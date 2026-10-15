@@ -1,0 +1,396 @@
+{
+  "name": "projects/1037422058097488063",
+  "title": "TripAi",
+  "visibility": "PUBLIC",
+  "createTime": "2026-10-15T03:44:29.951583Z",
+  "updateTime": "2026-10-15T06:38:33.032764Z",
+  "projectType": "TEXT_TO_UI_PRO",
+  "thumbnailScreenshot": {
+    "name": "projects/1037422058097488063/screens/a6d0c9aa430d4cb5a74c1849b0628edb/fileEntries/screenshot",
+    "downloadUrl": "https://lh3.googleusercontent.com/aida/AEtjO1WNvvYjV44YTiL2QAXt05dxJloES96nY_f13ZSN0QNZM5oJ6GIfvkEmz0_zwZ9S0SFSHL3fSMwge6kkS3W-irrLSEJYiJ2m97nKx8aGlghPzZjUV0bHwkHLmdoOkjOEUuWlUvootImzK2pa9NizULBGmsJPIzemSkAJ0FrTjuVv8qAEMCy_9rMZMHj3jykrjuUN5w1Yxr0TzofRwe2Y9yTnK8JFQhts5cUaI0I4Q-Yx-ccC-ouYrY2vfnk"
+  },
+  "origin": "STITCH",
+  "deviceType": "DESKTOP",
+  "designTheme": {
+    "colorMode": "LIGHT",
+    "font": "PLAYFAIR_DISPLAY",
+    "roundness": "ROUND_FULL",
+    "customColor": "#6e4f32",
+    "headlineFont": "PLAYFAIR_DISPLAY",
+    "bodyFont": "PLUS_JAKARTA_SANS",
+    "labelFont": "PLUS_JAKARTA_SANS",
+    "namedColors": {
+      "secondary": "#75593e",
+      "surface_container": "#f2ede7",
+      "outline_variant": "#d3c4b9",
+      "tertiary": "#4d3a28",
+      "on_secondary_container": "#795d42",
+      "surface_dim": "#ded9d4",
+      "background": "#fef9f2",
+      "surface_tint": "#78583a",
+      "error_container": "#ffdad6",
+      "on_secondary": "#ffffff",
+      "on_secondary_fixed_variant": "#5b4229",
+      "on_tertiary_container": "#e2c5ad",
+      "on_tertiary_fixed_variant": "#574331",
+      "on_primary_container": "#edc39e",
+      "inverse_primary": "#e9bf9a",
+      "tertiary_container": "#66513e",
+      "secondary_container": "#ffd9b7",
+      "on_surface": "#1d1b18",
+      "surface_container_low": "#f8f3ed",
+      "on_error": "#ffffff",
+      "primary_fixed_dim": "#e9bf9a",
+      "tertiary_fixed_dim": "#dec1a9",
+      "surface_variant": "#e6e2dc",
+      "surface_bright": "#fef9f2",
+      "on_secondary_fixed": "#2a1703",
+      "on_error_container": "#93000a",
+      "inverse_surface": "#32302c",
+      "secondary_fixed": "#ffdcbe",
+      "primary": "#54381d",
+      "error": "#ba1a1a",
+      "tertiary_fixed": "#fbddc4",
+      "on_primary_fixed": "#2c1601",
+      "on_primary_fixed_variant": "#5e4125",
+      "surface_container_highest": "#e6e2dc",
+      "surface_container_lowest": "#ffffff",
+      "primary_container": "#6e4f32",
+      "on_background": "#1d1b18",
+      "primary_fixed": "#ffdcbf",
+      "inverse_on_surface": "#f5f0ea",
+      "outline": "#81756b",
+      "on_tertiary_fixed": "#271809",
+      "surface_container_high": "#ece7e1",
+      "on_primary": "#ffffff",
+      "secondary_fixed_dim": "#e4c09f",
+      "surface": "#fef9f2",
+      "on_tertiary": "#ffffff",
+      "on_surface_variant": "#4f453c"
+    },
+    "designMd": "---\nname: Warm Editorial Journey\ncolors:\n  surface: '#fef9f2'\n  surface-dim: '#ded9d4'\n  surface-bright: '#fef9f2'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f8f3ed'\n  surface-container: '#f2ede7'\n  surface-container-high: '#ece7e1'\n  surface-container-highest: '#e6e2dc'\n  on-surface: '#1d1b18'\n  on-surface-variant: '#4f453c'\n  inverse-surface: '#32302c'\n  inverse-on-surface: '#f5f0ea'\n  outline: '#81756b'\n  outline-variant: '#d3c4b9'\n  surface-tint: '#78583a'\n  primary: '#54381d'\n  on-primary: '#ffffff'\n  primary-container: '#6e4f32'\n  on-primary-container: '#edc39e'\n  inverse-primary: '#e9bf9a'\n  secondary: '#75593e'\n  on-secondary: '#ffffff'\n  secondary-container: '#ffd9b7'\n  on-secondary-container: '#795d42'\n  tertiary: '#4d3a28'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#66513e'\n  on-tertiary-container: '#e2c5ad'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#ffdcbf'\n  primary-fixed-dim: '#e9bf9a'\n  on-primary-fixed: '#2c1601'\n  on-primary-fixed-variant: '#5e4125'\n  secondary-fixed: '#ffdcbe'\n  secondary-fixed-dim: '#e4c09f'\n  on-secondary-fixed: '#2a1703'\n  on-secondary-fixed-variant: '#5b4229'\n  tertiary-fixed: '#fbddc4'\n  tertiary-fixed-dim: '#dec1a9'\n  on-tertiary-fixed: '#271809'\n  on-tertiary-fixed-variant: '#574331'\n  background: '#fef9f2'\n  on-background: '#1d1b18'\n  surface-variant: '#e6e2dc'\ntypography:\n  display:\n    fontFamily: Playfair Display\n    fontSize: 56px\n    fontWeight: '600'\n    lineHeight: 64px\n    letterSpacing: -0.02em\n  display-mobile:\n    fontFamily: Playfair Display\n    fontSize: 38px\n    fontWeight: '600'\n    lineHeight: 44px\n    letterSpacing: -0.01em\n  headline-lg:\n    fontFamily: Playfair Display\n    fontSize: 40px\n    fontWeight: '600'\n    lineHeight: 48px\n    letterSpacing: -0.015em\n  headline-lg-mobile:\n    fontFamily: Playfair Display\n    fontSize: 28px\n    fontWeight: '600'\n    lineHeight: 36px\n    letterSpacing: -0.01em\n  headline-md:\n    fontFamily: Playfair Display\n    fontSize: 28px\n    fontWeight: '500'\n    lineHeight: 36px\n    letterSpacing: -0.01em\n  headline-sm:\n    fontFamily: Playfair Display\n    fontSize: 22px\n    fontWeight: '500'\n    lineHeight: 30px\n    letterSpacing: 0em\n  title-lg:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 18px\n    fontWeight: '600'\n    lineHeight: 26px\n    letterSpacing: -0.01em\n  title-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 16px\n    fontWeight: '600'\n    lineHeight: 24px\n    letterSpacing: 0em\n  body-lg:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 16px\n    fontWeight: '400'\n    lineHeight: 26px\n    letterSpacing: 0.01em\n  body-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 22px\n    letterSpacing: 0.01em\n  body-sm:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 18px\n    letterSpacing: 0.015em\n  label-lg:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 14px\n    fontWeight: '500'\n    lineHeight: 20px\n    letterSpacing: 0.02em\n  label-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 12px\n    fontWeight: '500'\n    lineHeight: 16px\n    letterSpacing: 0.03em\n  label-sm:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 11px\n    fontWeight: '600'\n    lineHeight: 14px\n    letterSpacing: 0.04em\nrounded:\n  sm: 0.5rem\n  DEFAULT: 1rem\n  md: 1.5rem\n  lg: 2rem\n  xl: 3rem\n  full: 9999px\nspacing:\n  gutter: 1.5rem\n  gutter-mobile: 1rem\n  margin: 3rem\n  margin-mobile: 1.25rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2.5rem\n---\n\n## Brand & Style\n\nThis design system embodies the understated luxury and tactile warmth of a bespoke travel journal merged with intuitive, cutting-edge AI capability. Built for discerning travelers planning complex itineraries, it cultivates an emotional atmosphere of serenity, clarity, and thoughtful discovery. Rather than relying on hyper-saturated gradients or frantic neon accents, the aesthetic leans into calm minimalism paired with warm, tactile elegance. \n\nKey attributes:\n- **Atmospheric Warmth:** Cream paper tones and sun-drenched earth pigments evoke physical linen journals, architectural limestone, and warm soil.\n- **Editorial Poise:** High-contrast serif headlines evoke travel literature and vintage dispatch guides, balanced by clean geometric sans-serif UI typography.\n- **Breathing Space:** Generous negative space reduces cognitive overload during multi-day trip coordination, allowing itinerary milestones and rich destination media to breathe effortlessly.\n- **Tactile Softness:** Pill silhouettes, smooth continuous curves, and faint warm ambient light recreate the feeling of thumbing through luxury stationery.\n\n## Colors\n\nThe palette is rooted in an earthy, organic continuum that shifts gracefully between soft limestone paper and rich roasted espresso:\n\n- **Primary (`#6e4f32` - Deep Umber):** Serves as the primary anchor for core calls-to-action, active icons, and high-emphasis body text, ensuring WCAG AAA legibility against cream substrates.\n- **Secondary (`#8c6e52` - Warm Mocha):** Deployed for subtle action hover states, active tab highlights, secondary buttons, and focus outlines.\n- **Tertiary (`#a28973` - Sunlit Clay):** Allocated to metadata icons, badge backgrounds, pill tag text, and timeline connectors.\n- **Borders & Dividers (`#bba591` - Light Taupe):** Used at 40%\u201370% opacity for delicate hairline borders, horizontal rules, and timeline guides without fragmenting the canvas.\n- **Surface Tint (`#d9c9ba` - Soft Sand):** Applied to muted input fields, secondary chip backgrounds, and resting container surfaces.\n- **Base Canvas (`#f7f2ec` - Warm Cream):** The full-viewport canvas background, eliminating stark sterile white glare.\n- **Elevated Canvas (`#ffffff` - Crisp Linen):** Exclusively reserved for floating card containers, active popovers, and elevated modal overlays to establish clean spatial depth.\n\n## Typography\n\nThe type system leverages deliberate tension between literary romanticism and contemporary pragmatic UI design. \n\n- **Display & Headlines:** Set in `Playfair Display`, bringing an editorial, storied cadence to travel destinations, trip names, and hero banners. It should never be used in all-caps or tightly condensed blocks.\n- **Body & Interface:** Set in `Plus Jakarta Sans`, offering crisp geometry, broad apertures, and organic warmth that matches the rounded visual tone. \n- **Hierarchy Rules:** Reserve serif headlines for contextual headings and narrative AI itinerary summaries. Keep operational cues, timeline timestamps, metadata badges, and form labels strictly within `Plus Jakarta Sans` for rapid scanning and legibility.\n\n## Layout & Spacing\n\nThis design system uses a flexible 12-column grid system capped at a maximum inner content container of 1320px for desktop screens to preserve comfortable reading lengths:\n\n- **Desktop (\u2265 1024px):** 12-column fluid grid, 48px (`margin`) outer screen margin, and 24px (`gutter`) column gutters. Itinerary sidebars lock to a 4-column span, leaving 8 columns for dynamic itinerary timeline flow and map views.\n- **Tablet (768px \u2013 1023px):** 8-column grid with 32px margins and 20px gutters. Dual-pane flows collapse into stacked tab views.\n- **Mobile (\u2264 767px):** 4-column fluid layout with 20px (`margin-mobile`) margins and 16px (`gutter-mobile`) gutters. Floating quick-action bars sit anchored to the lower safe area.\n\nSpatial rhythm follows a strict 4px/8px incremental cadence. Section separation prioritizes ample empty room (`space-xl` and higher) over heavy graphic dividers to sustain the airy travel journal aesthetic.\n\n## Elevation & Depth\n\nSpatial separation avoids artificial drop shadows and cold grey tones, relying instead on warm diffused luminescence:\n\n- **Ambient Elevation:** Shadows feature an extended blur radius tinted directly with warm deep brown: `0 10px 30px -10px rgba(110, 79, 50, 0.08)`. For hovering cards or interactive itinerary blocks, the shadow elevates slightly to `0 16px 36px -12px rgba(110, 79, 50, 0.12)`.\n- **Surface Layering:** The primary canvas rests on `#f7f2ec`. Content groups sit inside `#ffffff` surfaces bordered by hairline borders (`1px solid rgba(187, 165, 145, 0.35)`).\n- **Overlays & Modals:** Dialog backdrops use an ambient blur (`backdrop-filter: blur(12px)`) combined with a soft earthen wash (`rgba(247, 242, 236, 0.8)`), preserving underlying context without visually cluttering the view.\n\n## Shapes\n\nThe design system uses a pronounced, pill-inspired shape language that imparts softness, comfort, and safety:\n\n- **Buttons & Chips:** Fully pill-shaped (`9999px`), delivering a tactile, pebble-like quality when clicked or tapped.\n- **Cards & Modal Sheets:** Formed with large radii (20px to 24px), harmonizing with the fluid geometry of the typography.\n- **Input Fields & Textareas:** Styled with a 16px corner radius, balancing structured data entry with visual softness.\n- **Image Containers:** Media clips and destination photography always inherit a minimum of 16px border-radius to avoid harsh orthogonal intersections against the soft palette.\n\n## Components\n\n### Buttons\n- **Primary:** Background `#6e4f32`, text `#ffffff`, border radius `9999px`, padding `12px 24px`. Hover state shifts background to `#8c6e52` with smooth 200ms ease transition. Active state scales down slightly to `0.98`.\n- **Secondary / Ghost:** Transparent background, hairline border `1px solid #bba591`, text `#6e4f32`. On hover, background shifts to `rgba(217, 201, 186, 0.25)`.\n- **Floating AI Trigger:** Floating prompt button with subtle warm ambient shadow, `#6e4f32` fill, and an internal delicate sparkle icon in warm clay (`#a28973`).\n\n### Inputs & Form Fields\n- Surface filled with soft sand wash (`rgba(217, 201, 186, 0.3)`), border `1px solid rgba(187, 165, 145, 0.6)`, text `#6e4f32`, placeholder `#a28973`.\n- Corner radius is `16px`, height `48px`, padding `0 18px`.\n- On focus, input surface turns pure `#ffffff`, outline transitions to an outer mocha ring `0 0 0 3px rgba(140, 110, 82, 0.25)`, and border becomes `#8c6e52`.\n\n### Cards & Itinerary Containers\n- Surface: `#ffffff` for floating itinerary cards; subtle tint (`#f0e9e1`) for secondary informational containers.\n- Border: `1px solid rgba(187, 165, 145, 0.35)`.\n- Shadow: `0 10px 30px -10px rgba(110, 79, 50, 0.08)`.\n- Radius: `20px` to `24px` with internal padding of `24px`.\n\n### Chips & Filter Tags\n- Fully rounded (`9999px`), padding `6px 14px`.\n- Unselected: Background `rgba(217, 201, 186, 0.35)`, text `#6e4f32`, no border.\n- Selected: Background `#6e4f32`, text `#ffffff`.\n\n### Checkboxes & Radio Buttons\n- Checkbox: 20px rounded rectangle (radius `6px`), border `1.5px solid #bba591`. When checked, background fills with `#6e4f32` and checkmark renders in pure `#ffffff`.\n- Radio: 20px circle with a centered `#6e4f32` dot on selection.\n\n### Custom Component: Daily Timeline Milestone\n- Vertical timeline thread colored `#bba591` (2px width, dashed or continuous).\n- Milestone nodes: Circular pill badges (`32px` diameter) in `#f7f2ec` with an inner ring of `#8c6e52`.\n- AI Recommendation callout: Highlighted with an ivory-tinted card, delicate warm gold border, and Playfair Display title.",
+    "colorVariant": "FIDELITY",
+    "overridePrimaryColor": "#6e4f32",
+    "overrideSecondaryColor": "#8c6e52",
+    "overrideTertiaryColor": "#a28973",
+    "overrideNeutralColor": "#f7f2ec",
+    "spacingScale": 2,
+    "typography": {
+      "headline-lg": {
+        "fontFamily": "Playfair Display",
+        "fontSize": "40px",
+        "fontWeight": "600",
+        "lineHeight": "48px",
+        "letterSpacing": "-0.015em"
+      },
+      "label-lg": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "14px",
+        "fontWeight": "500",
+        "lineHeight": "20px",
+        "letterSpacing": "0.02em"
+      },
+      "title-lg": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "18px",
+        "fontWeight": "600",
+        "lineHeight": "26px",
+        "letterSpacing": "-0.01em"
+      },
+      "display": {
+        "fontFamily": "Playfair Display",
+        "fontSize": "56px",
+        "fontWeight": "600",
+        "lineHeight": "64px",
+        "letterSpacing": "-0.02em"
+      },
+      "headline-lg-mobile": {
+        "fontFamily": "Playfair Display",
+        "fontSize": "28px",
+        "fontWeight": "600",
+        "lineHeight": "36px",
+        "letterSpacing": "-0.01em"
+      },
+      "body-lg": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "26px",
+        "letterSpacing": "0.01em"
+      },
+      "title-md": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "lineHeight": "24px",
+        "letterSpacing": "0em"
+      },
+      "headline-sm": {
+        "fontFamily": "Playfair Display",
+        "fontSize": "22px",
+        "fontWeight": "500",
+        "lineHeight": "30px",
+        "letterSpacing": "0em"
+      },
+      "label-md": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "12px",
+        "fontWeight": "500",
+        "lineHeight": "16px",
+        "letterSpacing": "0.03em"
+      },
+      "body-sm": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "lineHeight": "18px",
+        "letterSpacing": "0.015em"
+      },
+      "label-sm": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "11px",
+        "fontWeight": "600",
+        "lineHeight": "14px",
+        "letterSpacing": "0.04em"
+      },
+      "display-mobile": {
+        "fontFamily": "Playfair Display",
+        "fontSize": "38px",
+        "fontWeight": "600",
+        "lineHeight": "44px",
+        "letterSpacing": "-0.01em"
+      },
+      "headline-md": {
+        "fontFamily": "Playfair Display",
+        "fontSize": "28px",
+        "fontWeight": "500",
+        "lineHeight": "36px",
+        "letterSpacing": "-0.01em"
+      },
+      "body-md": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "lineHeight": "22px",
+        "letterSpacing": "0.01em"
+      }
+    },
+    "spacing": {
+      "space-xs": "0.25rem",
+      "space-md": "1rem",
+      "gutter": "1.5rem",
+      "gutter-mobile": "1rem",
+      "margin-mobile": "1.25rem",
+      "space-lg": "1.5rem",
+      "space-xl": "2.5rem",
+      "margin": "3rem",
+      "space-sm": "0.5rem"
+    },
+    "headlineFontFamily": "Playfair Display",
+    "bodyFontFamily": "Plus Jakarta Sans",
+    "labelFontFamily": "Plus Jakarta Sans"
+  },
+  "screenInstances": [
+    {
+      "id": "0104c6709c2d4e8588c6e2bd58b7408c",
+      "sourceScreen": "projects/1037422058097488063/screens/0104c6709c2d4e8588c6e2bd58b7408c",
+      "x": 6,
+      "y": 20479,
+      "width": 1280,
+      "height": 1024,
+      "label": "Generating Screen..."
+    },
+    {
+      "id": "0f458ce9d72d4c50b76a568c9b3bbb23",
+      "sourceScreen": "projects/1037422058097488063/screens/0f458ce9d72d4c50b76a568c9b3bbb23",
+      "x": 1344,
+      "y": 21732,
+      "width": 512,
+      "height": 382,
+      "label": "Generating Image..."
+    },
+    {
+      "id": "15b81bce3c5c485c9066cbe116e0c2cd",
+      "sourceScreen": "projects/1037422058097488063/screens/15b81bce3c5c485c9066cbe116e0c2cd",
+      "y": 6559,
+      "width": 1280,
+      "height": 2934,
+      "label": "Generating Screen...",
+      "hidden": true
+    },
+    {
+      "id": "2287c1dffeff4752a7a6f94490e7f270",
+      "sourceScreen": "projects/1037422058097488063/screens/2287c1dffeff4752a7a6f94490e7f270",
+      "x": -13,
+      "y": 14124,
+      "width": 1280,
+      "height": 3476,
+      "label": "Generating Screen..."
+    },
+    {
+      "id": "233372b05fc44dfdba9c72ebc2ae32e7",
+      "sourceScreen": "projects/1037422058097488063/screens/233372b05fc44dfdba9c72ebc2ae32e7",
+      "x": -8,
+      "y": 6110,
+      "width": 1280,
+      "height": 7999,
+      "label": "Generating Screen..."
+    },
+    {
+      "id": "57a9df2c3cfd4c889205722c21579583",
+      "sourceScreen": "projects/1037422058097488063/screens/57a9df2c3cfd4c889205722c21579583",
+      "x": 3363,
+      "y": 6351,
+      "width": 512,
+      "height": 286,
+      "label": "Generating Image...",
+      "hidden": true
+    },
+    {
+      "id": "885793436ca4479d95dc6a5a68064aef",
+      "sourceScreen": "projects/1037422058097488063/screens/885793436ca4479d95dc6a5a68064aef",
+      "y": 20578,
+      "width": 1280,
+      "height": 6391,
+      "label": "Generating Screen...",
+      "hidden": true
+    },
+    {
+      "id": "8ab64698fafb4c08ab4a2deaef2b44e6",
+      "sourceScreen": "projects/1037422058097488063/screens/8ab64698fafb4c08ab4a2deaef2b44e6",
+      "y": 5161,
+      "width": 1280,
+      "height": 916,
+      "label": "TripAi - Generating Your Trip"
+    },
+    {
+      "id": "919bb764804e4739a7b3aca38558a7c0",
+      "sourceScreen": "projects/1037422058097488063/screens/919bb764804e4739a7b3aca38558a7c0",
+      "x": 4515,
+      "y": 6351,
+      "width": 512,
+      "height": 286,
+      "label": "Generating Image...",
+      "hidden": true
+    },
+    {
+      "id": "942bade0116743299fa5af7950b3c640",
+      "sourceScreen": "projects/1037422058097488063/screens/942bade0116743299fa5af7950b3c640",
+      "x": 2368,
+      "width": 1280,
+      "height": 1024,
+      "label": "TripAi - Home Dashboard",
+      "hidden": true
+    },
+    {
+      "id": "9a0431860b3b472792a43ad428b194d1",
+      "sourceScreen": "projects/1037422058097488063/screens/9a0431860b3b472792a43ad428b194d1",
+      "x": 2776,
+      "y": 20479,
+      "width": 1280,
+      "height": 1024,
+      "label": "Generating Screen..."
+    },
+    {
+      "id": "9de86df0e74b4267967495ca1384e580",
+      "sourceScreen": "projects/1037422058097488063/screens/9de86df0e74b4267967495ca1384e580",
+      "x": 1920,
+      "y": 21732,
+      "width": 512,
+      "height": 382,
+      "label": "Generating Image..."
+    },
+    {
+      "id": "a6d0c9aa430d4cb5a74c1849b0628edb",
+      "sourceScreen": "projects/1037422058097488063/screens/a6d0c9aa430d4cb5a74c1849b0628edb",
+      "x": -8,
+      "y": 139,
+      "width": 1280,
+      "height": 2726,
+      "label": "Generating Screen..."
+    },
+    {
+      "id": "a961222394814f11831b7cab5b2b8d07",
+      "sourceScreen": "projects/1037422058097488063/screens/a961222394814f11831b7cab5b2b8d07",
+      "y": 2982,
+      "width": 1280,
+      "height": 2149,
+      "label": "Generating Screen..."
+    },
+    {
+      "id": "ab73247e10d44f42978ae62d837fbcb1",
+      "sourceScreen": "projects/1037422058097488063/screens/ab73247e10d44f42978ae62d837fbcb1",
+      "x": 1318,
+      "y": 6121,
+      "width": 1280,
+      "height": 1274,
+      "label": "Generating Screen..."
+    },
+    {
+      "id": "assets_bbb17c3aba4d4b3f8ff9086eed066604",
+      "x": -1037,
+      "y": -32,
+      "width": 960,
+      "height": 540,
+      "sourceAsset": "assets/bbb17c3aba4d4b3f8ff9086eed066604",
+      "type": "DESIGN_SYSTEM_INSTANCE"
+    },
+    {
+      "id": "c6ec5b43a5d44c8ba6010ca6f74943a3",
+      "sourceScreen": "projects/1037422058097488063/screens/c6ec5b43a5d44c8ba6010ca6f74943a3",
+      "x": -13,
+      "y": 17670,
+      "width": 1280,
+      "height": 2652,
+      "label": "TripAi - Shared Trip Plan (Read-Only)"
+    },
+    {
+      "id": "d4eaffbe3db84489b77a74d2bb53d701",
+      "sourceScreen": "projects/1037422058097488063/screens/d4eaffbe3db84489b77a74d2bb53d701",
+      "x": 3939,
+      "y": 6351,
+      "width": 512,
+      "height": 286,
+      "label": "Generating Image...",
+      "hidden": true
+    },
+    {
+      "id": "d8d63afd57694ef3924f6f351edeec8c",
+      "sourceScreen": "projects/1037422058097488063/screens/d8d63afd57694ef3924f6f351edeec8c",
+      "y": 28782,
+      "width": 1280,
+      "height": 6451,
+      "label": "TripAi - Error States Suite"
+    },
+    {
+      "id": "d926f15ee04f48bd80c7ba140d5f623f",
+      "sourceScreen": "projects/1037422058097488063/screens/d926f15ee04f48bd80c7ba140d5f623f",
+      "y": 21732,
+      "width": 1280,
+      "height": 6794,
+      "label": "Generating Screen..."
+    },
+    {
+      "id": "e159bb35159042bb901d1c0449387446",
+      "sourceScreen": "projects/1037422058097488063/screens/e159bb35159042bb901d1c0449387446",
+      "x": 1405,
+      "y": 20479,
+      "width": 1280,
+      "height": 1024,
+      "label": "Generating Screen..."
+    },
+    {
+      "id": "facfea23b97a46a3a61dccb39b74da37",
+      "sourceScreen": "projects/1037422058097488063/screens/facfea23b97a46a3a61dccb39b74da37",
+      "x": 2787,
+      "y": 6351,
+      "width": 512,
+      "height": 286,
+      "label": "Generating Image...",
+      "hidden": true
+    }
+  ],
+  "metadata": {
+    "userRole": "OWNER"
+  }
+}

@@ -1,0 +1,547 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TripAi - Generating Your Trip</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sand: '#d9c9ba',
+            taupe: '#bba591',
+            clay: '#a28973',
+            mocha: '#8c6e52',
+            deepbrown: '#6e4f32',
+            cream: '#f7f2ec',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            soft: '0 8px 30px -4px rgba(110, 79, 50, 0.06), 0 2px 10px -2px rgba(110, 79, 50, 0.04)',
+            subtle: '0 4px 16px -2px rgba(110, 79, 50, 0.04)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Calm Motion & Shimmer Keyframes */
+    @keyframes slowSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes slowPulse {
+      0%, 100% { opacity: 0.85; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.03); }
+    }
+    @keyframes radarPulse {
+      0% { transform: scale(0.95); opacity: 0.6; }
+      50% { transform: scale(1.15); opacity: 0.15; }
+      100% { transform: scale(0.95); opacity: 0.6; }
+    }
+    @keyframes shimmerMove {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
+    @keyframes flightPath {
+      0% { stroke-dashoffset: 240; }
+      100% { stroke-dashoffset: 0; }
+    }
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-3px) rotate(1deg); }
+    }
+
+    .animate-slow-spin {
+      animation: slowSpin 28s linear infinite;
+    }
+    .animate-spin-reverse {
+      animation: slowSpin 38s linear infinite reverse;
+    }
+    .animate-slow-pulse {
+      animation: slowPulse 3.5s ease-in-out infinite;
+    }
+    .animate-radar {
+      animation: radarPulse 4s ease-in-out infinite;
+    }
+    .animate-float {
+      animation: gentleFloat 5s ease-in-out infinite;
+    }
+    .flight-dash {
+      stroke-dasharray: 6 6;
+      animation: flightPath 5s linear infinite;
+    }
+    
+    /* Skeleton Shimmer */
+    .shimmer-box {
+      position: relative;
+      overflow: hidden;
+      background-color: #d9c9ba;
+    }
+    .shimmer-box::after {
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%);
+      animation: shimmerMove 2.2s infinite;
+      content: '';
+    }
+
+    /* Accessibility reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .animate-slow-spin, .animate-spin-reverse, .animate-slow-pulse, .animate-radar, .animate-float, .flight-dash, .shimmer-box::after {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-cream text-deepbrown font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-sand selection:text-deepbrown">
+
+  <!-- ========================================== -->
+  <!-- 1. MINIMAL NAVBAR (Sticky, Focused, No Distractions) -->
+  <!-- ========================================== -->
+  <header class="w-full bg-cream/90 backdrop-blur-sm border-b border-taupe/30 sticky top-0 z-30 transition-colors">
+    <div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+      <!-- Left: TripAi Brand Wordmark + Minimal Compass Icon -->
+      <a href="#" class="flex items-center gap-2.5 group">
+        <div class="w-8 h-8 rounded-full border border-taupe/40 bg-sand/30 flex items-center justify-center text-deepbrown group-hover:bg-sand/60 transition-colors">
+          <svg class="w-4 h-4 text-deepbrown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="#8c6e52"></polygon>
+          </svg>
+        </div>
+        <span class="font-serif text-xl tracking-tight font-semibold text-deepbrown">TripAi</span>
+      </a>
+
+      <!-- Right: Discrete Cancel Action -->
+      <div class="flex items-center gap-4">
+        <!-- Interactive State Switcher for Reviewing all requested variants -->
+        <div class="hidden md:flex items-center gap-1 bg-white/70 border border-taupe/30 rounded-full p-1 text-xs text-clay">
+          <span class="px-2 text-[11px] font-medium uppercase tracking-wider text-taupe">Preview State:</span>
+          <button id="btn-state-progress" onclick="switchState('progress')" class="px-2.5 py-1 rounded-full bg-deepbrown text-white font-medium transition-all shadow-sm">In Progress</button>
+          <button id="btn-state-slow" onclick="switchState('slow')" class="px-2.5 py-1 rounded-full hover:bg-sand/40 text-clay hover:text-deepbrown transition-all">Slow (Delay)</button>
+          <button id="btn-state-error" onclick="switchState('error')" class="px-2.5 py-1 rounded-full hover:bg-sand/40 text-clay hover:text-deepbrown transition-all">Error</button>
+        </div>
+
+        <button onclick="window.history.back()" class="text-xs font-medium text-clay hover:text-deepbrown transition-colors px-3 py-1.5 rounded-full hover:bg-sand/30">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 2. MAIN VIEWPORT CENTER STAGE -->
+  <!-- ========================================== -->
+  <main class="flex-1 flex flex-col items-center justify-center px-4 py-8 max-w-[640px] w-full mx-auto relative z-10">
+
+    <!-- ========================================== -->
+    <!-- STATE A: IN PROGRESS / NORMAL (Default) -->
+    <!-- ========================================== -->
+    <div id="state-container" class="w-full flex flex-col items-center text-center transition-all duration-300">
+      
+      <!-- MOTION ELEMENT: Line-art Compass & Airway Map (Annotated Motion) -->
+      <div class="relative w-28 h-28 mb-5 flex items-center justify-center">
+        <!-- Radar Ring Pulse Effect -->
+        <div id="radar-ring" class="absolute inset-0 rounded-full border border-taupe/30 bg-sand/20 animate-radar"></div>
+        
+        <!-- Faint map contours / compass rose outer ring -->
+        <svg class="absolute inset-1 w-[104px] h-[104px] text-taupe/40 animate-slow-spin pointer-events-none" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 4"></circle>
+          <circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="0.6"></circle>
+          <!-- Compass tick marks -->
+          <line x1="50" y1="2" x2="50" y2="8" stroke="currentColor" stroke-width="1.5"></line>
+          <line x1="50" y1="92" x2="50" y2="98" stroke="currentColor" stroke-width="1.5"></line>
+          <line x1="2" y1="50" x2="8" y2="50" stroke="currentColor" stroke-width="1.5"></line>
+          <line x1="92" y1="50" x2="98" y2="50" stroke="currentColor" stroke-width="1.5"></line>
+          <path d="M 20 20 Q 50 10 80 20" stroke="currentColor" stroke-width="0.5" stroke-dasharray="3 3"></path>
+          <path d="M 15 75 Q 50 90 85 75" stroke="currentColor" stroke-width="0.5" stroke-dasharray="3 3"></path>
+        </svg>
+
+        <!-- Dynamic Counter-Rotating Astrolabe/Orbit Ring -->
+        <svg class="absolute inset-3 w-[88px] h-[88px] text-clay/50 animate-spin-reverse pointer-events-none" viewBox="0 0 80 80" fill="none">
+          <circle cx="40" cy="40" r="34" stroke="currentColor" stroke-width="0.75" stroke-dasharray="4 6"></circle>
+          <circle cx="40" cy="6" r="2.5" fill="#a28973"></circle>
+          <circle cx="74" cy="40" r="2.5" fill="#8c6e52"></circle>
+        </svg>
+
+        <!-- Paper plane tracing dotted arc motion -->
+        <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 112 112">
+          <path id="curvePath" d="M 24 88 C 28 32, 84 32, 88 24" fill="none" stroke="#8c6e52" stroke-width="1.2" class="flight-dash opacity-70"></path>
+        </svg>
+
+        <!-- Center Paper Plane Icon or Compass Dial (Gentle Floating animation) -->
+        <div id="motion-center-badge" class="relative z-10 w-14 h-14 rounded-full bg-white shadow-soft border border-sand flex items-center justify-center animate-float">
+          <!-- Paper plane with warm palette tone -->
+          <svg id="motion-icon" class="w-6 h-6 text-deepbrown transform rotate-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m22 2-7 20-4-9-9-4Z"></path>
+            <path d="M22 2 11 13" stroke="#8c6e52"></path>
+          </svg>
+        </div>
+      </div>
+
+      <!-- HEADLINE & USER INPUT REFLECTION -->
+      <h1 id="screen-heading" class="font-serif text-2xl sm:text-3xl text-deepbrown font-medium tracking-tight mb-2">
+        Crafting your trip to <span class="italic text-mocha">Kyoto</span>...
+      </h1>
+      <p id="screen-subline" class="text-xs sm:text-sm text-clay font-normal tracking-wide mb-6 flex items-center justify-center gap-2">
+        <span class="inline-flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-clay" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          5 days
+        </span>
+        <span class="text-taupe">·</span>
+        <span class="inline-flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-clay" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          ₹25,000 budget
+        </span>
+        <span class="text-taupe">·</span>
+        <span class="inline-flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-clay" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          Comfort style
+        </span>
+      </p>
+
+      <!-- ========================================== -->
+      <!-- 3. PROGRESS STEPS CARD -->
+      <!-- ========================================== -->
+      <div id="progress-card" class="w-full bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-sand/50 text-left mb-6 transition-all">
+        
+        <!-- Header with percentage & animated progress bar -->
+        <div class="mb-5">
+          <div class="flex justify-between items-center text-xs mb-2">
+            <span class="text-clay font-medium tracking-wide">Itinerary Assembly</span>
+            <span id="progress-pct" class="font-serif italic text-mocha font-semibold text-sm">38% complete</span>
+          </div>
+          <!-- Progress Track -->
+          <div class="w-full h-1.5 bg-sand/40 rounded-full overflow-hidden">
+            <div id="progress-bar-fill" class="h-full bg-mocha rounded-full transition-all duration-700 ease-out" style="width: 38%;"></div>
+          </div>
+        </div>
+
+        <!-- Vertical 5-Step Checklist -->
+        <ul id="steps-list" class="space-y-3.5">
+          
+          <!-- STEP 1: DONE -->
+          <li class="flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+              <!-- Filled mocha check circle -->
+              <div class="w-6 h-6 rounded-full bg-mocha text-white flex items-center justify-center shadow-xs flex-shrink-0">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </div>
+              <span class="text-xs sm:text-sm font-medium text-deepbrown">
+                Finding the best way to get there
+              </span>
+            </div>
+            <span class="text-[11px] text-clay/70 font-sans">Synced</span>
+          </li>
+
+          <!-- STEP 2: IN PROGRESS (Active) -->
+          <li class="flex items-center justify-between group bg-sand/15 -mx-2 px-2 py-1 rounded-lg border border-sand/30">
+            <div class="flex items-center gap-3">
+              <!-- Animated pulsing spinner -->
+              <div class="relative w-6 h-6 flex items-center justify-center flex-shrink-0">
+                <div class="absolute inset-0 rounded-full border-2 border-sand border-t-mocha animate-spin"></div>
+                <div class="w-2 h-2 rounded-full bg-mocha animate-ping"></div>
+              </div>
+              <span class="text-xs sm:text-sm font-semibold text-deepbrown tracking-tight flex items-center gap-2">
+                Planning your day-by-day itinerary
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-mocha animate-pulse"></span>
+              </span>
+            </div>
+            <span class="text-[11px] text-mocha font-medium animate-pulse">Building...</span>
+          </li>
+
+          <!-- STEP 3: PENDING -->
+          <li class="flex items-center justify-between opacity-75">
+            <div class="flex items-center gap-3">
+              <!-- Empty taupe circle -->
+              <div class="w-6 h-6 rounded-full border border-taupe/70 bg-transparent flex items-center justify-center flex-shrink-0">
+                <div class="w-1.5 h-1.5 rounded-full bg-taupe/40"></div>
+              </div>
+              <span class="text-xs sm:text-sm font-normal text-taupe">
+                Picking hotels near each day's spots
+              </span>
+            </div>
+            <span class="text-[11px] text-taupe">Pending</span>
+          </li>
+
+          <!-- STEP 4: PENDING -->
+          <li class="flex items-center justify-between opacity-75">
+            <div class="flex items-center gap-3">
+              <!-- Empty taupe circle -->
+              <div class="w-6 h-6 rounded-full border border-taupe/70 bg-transparent flex items-center justify-center flex-shrink-0">
+                <div class="w-1.5 h-1.5 rounded-full bg-taupe/40"></div>
+              </div>
+              <span class="text-xs sm:text-sm font-normal text-taupe">
+                Estimating local transport
+              </span>
+            </div>
+            <span class="text-[11px] text-taupe">Pending</span>
+          </li>
+
+          <!-- STEP 5: PENDING -->
+          <li class="flex items-center justify-between opacity-75">
+            <div class="flex items-center gap-3">
+              <!-- Empty taupe circle -->
+              <div class="w-6 h-6 rounded-full border border-taupe/70 bg-transparent flex items-center justify-center flex-shrink-0">
+                <div class="w-1.5 h-1.5 rounded-full bg-taupe/40"></div>
+              </div>
+              <span class="text-xs sm:text-sm font-normal text-taupe">
+                Balancing your budget
+              </span>
+            </div>
+            <span class="text-[11px] text-taupe">Pending</span>
+          </li>
+
+        </ul>
+
+        <!-- SLOW STATE NOTICE (Subtle line below steps, toggleable) -->
+        <div id="slow-state-notice" class="hidden mt-4 pt-3.5 border-t border-sand/40 flex items-center gap-2.5 text-xs text-mocha bg-sand/20 -mx-2 -mb-2 px-3 py-2 rounded-b-xl animate-fade-in">
+          <svg class="w-4 h-4 text-mocha flex-shrink-0 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path>
+          </svg>
+          <span class="font-normal text-deepbrown">
+            Taking a little longer than usual. Hang tight, we're curating authentic local spots...
+          </span>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- 4. TRIP PREVIEW SKELETON (Gentle Shimmer) -->
+      <!-- ========================================== -->
+      <div id="skeleton-preview-section" class="w-full mb-6 text-left">
+        <div class="flex items-center justify-between mb-2.5 px-1">
+          <span class="text-[11px] uppercase tracking-wider text-taupe font-semibold">Itinerary Draft In Flow</span>
+          <span class="text-[11px] text-clay italic">Days 1–3 Preview</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2.5 sm:gap-3.5">
+          
+          <!-- Day 1 Skeleton Card -->
+          <div class="bg-white/90 rounded-xl p-3 border border-sand/60 shadow-subtle flex flex-col justify-between h-28 relative overflow-hidden">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="h-3 w-10 shimmer-box rounded"></div>
+                <div class="h-2 w-6 shimmer-box rounded-full"></div>
+              </div>
+              <div class="h-3.5 w-4/5 shimmer-box rounded mb-1.5"></div>
+              <div class="h-2.5 w-3/5 shimmer-box rounded"></div>
+            </div>
+            <div class="flex items-center gap-1.5 pt-2 border-t border-sand/30">
+              <div class="w-2.5 h-2.5 rounded-full shimmer-box"></div>
+              <div class="h-2 w-14 shimmer-box rounded"></div>
+            </div>
+          </div>
+
+          <!-- Day 2 Skeleton Card -->
+          <div class="bg-white/90 rounded-xl p-3 border border-sand/60 shadow-subtle flex flex-col justify-between h-28 relative overflow-hidden">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="h-3 w-10 shimmer-box rounded"></div>
+                <div class="h-2 w-6 shimmer-box rounded-full"></div>
+              </div>
+              <div class="h-3.5 w-3/4 shimmer-box rounded mb-1.5"></div>
+              <div class="h-2.5 w-1/2 shimmer-box rounded"></div>
+            </div>
+            <div class="flex items-center gap-1.5 pt-2 border-t border-sand/30">
+              <div class="w-2.5 h-2.5 rounded-full shimmer-box"></div>
+              <div class="h-2 w-12 shimmer-box rounded"></div>
+            </div>
+          </div>
+
+          <!-- Day 3 Skeleton Card -->
+          <div class="bg-white/90 rounded-xl p-3 border border-sand/60 shadow-subtle flex flex-col justify-between h-28 relative overflow-hidden opacity-90">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <div class="h-3 w-10 shimmer-box rounded"></div>
+                <div class="h-2 w-6 shimmer-box rounded-full"></div>
+              </div>
+              <div class="h-3.5 w-4/6 shimmer-box rounded mb-1.5"></div>
+              <div class="h-2.5 w-2/3 shimmer-box rounded"></div>
+            </div>
+            <div class="flex items-center gap-1.5 pt-2 border-t border-sand/30">
+              <div class="w-2.5 h-2.5 rounded-full shimmer-box"></div>
+              <div class="h-2 w-10 shimmer-box rounded"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- 5. ROTATING TRAVEL TIP (Italic Clay Text + Dots) -->
+      <!-- ========================================== -->
+      <div id="travel-tip-section" class="w-full flex flex-col items-center justify-center text-center px-4">
+        <div class="flex items-center gap-1.5 text-xs text-clay italic">
+          <svg class="w-3.5 h-3.5 text-mocha not-italic flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+          </svg>
+          <span id="current-tip" class="transition-opacity duration-300">
+            Tip: Book trains 60 days ahead for the best fares &amp; panoramic window seats.
+          </span>
+        </div>
+        <!-- Faint dot indicator -->
+        <div class="flex items-center gap-1.5 mt-2.5">
+          <button onclick="setTip(0)" class="w-1.5 h-1.5 rounded-full bg-mocha transition-all"></button>
+          <button onclick="setTip(1)" class="w-1.5 h-1.5 rounded-full bg-taupe/40 hover:bg-taupe transition-all"></button>
+          <button onclick="setTip(2)" class="w-1.5 h-1.5 rounded-full bg-taupe/40 hover:bg-taupe transition-all"></button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 6. ERROR STATE VARIANT (Rendered cleanly within the same design) -->
+    <!-- ========================================== -->
+    <div id="error-container" class="hidden w-full flex flex-col items-center text-center transition-all duration-300">
+      
+      <!-- Gentle Earthy Error Illustration (No harsh red, soft sand/clay/deepbrown) -->
+      <div class="w-20 h-20 rounded-full bg-white border border-sand shadow-soft flex items-center justify-center mb-5 text-mocha">
+        <svg class="w-10 h-10 text-clay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Compass with slight offset needle or folded map with pin -->
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16" stroke-width="2.5"></line>
+        </svg>
+      </div>
+
+      <h2 class="font-serif text-2xl sm:text-3xl text-deepbrown font-medium tracking-tight mb-2">
+        Something went wrong
+      </h2>
+      <p class="text-xs sm:text-sm text-clay max-w-sm mb-6 leading-relaxed">
+        We couldn't build your trip this time. Your destination details and travel preferences are safely saved.
+      </p>
+
+      <!-- Reassurance Card -->
+      <div class="w-full bg-white rounded-2xl p-5 shadow-soft border border-sand/50 text-left mb-6">
+        <div class="flex items-center gap-3 text-xs text-clay">
+          <div class="w-8 h-8 rounded-full bg-sand/30 flex items-center justify-center text-mocha flex-shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+          </div>
+          <div>
+            <div class="font-medium text-deepbrown text-sm">Saved Query: Kyoto (5 Days · ₹25,000)</div>
+            <div class="text-[12px] text-clay">All preferences preserved. You will not need to retype your inputs.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full max-w-xs">
+        <button onclick="switchState('progress')" class="w-full py-3 px-5 rounded-full bg-deepbrown hover:bg-mocha text-white text-sm font-medium transition-colors shadow-soft flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+          </svg>
+          Try again
+        </button>
+        <button onclick="window.history.back()" class="w-full py-3 px-5 rounded-full bg-sand/30 hover:bg-sand/60 text-deepbrown text-sm font-medium border border-taupe/40 transition-colors">
+          Edit my details
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- ANNOTATION BADGE (Design Clarity Note) -->
+    <!-- ========================================== -->
+    <div class="mt-8 text-center">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sand/30 border border-taupe/20 text-[11px] text-clay">
+        <span class="w-1.5 h-1.5 rounded-full bg-mocha"></span>
+        Calm motion applied: 28s compass rotation, shimmer skeletons, and pulsing active step
+      </span>
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- CLIENT INTERACTIVITY & STATE TOGGLING SCRIPT -->
+  <!-- ========================================== -->
+  <script>
+    const tips = [
+      "Tip: Book trains 60 days ahead for the best fares & panoramic window seats.",
+      "Tip: Early mornings in Arashiyama bamboo grove offer serene, uncrowded paths.",
+      "Tip: Keeping an offline digital transit card speeds up local subway hopping."
+    ];
+    let currentTipIndex = 0;
+
+    function setTip(index) {
+      currentTipIndex = index;
+      const el = document.getElementById('current-tip');
+      el.style.opacity = '0';
+      setTimeout(() => {
+        el.innerText = tips[index];
+        el.style.opacity = '1';
+      }, 200);
+    }
+
+    // Auto rotate tips every 6 seconds
+    setInterval(() => {
+      const nextIndex = (currentTipIndex + 1) % tips.length;
+      setTip(nextIndex);
+    }, 6000);
+
+    // Switch between the user-requested states: 'progress', 'slow', and 'error'
+    function switchState(state) {
+      const stateContainer = document.getElementById('state-container');
+      const errorContainer = document.getElementById('error-container');
+      const slowNotice = document.getElementById('slow-state-notice');
+      const progressBar = document.getElementById('progress-bar-fill');
+      const progressPct = document.getElementById('progress-pct');
+
+      // Reset button styles
+      const btnProgress = document.getElementById('btn-state-progress');
+      const btnSlow = document.getElementById('btn-state-slow');
+      const btnError = document.getElementById('btn-state-error');
+
+      [btnProgress, btnSlow, btnError].forEach(btn => {
+        btn.className = "px-2.5 py-1 rounded-full hover:bg-sand/40 text-clay hover:text-deepbrown transition-all";
+      });
+
+      if (state === 'progress') {
+        stateContainer.classList.remove('hidden');
+        errorContainer.classList.add('hidden');
+        slowNotice.classList.add('hidden');
+        btnProgress.className = "px-2.5 py-1 rounded-full bg-deepbrown text-white font-medium transition-all shadow-sm";
+        progressBar.style.width = '38%';
+        progressPct.innerText = '38% complete';
+      } else if (state === 'slow') {
+        stateContainer.classList.remove('hidden');
+        errorContainer.classList.add('hidden');
+        slowNotice.classList.remove('hidden');
+        btnSlow.className = "px-2.5 py-1 rounded-full bg-deepbrown text-white font-medium transition-all shadow-sm";
+        progressBar.style.width = '62%';
+        progressPct.innerText = '62% (calibrating)...';
+      } else if (state === 'error') {
+        stateContainer.classList.add('hidden');
+        errorContainer.classList.remove('hidden');
+        btnError.className = "px-2.5 py-1 rounded-full bg-deepbrown text-white font-medium transition-all shadow-sm";
+      }
+    }
+  </script>
+
+
+
+</body></html>

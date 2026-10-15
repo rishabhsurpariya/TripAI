@@ -1,0 +1,855 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-primary-fixed":"#2c1601","primary":"#54381d","tertiary-fixed":"#fbddc4","surface-dim":"#ded9d4","on-surface-variant":"#4f453c","outline-variant":"#d3c4b9","on-tertiary-container":"#e2c5ad","on-secondary-container":"#795d42","surface-container-high":"#ece7e1","primary-fixed":"#ffdcbf","tertiary-container":"#66513e","primary-container":"#6e4f32","on-secondary-fixed":"#2a1703","surface-container-low":"#f8f3ed","inverse-on-surface":"#f5f0ea","on-secondary":"#ffffff","secondary-fixed":"#ffdcbe","error-container":"#ffdad6","on-tertiary-fixed-variant":"#574331","on-primary-container":"#edc39e","secondary-fixed-dim":"#e4c09f","surface":"#fef9f2","secondary":"#75593e","on-secondary-fixed-variant":"#5b4229","surface-tint":"#78583a","surface-container-lowest":"#ffffff","on-surface":"#1d1b18","on-primary":"#ffffff","surface-variant":"#e6e2dc","on-error":"#ffffff","secondary-container":"#ffd9b7","on-tertiary":"#ffffff","inverse-surface":"#32302c","tertiary":"#4d3a28","on-tertiary-fixed":"#271809","outline":"#81756b","surface-container":"#f2ede7","on-error-container":"#93000a","on-background":"#1d1b18","primary-fixed-dim":"#e9bf9a","inverse-primary":"#e9bf9a","error":"#ba1a1a","background":"#fef9f2","surface-container-highest":"#e6e2dc","surface-bright":"#fef9f2","on-primary-fixed-variant":"#5e4125","tertiary-fixed-dim":"#dec1a9"},borderRadius:{"DEFAULT":"1rem","lg":"2rem","xl":"3rem","full":"9999px"},spacing:{"gutter":"1.5rem","space-lg":"1.5rem","margin":"3rem","space-md":"1rem","space-sm":"0.5rem","margin-mobile":"1.25rem","space-xl":"2.5rem","space-xs":"0.25rem","gutter-mobile":"1rem"},fontFamily:{"headline-lg-mobile":["Playfair Display"],"headline-sm":["Playfair Display"],"display-mobile":["Playfair Display"],"label-sm":["Plus Jakarta Sans"],"headline-lg":["Playfair Display"],"label-md":["Plus Jakarta Sans"],"headline-md":["Playfair Display"],"body-lg":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"],"title-lg":["Plus Jakarta Sans"],"display":["Playfair Display"],"label-lg":["Plus Jakarta Sans"]},fontSize:{"headline-lg-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-sm":["22px",{"lineHeight":"30px","letterSpacing":"0em","fontWeight":"500"}],"display-mobile":["38px",{"lineHeight":"44px","letterSpacing":"-0.01em","fontWeight":"600"}],"label-sm":["11px",{"lineHeight":"14px","letterSpacing":"0.04em","fontWeight":"600"}],"headline-lg":["40px",{"lineHeight":"48px","letterSpacing":"-0.015em","fontWeight":"600"}],"label-md":["12px",{"lineHeight":"16px","letterSpacing":"0.03em","fontWeight":"500"}],"headline-md":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"500"}],"body-lg":["16px",{"lineHeight":"26px","letterSpacing":"0.01em","fontWeight":"400"}],"body-sm":["12px",{"lineHeight":"18px","letterSpacing":"0.015em","fontWeight":"400"}],"body-md":["14px",{"lineHeight":"22px","letterSpacing":"0.01em","fontWeight":"400"}],"title-md":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"600"}],"title-lg":["18px",{"lineHeight":"26px","letterSpacing":"-0.01em","fontWeight":"600"}],"display":["56px",{"lineHeight":"64px","letterSpacing":"-0.02em","fontWeight":"600"}],"label-lg":["14px",{"lineHeight":"20px","letterSpacing":"0.02em","fontWeight":"500"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface"><header class="fixed top-0 left-0 right-0 z-50 bg-[#f7f2ec]/95 backdrop-blur-md border-b border-[#bba591]"><div class="h-16 max-w-[1320px] mx-auto px-gutter flex items-center justify-between"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-xs text-primary group" data-path="explore" href="#"><span class="material-symbols-outlined text-primary text-[26px]">explore</span><span class="font-headline-sm text-headline-sm tracking-tight text-primary">TripAi</span></a><nav class="flex items-center gap-space-lg ml-space-md" data-active-classes="text-on-surface border-b-2 border-[#8c6e52] font-title-md text-title-md pb-1"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors pb-1 border-b-2 border-transparent" data-path="explore" href="#">Explore</a><a aria-current="page" class="transition-colors text-on-surface border-b-2 border-[#8c6e52] font-title-md text-title-md pb-1" data-path="my-trips" href="#">My Trips</a></nav></div><div class="flex items-center gap-space-md"><button class="flex items-center gap-space-xs py-space-xs px-space-sm rounded-full hover:bg-surface-container-high hover:text-on-surface transition-colors"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="material-symbols-outlined text-on-surface-variant text-[20px]">keyboard_arrow_down</span></button></div></div></header><main class="w-full pt-16 bg-[#f7f2ec] min-h-screen"><div class="flex flex-col w-full">
+<div class="w-full max-w-[1200px] mx-auto px-gutter py-space-lg flex flex-col gap-space-lg text-primary">
+<!-- PAGE HEADER -->
+<header class="flex flex-col sm:flex-row sm:items-end justify-between gap-space-md">
+<div>
+<h1 class="font-headline-lg text-headline-lg tracking-tight text-primary">My Trips</h1>
+<p class="font-body-md text-body-md text-tertiary mt-1 flex items-center gap-2">
+<span>8 saved trips</span>
+<span class="inline-block w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>2 upcoming</span>
+<span class="inline-block w-1 h-1 rounded-full bg-outline-variant"></span>
+<span>1 shared</span>
+</p>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="inline-flex items-center gap-space-xs px-6 py-3 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg transition-transform hover:opacity-95 active:scale-95 shadow-sm" id="header-new-trip" onclick="openNewTripDialog()">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>+ New trip</span>
+</button>
+</div>
+</header>
+<!-- TOOLBAR -->
+<section class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-space-md">
+<!-- Search Input -->
+<div class="relative w-full lg:w-72">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-tertiary text-[20px]">search</span>
+<input class="w-full h-11 pl-10 pr-4 rounded-full bg-surface-container-low font-body-md text-body-md text-primary placeholder-tertiary focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" id="search-input" oninput="handleSearch(this.value)" placeholder="Search by destination..." type="text">
+</div>
+<!-- Filter Chips -->
+<div class="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-none" id="filter-chip-group">
+<button class="filter-chip flex items-center gap-1.5 px-4 py-2 rounded-full font-label-lg text-label-lg bg-primary-container text-on-primary transition-all" data-filter="all" onclick="setFilter('all')">
+<span>All</span>
+<span class="px-1.5 py-0.5 rounded-full text-[10px] bg-primary/40 text-on-primary">8</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-4 py-2 rounded-full font-label-lg text-label-lg bg-surface-container-high text-tertiary hover:bg-surface-dim transition-all" data-filter="upcoming" onclick="setFilter('upcoming')">
+<span>Upcoming</span>
+<span class="px-1.5 py-0.5 rounded-full text-[10px] bg-surface-variant text-primary">2</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-4 py-2 rounded-full font-label-lg text-label-lg bg-surface-container-high text-tertiary hover:bg-surface-dim transition-all" data-filter="past" onclick="setFilter('past')">
+<span>Past</span>
+<span class="px-1.5 py-0.5 rounded-full text-[10px] bg-surface-variant text-primary">5</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-4 py-2 rounded-full font-label-lg text-label-lg bg-surface-container-high text-tertiary hover:bg-surface-dim transition-all" data-filter="shared" onclick="setFilter('shared')">
+<span>Shared</span>
+<span class="px-1.5 py-0.5 rounded-full text-[10px] bg-surface-variant text-primary">1</span>
+</button>
+</div>
+<!-- Controls: Sort & Layout Toggle -->
+<div class="flex items-center justify-between lg:justify-end gap-space-md">
+<!-- Sort Dropdown -->
+<div class="relative">
+<select class="appearance-none h-10 pl-3.5 pr-8 rounded-full bg-surface-container-low font-label-lg text-label-lg text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer" id="sort-select" onchange="handleSort(this.value)">
+<option value="recent">Recently edited</option>
+<option value="date">Date of trip</option>
+<option value="budget">Budget remaining</option>
+<option value="title">Destination A–Z</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-tertiary text-[18px]">expand_more</span>
+</div>
+<!-- View Segmented Switch -->
+<div class="inline-flex p-1 rounded-full bg-surface-container-low">
+<button class="p-1.5 rounded-full bg-surface-container-lowest text-primary shadow-xs transition-all" id="view-btn-grid" onclick="setViewMode('grid')" title="Grid view">
+<span class="material-symbols-outlined text-[18px] block">grid_view</span>
+</button>
+<button class="p-1.5 rounded-full text-tertiary hover:text-primary transition-all" id="view-btn-list" onclick="setViewMode('list')" title="List view">
+<span class="material-symbols-outlined text-[18px] block">view_agenda</span>
+</button>
+</div>
+</div>
+</section>
+<!-- PREVIEW STATE SWITCHER BAR -->
+<div class="w-full flex items-center justify-between flex-wrap gap-2 px-space-md py-2.5 bg-surface-container rounded-DEFAULT">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[18px]">science</span>
+<span class="font-label-md text-label-md uppercase tracking-wider text-tertiary">Interactive Previews</span>
+</div>
+<div class="flex items-center gap-1.5 flex-wrap">
+<button class="px-2.5 py-1 rounded-full bg-surface-container-lowest font-label-sm text-label-sm text-primary hover:bg-surface-variant transition-colors" onclick="setViewMode('grid'); resetFilters();">Default Grid</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-lowest font-label-sm text-label-sm text-primary hover:bg-surface-variant transition-colors" onclick="setViewMode('list'); resetFilters();">List View</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-lowest font-label-sm text-label-sm text-primary hover:bg-surface-variant transition-colors" onclick="simulateEmptyState()">Empty State</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-lowest font-label-sm text-label-sm text-primary hover:bg-surface-variant transition-colors" onclick="simulateNoSearchResults()">Search No-Results</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-lowest font-label-sm text-label-sm text-primary hover:bg-surface-variant transition-colors" onclick="openShareModal('Goa Coastal Odyssey · Sun, Spice &amp; Heritage', 'tripai.com/p/goa-sun-spice-heritage')">Share Modal</button>
+<button class="px-2.5 py-1 rounded-full bg-surface-container-lowest font-label-sm text-label-sm text-primary hover:bg-surface-variant transition-colors" onclick="openDeleteModal('Reykjavik &amp; Golden Circle')">Delete Modal</button>
+</div>
+</div>
+<!-- MAIN TRIPS GRID VIEW -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg" id="grid-view-container">
+<!-- CARD 1: Goa (Active / Menu showcase) -->
+<article class="trip-card group relative bg-surface-container-lowest rounded-lg p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow" data-title="Goa Sun Spice Heritage" data-trip-category="upcoming shared">
+<div>
+<!-- Photo & Badges -->
+<div class="relative w-full h-48 rounded-DEFAULT overflow-hidden bg-surface-dim mb-4">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Sunlit Portuguese terracotta villa with arched verandas, blooming bougainvillea, and palm fronds in Goa under warm golden hour lighting in gentle earth tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASpCjwdnKo2bXUQBhpEiA-lOLw4ahFwEPyW3qyTBOfYeBj7buiaN8JSY8bU7qPsz5C76vgAp-stosTz8UzIJzmx2I9YK1kGJyvaLKaJ1eMb2hMYfBU5B6RNrHehaN_qf1UlCRc759vLoaQbdJZe7ak4k0iwPa1BfOYR08cxWAHb3gqigcA4ZOxHKy7U1DtWK1CS535lc2CUHpEUGiHKrjGaSY2NXGcYsArUIo1q7hmVyJBrs6cKUhf">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+<span class="px-2.5 py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm">Upcoming</span>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">link</span>
+<span>Shared</span>
+</span>
+</div>
+<!-- Context action button -->
+<button class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary flex items-center justify-center hover:bg-surface-container-lowest transition-colors shadow-sm" onclick="toggleCardMenu(event, 'card-menu-1')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<!-- Title & Dates -->
+<h2 class="font-headline-sm text-headline-sm text-primary tracking-tight">Goa · Sun, Spice &amp; Heritage</h2>
+<p class="font-body-sm text-body-sm text-tertiary mt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">calendar_today</span>
+<span>14 – 18 Nov 2024 · 5 days</span>
+</p>
+<!-- Meta -->
+<div class="mt-3 flex items-center flex-wrap gap-x-2 gap-y-1 font-body-sm text-body-sm text-secondary">
+<span>2 Travelers</span>
+<span class="text-outline-variant">·</span>
+<span>₹23,400 / ₹25,000 budget</span>
+<span class="text-outline-variant">·</span>
+<span class="text-tertiary">Comfort style</span>
+</div>
+<!-- Progress -->
+<div class="mt-3">
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 93%;"></div>
+</div>
+<div class="flex justify-between items-center mt-1.5 font-label-sm text-label-sm">
+<span class="text-tertiary">93% allocated</span>
+<span class="text-secondary font-medium">₹1,600 buffer left</span>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<div class="mt-5 pt-3 flex items-center justify-between border-t border-transparent">
+<span class="font-label-sm text-label-sm text-tertiary">Last edited 2h ago</span>
+<button class="font-label-lg text-label-lg text-primary flex items-center gap-1 hover:translate-x-0.5 transition-transform" onclick="openTrip('Goa')">
+<span>Open trip</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<!-- Popover Action Menu -->
+<div class="absolute right-4 top-14 w-48 bg-surface-container-lowest rounded-DEFAULT shadow-md py-1.5 z-20 hidden flex-col" id="card-menu-1">
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openTrip('Goa')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">launch</span>
+<span>Open trip</span>
+</button>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="duplicateTrip('Goa Coastal Odyssey')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">content_copy</span>
+<span>Duplicate</span>
+</button>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openShareModal('Goa · Sun, Spice &amp; Heritage', 'tripai.com/p/goa-sun-spice-heritage')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">share</span>
+<span>Share link</span>
+</button>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="promptRename('Goa · Sun, Spice &amp; Heritage')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">edit</span>
+<span>Rename title</span>
+</button>
+<div class="h-px bg-surface-container-high my-1"></div>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openDeleteModal('Goa · Sun, Spice &amp; Heritage')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">delete</span>
+<span>Delete trip</span>
+</button>
+</div>
+</article>
+<!-- CARD 2: Kyoto (Upcoming) -->
+<article class="trip-card group relative bg-surface-container-lowest rounded-lg p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow" data-title="Kyoto Nara Autumn Temples" data-trip-category="upcoming">
+<div>
+<div class="relative w-full h-48 rounded-DEFAULT overflow-hidden bg-surface-dim mb-4">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Traditional Kyoto wooden temple surrounded by radiant red Japanese autumn maples with stone lantern in tranquil evening mist and soft warm illumination" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYhOzxmFURYKZyuUemvhmH-Sa-fAimGcOqm6RqFCQYEwojEhW8u-Ct8rpPbTwIYEfcW0ap3rqTB2tyIK6dHNIvfYdyN2BX7ltarkryDyqX5HT64dAzMRem53EjeQEPQKmq6kgXKRAR8XD_qsqr8hQkGzEhoxGQ1TpF-4ln89tRwaJvagap1E76qEpp8kUVIJlXhsayzfuxXlZccTW61XTbHEBSu9_9z2DAxM3hc_LiniGYayH4WlQ9">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="px-2.5 py-1 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm">Upcoming</span>
+</div>
+<button class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary flex items-center justify-center hover:bg-surface-container-lowest transition-colors shadow-sm" onclick="toggleCardMenu(event, 'card-menu-2')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary tracking-tight">Kyoto &amp; Nara · Autumn Temples</h2>
+<p class="font-body-sm text-body-sm text-tertiary mt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">calendar_today</span>
+<span>02 – 07 Dec 2024 · 6 days</span>
+</p>
+<div class="mt-3 flex items-center flex-wrap gap-x-2 gap-y-1 font-body-sm text-body-sm text-secondary">
+<span>1 Traveler</span>
+<span class="text-outline-variant">·</span>
+<span>$1,850 / $2,000</span>
+<span class="text-outline-variant">·</span>
+<span class="text-tertiary">Cultural</span>
+</div>
+<div class="mt-3">
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 92%;"></div>
+</div>
+<div class="flex justify-between items-center mt-1.5 font-label-sm text-label-sm">
+<span class="text-tertiary">92% planned</span>
+<span class="text-secondary font-medium">$150 remaining</span>
+</div>
+</div>
+</div>
+<div class="mt-5 pt-3 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary">Last edited yesterday</span>
+<button class="font-label-lg text-label-lg text-primary flex items-center gap-1 hover:translate-x-0.5 transition-transform" onclick="openTrip('Kyoto')">
+<span>Open trip</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<!-- Menu Kyoto -->
+<div class="absolute right-4 top-14 w-48 bg-surface-container-lowest rounded-DEFAULT shadow-md py-1.5 z-20 hidden flex-col" id="card-menu-2">
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openTrip('Kyoto')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">launch</span>
+<span>Open trip</span>
+</button>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="duplicateTrip('Kyoto &amp; Nara')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">content_copy</span>
+<span>Duplicate</span>
+</button>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openShareModal('Kyoto &amp; Nara · Autumn Temples', 'tripai.com/p/kyoto-autumn-temples')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">share</span>
+<span>Share link</span>
+</button>
+<div class="h-px bg-surface-container-high my-1"></div>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openDeleteModal('Kyoto &amp; Nara · Autumn Temples')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">delete</span>
+<span>Delete trip</span>
+</button>
+</div>
+</article>
+<!-- CARD 3: Amalfi (Past & Shared) -->
+<article class="trip-card group relative bg-surface-container-lowest rounded-lg p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow" data-title="Amalfi Capri Coastline" data-trip-category="past shared">
+<div>
+<div class="relative w-full h-48 rounded-DEFAULT overflow-hidden bg-surface-dim mb-4">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Scenic pastel-tinted cliffside buildings of Positano clinging to steep mountain over shimmering turquoise Mediterranean water in calm sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuRawk-t8FO0JJTP3Efi5wmPdhYWkC1kSvJFoAfGSywsUwDWkMknsw4EnpV1BLOXoMGU_KHWbGa3YcTZlpd0Dchpgy14YFyUIlS6PPf8woU8qa4JgF63ld0uT7cUaBMFyPSpSDgigilST7C-az7wkEY3l5A2qYi0qjs3U1lQ6YWQxO1YMt8MClVqNOb9WNpu0gauadtqzopG0Wapso8kXBNAbX1zqFz-lo-vX4KhJvqmK3IZBi5qR4">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-tertiary font-label-sm text-label-sm">Past</span>
+<span class="px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">link</span>
+<span>Shared</span>
+</span>
+</div>
+<button class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary flex items-center justify-center hover:bg-surface-container-lowest transition-colors shadow-sm" onclick="toggleCardMenu(event, 'card-menu-3')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary tracking-tight">Amalfi &amp; Capri Coastline</h2>
+<p class="font-body-sm text-body-sm text-tertiary mt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">calendar_today</span>
+<span>10 – 16 Sep 2024 · 7 days</span>
+</p>
+<div class="mt-3 flex items-center flex-wrap gap-x-2 gap-y-1 font-body-sm text-body-sm text-secondary">
+<span>2 Travelers</span>
+<span class="text-outline-variant">·</span>
+<span>€2,400 spent</span>
+<span class="text-outline-variant">·</span>
+<span class="text-tertiary">Relaxed</span>
+</div>
+<div class="mt-3 py-2 px-3 rounded-DEFAULT bg-surface-container-low flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]">menu_book</span>
+<span class="font-body-sm text-body-sm text-secondary">Archived trip journal · 18 memories</span>
+</div>
+</div>
+<div class="mt-5 pt-3 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary">Archived 2 mo ago</span>
+<button class="font-label-lg text-label-lg text-primary flex items-center gap-1 hover:translate-x-0.5 transition-transform" onclick="openTrip('Amalfi')">
+<span>View journal</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<!-- Menu Amalfi -->
+<div class="absolute right-4 top-14 w-48 bg-surface-container-lowest rounded-DEFAULT shadow-md py-1.5 z-20 hidden flex-col" id="card-menu-3">
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openTrip('Amalfi')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">launch</span>
+<span>View journal</span>
+</button>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openShareModal('Amalfi &amp; Capri Coastline', 'tripai.com/p/amalfi-capri-coast')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">share</span>
+<span>Share link</span>
+</button>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="duplicateTrip('Amalfi &amp; Capri')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">content_copy</span>
+<span>Duplicate as template</span>
+</button>
+<div class="h-px bg-surface-container-high my-1"></div>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openDeleteModal('Amalfi &amp; Capri Coastline')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">delete</span>
+<span>Delete</span>
+</button>
+</div>
+</article>
+<!-- CARD 4: Reykjavik (Past) -->
+<article class="trip-card group relative bg-surface-container-lowest rounded-lg p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow" data-title="Reykjavik Golden Circle" data-trip-category="past">
+<div>
+<div class="relative w-full h-48 rounded-DEFAULT overflow-hidden bg-surface-dim mb-4">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Dramatic basalt rock canyons and emerald green moss surrounding a majestic Icelandic waterfall under gentle cloudy Nordic skies in soft beige and earth tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBlB3VA2KKvWEHm7L1wZEPmtqaub5lnjfq6n2_7G4NGlz_RVGKhHTUqk6tZER4L7Wxey4s2xOUVH9YQnXhSQZfssOzHVkJslpsWm2N_WYO3exkByxcgnjaEyj81_vXMHCT2Z9v3b6xwQjI2THmTMbXET9sOyZFL41njSCFiv_3mvH85xX0gck8lecoc42r6KJDK9lKBikxJelnQoQU6mBV-Ivs5f8w0zgGW2icbCfWyUz2-KFgKzdG">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-high text-tertiary font-label-sm text-label-sm">Past</span>
+</div>
+<button class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary flex items-center justify-center hover:bg-surface-container-lowest transition-colors shadow-sm" onclick="toggleCardMenu(event, 'card-menu-4')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary tracking-tight">Reykjavik &amp; Golden Circle</h2>
+<p class="font-body-sm text-body-sm text-tertiary mt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">calendar_today</span>
+<span>18 – 23 May 2024 · 6 days</span>
+</p>
+<div class="mt-3 flex items-center flex-wrap gap-x-2 gap-y-1 font-body-sm text-body-sm text-secondary">
+<span>3 Travelers</span>
+<span class="text-outline-variant">·</span>
+<span>$2,200</span>
+<span class="text-outline-variant">·</span>
+<span class="text-tertiary">Adventure</span>
+</div>
+<div class="mt-3 py-2 px-3 rounded-DEFAULT bg-surface-container-low flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[16px]">done_all</span>
+<span class="font-body-sm text-body-sm text-secondary">Completed · 14 scenic stops</span>
+</div>
+</div>
+<div class="mt-5 pt-3 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary">Edited 5 mo ago</span>
+<button class="font-label-lg text-label-lg text-primary flex items-center gap-1 hover:translate-x-0.5 transition-transform" onclick="openTrip('Reykjavik')">
+<span>Open trip</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<!-- Menu Reykjavik -->
+<div class="absolute right-4 top-14 w-48 bg-surface-container-lowest rounded-DEFAULT shadow-md py-1.5 z-20 hidden flex-col" id="card-menu-4">
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openTrip('Reykjavik')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">launch</span>
+<span>Open trip</span>
+</button>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openDeleteModal('Reykjavik &amp; Golden Circle')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">delete</span>
+<span>Delete plan</span>
+</button>
+</div>
+</article>
+<!-- CARD 5: Oaxaca (Draft) -->
+<article class="trip-card group relative bg-surface-container-lowest rounded-lg p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow" data-title="Oaxaca Valley Culinary Journey" data-trip-category="draft">
+<div>
+<div class="relative w-full h-48 rounded-DEFAULT overflow-hidden bg-surface-dim mb-4">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Artisanal clay pots and vibrant culinary spice baskets in a sunlit stone courtyard in Oaxaca Mexico with rustic textures and warm wooden accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBHrcj1yCtNecgtQBvrO_ftxb9Vcn7vn4Je4UmOrbjMvSkOrJyRHwqivDUhgy9qJxTYlDG_V03rVYnb18jtHXgJ9bGp_ktOvikUvOUYG6OVFvFr2NCiZeub4LcsOlIF76YDgKTYM7I0OtTMNVn5S0ZIfSX1pNp6z6vrCxsHTaistJVMtbcN4_o-IfERtUnL7GXx6NM6HMqQ5KHE_EmlgtNK2t1Eja3cHWy1DpIG4ZcYc_THOFzje3U">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-low text-tertiary font-label-sm text-label-sm">Draft</span>
+</div>
+<button class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-primary flex items-center justify-center hover:bg-surface-container-lowest transition-colors shadow-sm" onclick="toggleCardMenu(event, 'card-menu-5')">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary tracking-tight">Oaxaca Valley Culinary Journey</h2>
+<p class="font-body-sm text-body-sm text-tertiary mt-1 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">schedule</span>
+<span>Unscheduled · 5 days planned</span>
+</p>
+<div class="mt-3 flex items-center flex-wrap gap-x-2 gap-y-1 font-body-sm text-body-sm text-secondary">
+<span>2 Travelers</span>
+<span class="text-outline-variant">·</span>
+<span>~$1,400 est.</span>
+<span class="text-outline-variant">·</span>
+<span class="text-tertiary">Gastronomy</span>
+</div>
+<div class="mt-3">
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 45%;"></div>
+</div>
+<div class="flex justify-between items-center mt-1.5 font-label-sm text-label-sm">
+<span class="text-tertiary">45% outlined</span>
+<span class="text-secondary font-medium">3 days left to plan</span>
+</div>
+</div>
+</div>
+<div class="mt-5 pt-3 flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-tertiary">Edited 3 days ago</span>
+<button class="font-label-lg text-label-lg text-primary flex items-center gap-1 hover:translate-x-0.5 transition-transform" onclick="openTrip('Oaxaca')">
+<span>Continue</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<!-- Menu Oaxaca -->
+<div class="absolute right-4 top-14 w-48 bg-surface-container-lowest rounded-DEFAULT shadow-md py-1.5 z-20 hidden flex-col" id="card-menu-5">
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openTrip('Oaxaca')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">edit</span>
+<span>Continue planning</span>
+</button>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="duplicateTrip('Oaxaca Valley')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">content_copy</span>
+<span>Duplicate</span>
+</button>
+<div class="h-px bg-surface-container-high my-1"></div>
+<button class="w-full px-4 py-2 text-left font-body-sm text-body-sm text-primary hover:bg-surface-container-low flex items-center gap-2" onclick="openDeleteModal('Oaxaca Valley Culinary Journey')">
+<span class="material-symbols-outlined text-[16px] text-tertiary">delete</span>
+<span>Delete draft</span>
+</button>
+</div>
+</article>
+<!-- CARD 6: Plan New Trip Tile (Action Card) -->
+<div class="trip-card rounded-lg p-6 bg-surface-container-high flex flex-col items-center justify-center text-center group hover:bg-surface-variant transition-colors min-h-[420px]">
+<div class="w-16 h-16 rounded-full bg-surface-container-lowest shadow-sm flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]">explore</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Start a new journey</h2>
+<p class="font-body-md text-body-md text-tertiary max-w-[240px] mt-2 mb-6">
+          Let TripAi draft your bespoke daily itinerary in seconds with tailored suggestions.
+        </p>
+<button class="px-6 py-3 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm hover:opacity-95 active:scale-95 transition-all flex items-center gap-2" onclick="openNewTripDialog()">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+<span>+ Plan with AI</span>
+</button>
+</div>
+</div>
+<!-- LIST VIEW CONTAINER (Hidden by default, toggleable via buttons) -->
+<div class="hidden flex-col gap-3" id="list-view-container">
+<!-- List Row 1 -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center gap-4 min-w-0">
+<div class="w-18 h-18 w-[72px] h-[72px] rounded-DEFAULT overflow-hidden shrink-0 bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="Goa Portuguese architecture in warm evening light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuASpCjwdnKo2bXUQBhpEiA-lOLw4ahFwEPyW3qyTBOfYeBj7buiaN8JSY8bU7qPsz5C76vgAp-stosTz8UzIJzmx2I9YK1kGJyvaLKaJ1eMb2hMYfBU5B6RNrHehaN_qf1UlCRc759vLoaQbdJZe7ak4k0iwPa1BfOYR08cxWAHb3gqigcA4ZOxHKy7U1DtWK1CS535lc2CUHpEUGiHKrjGaSY2NXGcYsArUIo1q7hmVyJBrs6cKUhf">
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-headline-sm text-headline-sm text-primary truncate">Goa · Sun, Spice &amp; Heritage</h3>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm">Upcoming</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm">Shared</span>
+</div>
+<p class="font-body-sm text-body-sm text-tertiary mt-0.5">14 – 18 Nov 2024 · 5 days · 2 Travelers · ₹23,400 spent</p>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end shrink-0">
+<span class="font-label-sm text-label-sm text-tertiary">Edited 2h ago</span>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full text-secondary hover:bg-surface-container-low transition-colors" onclick="openShareModal('Goa · Sun, Spice &amp; Heritage', 'tripai.com/p/goa-sun-spice-heritage')" title="Share link">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low text-primary font-label-lg text-label-lg hover:bg-surface-variant transition-colors" onclick="openTrip('Goa')">
+              Open trip
+            </button>
+</div>
+</div>
+</div>
+<!-- List Row 2 -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center gap-4 min-w-0">
+<div class="w-[72px] h-[72px] rounded-DEFAULT overflow-hidden shrink-0 bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="Kyoto traditional pagoda and vibrant autumn foliage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYhOzxmFURYKZyuUemvhmH-Sa-fAimGcOqm6RqFCQYEwojEhW8u-Ct8rpPbTwIYEfcW0ap3rqTB2tyIK6dHNIvfYdyN2BX7ltarkryDyqX5HT64dAzMRem53EjeQEPQKmq6kgXKRAR8XD_qsqr8hQkGzEhoxGQ1TpF-4ln89tRwaJvagap1E76qEpp8kUVIJlXhsayzfuxXlZccTW61XTbHEBSu9_9z2DAxM3hc_LiniGYayH4WlQ9">
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-headline-sm text-headline-sm text-primary truncate">Kyoto &amp; Nara · Autumn Temples</h3>
+<span class="px-2 py-0.5 rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm">Upcoming</span>
+</div>
+<p class="font-body-sm text-body-sm text-tertiary mt-0.5">02 – 07 Dec 2024 · 6 days · 1 Traveler · $1,850 spent</p>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end shrink-0">
+<span class="font-label-sm text-label-sm text-tertiary">Edited yesterday</span>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full text-secondary hover:bg-surface-container-low transition-colors" onclick="openShareModal('Kyoto &amp; Nara', 'tripai.com/p/kyoto-autumn-temples')" title="Share link">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-low text-primary font-label-lg text-label-lg hover:bg-surface-variant transition-colors" onclick="openTrip('Kyoto')">
+              Open trip
+            </button>
+</div>
+</div>
+</div>
+<!-- List Row 3 -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center gap-4 min-w-0">
+<div class="w-[72px] h-[72px] rounded-DEFAULT overflow-hidden shrink-0 bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="Amalfi Coast coastal cliffs and azure sea" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuRawk-t8FO0JJTP3Efi5wmPdhYWkC1kSvJFoAfGSywsUwDWkMknsw4EnpV1BLOXoMGU_KHWbGa3YcTZlpd0Dchpgy14YFyUIlS6PPf8woU8qa4JgF63ld0uT7cUaBMFyPSpSDgigilST7C-az7wkEY3l5A2qYi0qjs3U1lQ6YWQxO1YMt8MClVqNOb9WNpu0gauadtqzopG0Wapso8kXBNAbX1zqFz-lo-vX4KhJvqmK3IZBi5qR4">
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-headline-sm text-headline-sm text-primary truncate">Amalfi &amp; Capri Coastline</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-tertiary font-label-sm text-label-sm">Past</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-label-sm text-label-sm">Shared</span>
+</div>
+<p class="font-body-sm text-body-sm text-tertiary mt-0.5">10 – 16 Sep 2024 · 7 days · 2 Travelers · €2,400 spent</p>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end shrink-0">
+<span class="font-label-sm text-label-sm text-tertiary">Archived 2 mo ago</span>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-full bg-surface-container-low text-primary font-label-lg text-label-lg hover:bg-surface-variant transition-colors" onclick="openTrip('Amalfi')">
+              View journal
+            </button>
+</div>
+</div>
+</div>
+<!-- List Row 4 -->
+<div class="bg-surface-container-lowest rounded-DEFAULT p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-center gap-4 min-w-0">
+<div class="w-[72px] h-[72px] rounded-DEFAULT overflow-hidden shrink-0 bg-surface-dim">
+<img class="w-full h-full object-cover" data-alt="Iceland volcanic cliffs and waterfall" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBlB3VA2KKvWEHm7L1wZEPmtqaub5lnjfq6n2_7G4NGlz_RVGKhHTUqk6tZER4L7Wxey4s2xOUVH9YQnXhSQZfssOzHVkJslpsWm2N_WYO3exkByxcgnjaEyj81_vXMHCT2Z9v3b6xwQjI2THmTMbXET9sOyZFL41njSCFiv_3mvH85xX0gck8lecoc42r6KJDK9lKBikxJelnQoQU6mBV-Ivs5f8w0zgGW2icbCfWyUz2-KFgKzdG">
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-headline-sm text-headline-sm text-primary truncate">Reykjavik &amp; Golden Circle</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-tertiary font-label-sm text-label-sm">Past</span>
+</div>
+<p class="font-body-sm text-body-sm text-tertiary mt-0.5">18 – 23 May 2024 · 6 days · 3 Travelers · $2,200 spent</p>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end shrink-0">
+<span class="font-label-sm text-label-sm text-tertiary">Edited 5 mo ago</span>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-full bg-surface-container-low text-primary font-label-lg text-label-lg hover:bg-surface-variant transition-colors" onclick="openTrip('Reykjavik')">
+              Open trip
+            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- EMPTY STATE VIEW (Toggled when 0 items or for showcase preview) -->
+<div class="hidden flex-col items-center justify-center text-center p-12 bg-surface-container-lowest rounded-lg shadow-sm my-6" id="empty-state-view">
+<div class="w-20 h-20 rounded-full bg-surface-container-low flex items-center justify-center text-secondary mb-4">
+<span class="material-symbols-outlined text-[40px]">luggage</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-primary">No trips found</h2>
+<p class="font-body-md text-body-md text-tertiary max-w-md mt-1 mb-6" id="empty-state-subtitle">
+        No planned journeys match your search. Start a new bespoke trip or explore our curated collections.
+      </p>
+<div class="flex items-center gap-3 flex-wrap justify-center">
+<button class="px-6 py-3 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm hover:opacity-95 active:scale-95 transition-all" onclick="openNewTripDialog()">
+          Plan my first trip
+        </button>
+<button class="px-6 py-3 rounded-full bg-surface-container text-primary font-label-lg text-label-lg hover:bg-surface-dim transition-colors" onclick="resetFilters()">
+          Clear filters
+        </button>
+</div>
+</div>
+</div>
+<!-- SHARE MODAL DIALOG -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/20 backdrop-blur-md hidden" id="share-modal">
+<div class="bg-surface-container-lowest rounded-lg p-6 w-full max-w-lg shadow-xl relative animate-fade-in">
+<button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface-container-low text-primary flex items-center justify-center hover:bg-surface-variant transition-colors" onclick="closeShareModal()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+<div class="flex items-center gap-2.5 mb-1 text-primary">
+<span class="material-symbols-outlined text-secondary">share</span>
+<h3 class="font-headline-sm text-headline-sm" id="share-modal-title">Share Itinerary</h3>
+</div>
+<p class="font-body-md text-body-md text-tertiary mb-5">
+        Anyone with this link can view your curated itinerary, notes, and interactive map.
+      </p>
+<!-- Mini Preview Card -->
+<div class="bg-surface-container-low rounded-DEFAULT p-3 mb-5 flex items-center gap-3">
+<div class="w-12 h-12 rounded-DEFAULT bg-surface-dim overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Goa ocean coastline thumbnail preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAslgPnW9Hd2OHts8HxWlhWR2aTihy-uVhQwqx1sGWt0PWXVFbE0wmzUGP4mE1ndxSWLnqcl3PtWD7u2NcPnl-kHZ7ceU2lALpGqjHzmdkfLFDXsqRwWJjNzV6PTq6vymMdN_cEY_4rhc3t1D0QgazAQ7wD4XHEp5A03ps3fXZ4YLqc0lLVDUe8zsmcISSR0catFDhnXstiBOXGhXV9Fa3OOeolReKCfxnXwpxAGWI_WlIITnmxLy2i">
+</div>
+<div class="min-w-0">
+<p class="font-title-md text-title-md text-primary truncate" id="share-trip-name">Goa · Sun, Spice &amp; Heritage</p>
+<p class="font-body-sm text-body-sm text-tertiary">Public read-only journal</p>
+</div>
+</div>
+<!-- Toggle row -->
+<div class="flex items-center justify-between p-3 rounded-DEFAULT bg-surface-container-high mb-4">
+<div>
+<span class="font-title-md text-title-md text-primary block">Public link enabled</span>
+<span class="font-body-sm text-body-sm text-tertiary">Unlisted; not indexed by search engines</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" id="public-link-toggle" onchange="toggleLinkActive(this)" type="checkbox">
+<div class="w-11 h-6 bg-surface-dim peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+<!-- Link Copy Field -->
+<div class="flex items-center gap-2 mb-6">
+<div class="relative flex-1">
+<input class="w-full h-11 px-3.5 rounded-DEFAULT bg-surface-container-low font-body-sm text-body-sm text-primary focus:outline-none" id="share-link-input" readonly="" type="text" value="https://tripai.com/p/goa-sun-spice-heritage">
+</div>
+<button class="px-4 h-11 rounded-DEFAULT bg-surface-container-high text-primary hover:bg-surface-dim font-label-lg text-label-lg transition-colors flex items-center gap-1.5 shrink-0" onclick="copyShareLink()">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+<span id="copy-btn-text">Copy link</span>
+</button>
+</div>
+<div class="flex items-center justify-between pt-2">
+<button class="font-label-lg text-label-lg text-tertiary hover:text-primary transition-colors" onclick="revokeLink()">
+          Revoke secret link
+        </button>
+<button class="px-6 py-2.5 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg hover:opacity-95 active:scale-95 transition-all" onclick="closeShareModal()">
+          Done
+        </button>
+</div>
+</div>
+</div>
+<!-- DELETE CONFIRMATION MODAL -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary/20 backdrop-blur-md hidden" id="delete-modal">
+<div class="bg-surface-container-lowest rounded-lg p-6 w-full max-w-md shadow-xl text-center">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center text-primary mx-auto mb-3">
+<span class="material-symbols-outlined text-[28px]">delete</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Delete this trip plan?</h3>
+<p class="font-body-md text-body-md text-tertiary mt-2 mb-6">
+        Are you sure you want to delete <span class="font-medium text-primary" id="delete-trip-name">"Reykjavik &amp; Golden Circle"</span>? This will permanently remove all daily stops, notes, and scrapbook items. This action cannot be undone.
+      </p>
+<div class="flex items-center justify-center gap-3">
+<button class="px-5 py-2.5 rounded-full bg-surface-container text-primary font-label-lg text-label-lg hover:bg-surface-dim transition-colors" onclick="closeDeleteModal()">
+          Keep trip
+        </button>
+<!-- Deep brown used for deletion, strictly no red -->
+<button class="px-5 py-2.5 rounded-full bg-primary-container text-on-primary font-label-lg text-label-lg hover:opacity-95 active:scale-95 transition-all" onclick="confirmDelete()">
+          Delete plan
+        </button>
+</div>
+</div>
+</div>
+<!-- FLOATING TOAST NOTIFICATION -->
+<div class="fixed bottom-6 right-6 z-50 bg-primary-container text-on-primary px-4 py-3 rounded-DEFAULT shadow-lg flex items-center gap-2.5 translate-y-24 opacity-0 transition-all duration-300 pointer-events-none" id="toast-notification">
+<span class="material-symbols-outlined text-[20px] text-primary-fixed">check_circle</span>
+<span class="font-body-md text-body-md" id="toast-message">Trip duplicated to drafts</span>
+</div>
+</div>
+<script>
+  let currentFilter = 'all';
+  let activeMenuId = null;
+  let targetTripForDeletion = '';
+
+  function setFilter(category) {
+    currentFilter = category;
+    
+    // update chip styles
+    document.querySelectorAll('.filter-chip').forEach(btn => {
+      const match = btn.getAttribute('data-filter') === category;
+      if (match) {
+        btn.classList.remove('bg-surface-container-high', 'text-tertiary');
+        btn.classList.add('bg-primary-container', 'text-on-primary');
+      } else {
+        btn.classList.remove('bg-primary-container', 'text-on-primary');
+        btn.classList.add('bg-surface-container-high', 'text-tertiary');
+      }
+    });
+
+    filterItems();
+  }
+
+  function handleSearch(val) {
+    filterItems();
+  }
+
+  function filterItems() {
+    const query = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
+    const cards = document.querySelectorAll('#grid-view-container .trip-card[data-trip-category]');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const cat = card.getAttribute('data-trip-category') || '';
+      const title = (card.getAttribute('data-title') || '').toLowerCase();
+
+      const matchesCat = currentFilter === 'all' || cat.includes(currentFilter);
+      const matchesSearch = query === '' || title.includes(query);
+
+      if (matchesCat && matchesSearch) {
+        card.style.display = 'flex';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    const emptyView = document.getElementById('empty-state-view');
+    const gridView = document.getElementById('grid-view-container');
+    const isGridActive = !gridView.classList.contains('hidden');
+
+    if (visibleCount === 0 && isGridActive) {
+      emptyView.classList.remove('hidden');
+      emptyView.classList.add('flex');
+    } else {
+      emptyView.classList.add('hidden');
+      emptyView.classList.remove('flex');
+    }
+  }
+
+  function handleSort(criteria) {
+    showToast(`Sorted trips by: ${criteria.replace('-', ' ')}`);
+  }
+
+  function setViewMode(mode) {
+    const gridEl = document.getElementById('grid-view-container');
+    const listEl = document.getElementById('list-view-container');
+    const emptyEl = document.getElementById('empty-state-view');
+    const btnGrid = document.getElementById('view-btn-grid');
+    const btnList = document.getElementById('view-btn-list');
+
+    emptyEl.classList.add('hidden');
+    emptyEl.classList.remove('flex');
+
+    if (mode === 'grid') {
+      gridEl.classList.remove('hidden');
+      listEl.classList.add('hidden');
+      btnGrid.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-xs');
+      btnGrid.classList.remove('text-tertiary');
+      btnList.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-xs');
+      btnList.classList.add('text-tertiary');
+      filterItems();
+    } else {
+      gridEl.classList.add('hidden');
+      listEl.classList.remove('hidden');
+      listEl.classList.add('flex');
+      btnList.classList.add('bg-surface-container-lowest', 'text-primary', 'shadow-xs');
+      btnList.classList.remove('text-tertiary');
+      btnGrid.classList.remove('bg-surface-container-lowest', 'text-primary', 'shadow-xs');
+      btnGrid.classList.add('text-tertiary');
+    }
+  }
+
+  function simulateEmptyState() {
+    document.getElementById('grid-view-container').classList.add('hidden');
+    document.getElementById('list-view-container').classList.add('hidden');
+    const empty = document.getElementById('empty-state-view');
+    document.getElementById('empty-state-subtitle').textContent = 'Your library is empty. Let TripAi compose your first bespoke travel itinerary.';
+    empty.classList.remove('hidden');
+    empty.classList.add('flex');
+  }
+
+  function simulateNoSearchResults() {
+    setViewMode('grid');
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = 'Himalayas Expedition';
+    handleSearch('Himalayas Expedition');
+  }
+
+  function resetFilters() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
+    setFilter('all');
+  }
+
+  function toggleCardMenu(e, menuId) {
+    e.stopPropagation();
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+
+    if (activeMenuId && activeMenuId !== menuId) {
+      document.getElementById(activeMenuId)?.classList.add('hidden');
+      document.getElementById(activeMenuId)?.classList.remove('flex');
+    }
+
+    if (menu.classList.contains('hidden')) {
+      menu.classList.remove('hidden');
+      menu.classList.add('flex');
+      activeMenuId = menuId;
+    } else {
+      menu.classList.add('hidden');
+      menu.classList.remove('flex');
+      activeMenuId = null;
+    }
+  }
+
+  document.addEventListener('click', () => {
+    if (activeMenuId) {
+      const menu = document.getElementById(activeMenuId);
+      if (menu) {
+        menu.classList.add('hidden');
+        menu.classList.remove('flex');
+      }
+      activeMenuId = null;
+    }
+  });
+
+  function openShareModal(tripName, linkUrl) {
+    document.getElementById('share-modal-title').textContent = `Share Itinerary`;
+    document.getElementById('share-trip-name').textContent = tripName;
+    const input = document.getElementById('share-link-input');
+    if (input) input.value = linkUrl ? `https://${linkUrl}` : 'https://tripai.com/p/shared-journey';
+    
+    const modal = document.getElementById('share-modal');
+    modal.classList.remove('hidden');
+  }
+
+  function closeShareModal() {
+    document.getElementById('share-modal').classList.add('hidden');
+  }
+
+  function copyShareLink() {
+    const linkInput = document.getElementById('share-link-input');
+    if (linkInput) {
+      navigator.clipboard?.writeText(linkInput.value);
+      const copyBtnText = document.getElementById('copy-btn-text');
+      if (copyBtnText) copyBtnText.textContent = 'Copied!';
+      setTimeout(() => {
+        if (copyBtnText) copyBtnText.textContent = 'Copy link';
+      }, 2000);
+      showToast('✓ Secret link copied to clipboard!');
+    }
+  }
+
+  function revokeLink() {
+    const linkInput = document.getElementById('share-link-input');
+    if (linkInput) linkInput.value = 'Link revoked';
+    showToast('Secret link revoked');
+  }
+
+  function toggleLinkActive(checkbox) {
+    const input = document.getElementById('share-link-input');
+    if (!checkbox.checked) {
+      input.value = 'Public sharing disabled';
+      showToast('Public link disabled');
+    } else {
+      input.value = 'https://tripai.com/p/goa-sun-spice-heritage';
+      showToast('Public link re-enabled');
+    }
+  }
+
+  function openDeleteModal(tripName) {
+    targetTripForDeletion = tripName;
+    document.getElementById('delete-trip-name').textContent = `"${tripName}"`;
+    document.getElementById('delete-modal').classList.remove('hidden');
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('delete-modal').classList.add('hidden');
+  }
+
+  function confirmDelete() {
+    closeDeleteModal();
+    showToast(`Trip plan "${targetTripForDeletion}" deleted`);
+  }
+
+  function duplicateTrip(name) {
+    showToast(`✓ Trip "${name}" duplicated to drafts`);
+  }
+
+  function promptRename(oldName) {
+    showToast(`Rename modal ready for "${oldName}"`);
+  }
+
+  function openTrip(destination) {
+    showToast(`Opening itinerary: ${destination}`);
+  }
+
+  function openNewTripDialog() {
+    showToast(`Opening TripAi planner...`);
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast-notification');
+    const msg = document.getElementById('toast-message');
+    if (!toast || !msg) return;
+
+    msg.textContent = message;
+    toast.classList.remove('translate-y-24', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      toast.classList.add('translate-y-24', 'opacity-0');
+      toast.classList.remove('translate-y-0', 'opacity-100');
+    }, 3200);
+  }
+</script></main>
+
+</body></html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html><html lang="en" style="width: 1280px; height: 1024px; overflow: hidden; position: relative;"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_blank" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary-fixed":"#ffdcbe","surface-container-lowest":"#ffffff","inverse-surface":"#32302c","on-secondary":"#ffffff","tertiary-container":"#66513e","outline":"#81756b","tertiary":"#4d3a28","on-error":"#ffffff","on-primary":"#ffffff","primary-fixed":"#ffdcbf","on-primary-container":"#edc39e","primary-container":"#6e4f32","on-secondary-fixed":"#2a1703","secondary-fixed-dim":"#e4c09f","surface-container-highest":"#e6e2dc","on-primary-fixed":"#2c1601","primary-fixed-dim":"#e9bf9a","surface-container":"#f2ede7","surface-bright":"#fef9f2","on-tertiary-fixed-variant":"#574331","surface-dim":"#ded9d4","surface-container-low":"#f8f3ed","on-tertiary":"#ffffff","tertiary-fixed":"#fbddc4","error-container":"#ffdad6","surface":"#fef9f2","on-surface":"#1d1b18","inverse-on-surface":"#f5f0ea","outline-variant":"#d3c4b9","surface-variant":"#e6e2dc","on-error-container":"#93000a","on-tertiary-container":"#e2c5ad","secondary-container":"#ffd9b7","on-background":"#1d1b18","on-surface-variant":"#4f453c","inverse-primary":"#e9bf9a","secondary":"#75593e","surface-container-high":"#ece7e1","background":"#fef9f2","on-tertiary-fixed":"#271809","error":"#ba1a1a","surface-tint":"#78583a","on-secondary-fixed-variant":"#5b4229","tertiary-fixed-dim":"#dec1a9","on-secondary-container":"#795d42","primary":"#54381d","on-primary-fixed-variant":"#5e4125"},borderRadius:{DEFAULT:"1rem",lg:"2rem",xl:"3rem",full:"9999px"},spacing:{"space-md":"1rem","space-xl":"2.5rem","space-xs":"0.25rem",gutter:"1.5rem","space-sm":"0.5rem","margin-mobile":"1.25rem",margin:"3rem","gutter-mobile":"1rem","space-lg":"1.5rem"},fontFamily:{"display-mobile":["Playfair Display"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Playfair Display"],"headline-lg":["Playfair Display"],"headline-sm":["Playfair Display"],"title-lg":["Plus Jakarta Sans"],"label-lg":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],display:["Playfair Display"],"headline-md":["Playfair Display"],"title-md":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"]},fontSize:{"display-mobile":["38px",{lineHeight:"44px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"headline-lg-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-lg":["40px",{lineHeight:"48px",letterSpacing:"-0.015em",fontWeight:"600"}],"headline-sm":["22px",{lineHeight:"30px",letterSpacing:"0em",fontWeight:"500"}],"title-lg":["18px",{lineHeight:"26px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.02em",fontWeight:"500"}],"body-lg":["16px",{lineHeight:"26px",letterSpacing:"0.01em",fontWeight:"400"}],"body-md":["14px",{lineHeight:"22px",letterSpacing:"0.01em",fontWeight:"400"}],display:["56px",{lineHeight:"64px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-md":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"500"}],"title-md":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"500"}],"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.015em",fontWeight:"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen selection:bg-secondary-container selection:text-on-secondary-container"><main class="w-full min-h-screen bg-surface"><div class="flex flex-col w-full">
+<!-- Interactive State Bar / Control Ribbon -->
+<header class="w-full bg-surface-container-high py-2.5 px-4 shadow-sm z-30 sticky top-0 transition-colors duration-200">
+<div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-lg">tune</span>
+<span class="font-title-md text-title-md tracking-tight">Interactive State Suite</span>
+<span class="text-xs px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm uppercase tracking-wider">Demo Bar</span>
+</div>
+<nav aria-label="Demo states" class="flex flex-wrap items-center gap-1.5 overflow-x-auto py-1">
+<button class="state-pill px-3 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-primary text-on-primary shadow-sm" data-state-btn="default" onclick="setAppState('default')" type="button">
+          1. Default Login
+        </button>
+<button class="state-pill px-3 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container text-on-surface hover:bg-surface-container-highest" data-state-btn="auth-error" onclick="setAppState('auth-error')" type="button">
+          2. Invalid Credentials
+        </button>
+<button class="state-pill px-3 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container text-on-surface hover:bg-surface-container-highest" data-state-btn="input-error" onclick="setAppState('input-error')" type="button">
+          3. Inline Validation
+        </button>
+<button class="state-pill px-3 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container text-on-surface hover:bg-surface-container-highest" data-state-btn="btn-loading" onclick="setAppState('btn-loading')" type="button">
+          4. Email Loading
+        </button>
+<button class="state-pill px-3 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container text-on-surface hover:bg-surface-container-highest" data-state-btn="google-loading" onclick="setAppState('google-loading')" type="button">
+          5. Google Loading
+        </button>
+<button class="state-pill px-3 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container text-on-surface hover:bg-surface-container-highest" data-state-btn="success" onclick="setAppState('success')" type="button">
+          6. Success Redirect
+        </button>
+<button class="state-pill px-3 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-secondary-fixed text-on-secondary-fixed flex items-center gap-1 hover:bg-secondary-fixed-dim" data-state-btn="mobile-preview" id="viewport-toggle-btn" onclick="toggleViewportMode()" type="button">
+<span class="material-symbols-outlined text-sm" id="viewport-icon">smartphone</span>
+<span id="viewport-text">7. Mobile View</span>
+</button>
+</nav>
+</div>
+</header>
+<!-- Canvas Container with Responsive Frame Toggle -->
+<div class="w-full flex justify-center py-4 px-2 sm:px-4 lg:px-6 transition-all duration-300">
+<div class="w-full max-w-[1360px] bg-surface rounded-3xl shadow-xl overflow-hidden transition-all duration-500 min-h-[760px] flex flex-col" id="main-frame-wrapper">
+<!-- Split-screen Host Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 w-full flex-grow" id="split-layout">
+<!-- ======================= LEFT HERO / VISUAL COLUMN (Desktop 6 cols / Mobile 25-35% banner) ======================= -->
+<div class="lg:col-span-6 relative w-full h-[320px] lg:h-auto min-h-[320px] lg:min-h-[760px] p-6 lg:p-12 flex flex-col justify-between overflow-hidden transition-all duration-300" id="visual-column">
+<!-- Background Photo of Heritage Courtyard -->
+<div class="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-700 scale-105 hover:scale-100" data-alt="Sunlit Portuguese colonial heritage courtyard in Goa with ochre stucco walls, red clay terracotta roof tiles, lush tropical monstera and banana palms, carved wooden verandas, potted terracotta ferns, and an authentic vintage stone water well in warm atmospheric morning golden hour lighting" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD6upQALmrL_sJpwRelme7xJlMCwwHEzP0XihRi2ozTsuX78xCqR9cZ_P7nNDkaOx0orm91R_4RB-c8fihUkRsMIOOY_YeLOIqSEYkQGV74Mzy6xq3Pvr6iYGr42OSF3TvODUY9OcOy-_YNJixQo_YGhoX8OqHN1sBy1iktxPyLohWtyO-mR03SdbO-TDHGr_rQx6qDKtJ2sxRpObZ13qEQEzeRQ-T8vo3oI3yAxIOxTN-rPq0M9C1y')">
+</div>
+<!-- Deep Warm Earthen Scrim Overlays -->
+<div class="absolute inset-0 z-1 bg-gradient-to-t from-primary/95 via-primary/40 to-primary/30 mix-blend-multiply"></div>
+<div class="absolute inset-0 z-1 bg-gradient-to-r from-primary/60 to-transparent"></div>
+<!-- Top Section: Brand Badge -->
+<div class="relative z-10 flex items-center justify-between">
+<div class="flex items-center gap-2.5 px-4 py-2 rounded-full bg-surface-container-lowest/20 backdrop-blur-md shadow-sm">
+<span class="material-symbols-outlined text-surface-container-lowest text-2xl" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-headline-sm text-headline-sm font-semibold tracking-wide text-surface-container-lowest">TripAi</span>
+</div>
+<div class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest/15 backdrop-blur-sm text-surface-container-lowest font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-xs">auto_awesome</span>
+<span>Autonomous Itinerary Engine</span>
+</div>
+</div>
+<!-- Center-Bottom Floating Sticky Note (Tactile Paper Aesthetic) -->
+<div class="relative z-10 my-auto sm:my-8 max-w-[270px] self-start lg:self-center -rotate-3 transition-transform duration-300 hover:rotate-0 hover:scale-105">
+<!-- Washi Tape Effect at top -->
+<div class="w-20 h-4 bg-secondary-fixed/80 backdrop-blur-sm mx-auto -mb-2 rounded-sm shadow-xs opacity-90"></div>
+<div class="bg-surface-container-low p-4 rounded-xl shadow-lg relative overflow-hidden">
+<div class="flex items-start justify-between">
+<span class="material-symbols-outlined text-tertiary text-lg">flight_takeoff</span>
+<span class="font-label-sm text-label-sm text-outline tracking-wider">DISPATCH #204</span>
+</div>
+<p class="font-display text-2xl leading-snug text-primary mt-2 italic font-medium">
+                Next stop: anywhere ✈️
+              </p>
+<div class="mt-2 pt-2 flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>Fontainhas, Goa</span>
+<span class="inline-flex items-center gap-1 text-primary font-medium">
+<span class="material-symbols-outlined text-xs">wb_sunny</span> 28°C
+                </span>
+</div>
+</div>
+</div>
+<!-- Bottom Editorial Quote -->
+<div class="relative z-10 pt-4">
+<div class="max-w-md">
+<h2 class="font-headline-lg-mobile lg:font-headline-lg text-headline-lg-mobile lg:text-headline-lg text-surface-container-lowest tracking-tight leading-tight drop-shadow-sm font-normal">
+                Your whole trip, planned in seconds.
+              </h2>
+<p class="mt-2 font-body-lg text-body-lg text-surface-container-highest/90 max-w-sm drop-shadow-xs font-light">
+                Curated journeys with the tactile soul of a personal travel journal.
+              </p>
+</div>
+<div class="mt-6 flex items-center gap-6 text-surface-container-highest/70 font-label-md text-label-md">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-surface-container-highest">lock_person</span> Multi-agent Privacy
+              </span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-surface-container-highest">cloud_sync</span> Real-time Sync
+              </span>
+</div>
+</div>
+</div>
+<!-- ======================= RIGHT AUTH FORM COLUMN ======================= -->
+<div class="lg:col-span-6 bg-surface-container-low flex flex-col justify-between p-6 sm:p-10 lg:p-14 transition-all duration-300 relative" id="form-column">
+<!-- Top Navigation Header -->
+<div class="w-full flex items-center justify-between pb-6">
+<a class="inline-flex items-center gap-2 font-label-lg text-label-lg text-tertiary hover:text-primary transition-colors group" href="#" onclick="event.preventDefault(); resetDemo();">
+<span class="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-1">arrow_back</span>
+<span>Back to home</span>
+</a>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary/70 animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Secure Portal</span>
+</div>
+</div>
+<!-- Form Canvas Container (Max 420px for ideal reading measure) -->
+<div class="w-full max-w-[420px] mx-auto my-auto py-4">
+<!-- Headline block -->
+<div class="mb-8">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight font-serif">
+                Welcome back
+              </h1>
+<p class="mt-2 font-body-lg text-body-lg text-secondary">
+                Log in to see your saved trips and plan your next one.
+              </p>
+</div>
+<!-- Global Error Banner (Controlled by State) -->
+<div class="hidden mb-6 p-4 rounded-xl bg-secondary-fixed/50 transition-all duration-300" id="auth-alert-banner">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl flex-shrink-0 mt-0.5">info</span>
+<div class="flex-grow">
+<p class="font-title-md text-title-md text-primary font-medium">Authentication note</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">
+                    That email or password doesn't look right. Try again or reset your password.
+                  </p>
+</div>
+<button class="text-secondary hover:text-primary transition-colors" onclick="hideAuthError()" type="button">
+<span class="material-symbols-outlined text-base">close</span>
+</button>
+</div>
+</div>
+<!-- Calm Success Banner (Controlled by State) -->
+<div class="hidden mb-6 p-5 rounded-2xl bg-surface-container-high transition-all duration-300" id="success-banner">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-lg">check</span>
+</div>
+<div>
+<h4 class="font-title-md text-title-md text-primary font-serif">Welcome back to TripAi!</h4>
+<p class="font-body-sm text-body-sm text-secondary">Redirecting to your travel journals...</p>
+</div>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full mt-4 overflow-hidden">
+<div class="bg-primary h-full w-full origin-left animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+</div>
+</div>
+<!-- Social Sign-in Button -->
+<div class="w-full mb-6">
+<button class="w-full h-12 px-5 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center gap-3 group active:scale-[0.99]" id="google-auth-btn" onclick="triggerGoogleAuth()" type="button">
+<!-- Google "G" SVG Icon -->
+<svg class="w-5 h-5 flex-shrink-0" id="google-icon" viewBox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<!-- Google Spinner (Hidden by default) -->
+<svg class="hidden animate-spin h-5 w-5 text-primary" fill="none" id="google-spinner" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+<path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+</svg>
+<span class="font-title-md text-title-md text-primary font-medium group-hover:text-tertiary" id="google-btn-text">
+                  Continue with Google
+                </span>
+</button>
+</div>
+<!-- Soft Divider -->
+<div class="relative flex py-2 items-center mb-6">
+<div class="flex-grow bg-surface-container-highest h-[1px]"></div>
+<span class="flex-shrink mx-4 font-label-md text-label-md text-outline uppercase tracking-widest">or with email</span>
+<div class="flex-grow bg-surface-container-highest h-[1px]"></div>
+</div>
+<!-- Standard Login Form -->
+<form class="space-y-4" id="login-form" onsubmit="handleFormSubmit(event)">
+<!-- Email Input Field -->
+<div>
+<label class="block font-label-lg text-label-lg text-primary font-medium mb-1.5" for="email">
+                  Email address
+                </label>
+<div class="relative rounded-xl overflow-hidden shadow-xs focus-within:shadow-md transition-shadow">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-lg">mail</span>
+</div>
+<input class="w-full h-12 pl-10 pr-4 bg-surface-container-lowest/80 text-primary font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-secondary/40 transition-all rounded-xl" id="email" name="email" placeholder="name@example.com" required="" type="email" value="alexandra.morris@voyage.co">
+</div>
+<!-- Email Validation Inline Error Node -->
+<div class="hidden mt-2 p-2 px-3 rounded-lg bg-secondary-fixed/40 flex items-center gap-2" id="email-inline-error">
+<span class="material-symbols-outlined text-primary text-sm flex-shrink-0">error_outline</span>
+<p class="font-label-md text-label-md text-primary">
+                    Please enter a valid email address with an @ domain.
+                  </p>
+</div>
+</div>
+<!-- Password Input Field -->
+<div>
+<div class="flex items-center justify-between mb-1.5">
+<label class="block font-label-lg text-label-lg text-primary font-medium" for="password">
+                    Password
+                  </label>
+<a class="font-label-md text-label-md text-secondary hover:text-primary transition-colors hover:underline" href="#" onclick="event.preventDefault(); alert('Password reset dispatched to your registered address.');">
+                    Forgot password?
+                  </a>
+</div>
+<div class="relative rounded-xl overflow-hidden shadow-xs focus-within:shadow-md transition-shadow">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-lg">lock</span>
+</div>
+<input class="w-full h-12 pl-10 pr-11 bg-surface-container-lowest/80 text-primary font-body-md text-body-md placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-secondary/40 transition-all rounded-xl" id="password" name="password" placeholder="••••••••" required="" type="password" value="••••••••••••">
+<button aria-label="Toggle password view" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-secondary hover:text-primary transition-colors" onclick="togglePasswordVisibility()" type="button">
+<span class="material-symbols-outlined text-lg" id="password-toggle-icon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Utility Row: Remember Me -->
+<div class="flex items-center justify-between pt-1">
+<label class="flex items-center gap-2.5 cursor-pointer select-none">
+<input checked="" class="sr-only peer" id="remember-me" type="checkbox">
+<div class="w-5 h-5 rounded-md bg-surface-container-lowest peer-checked:bg-primary flex items-center justify-center transition-all shadow-xs">
+<span class="material-symbols-outlined text-on-primary text-sm scale-0 peer-checked:scale-100 transition-transform">check</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant font-normal">Remember this journal</span>
+</label>
+<div class="text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-outline">
+<span class="material-symbols-outlined text-xs">shield</span> 256-bit SSL
+                  </span>
+</div>
+</div>
+<!-- Primary Submit CTA -->
+<div class="pt-3">
+<button class="w-full h-12 px-6 rounded-xl bg-primary text-on-primary font-title-md text-title-md font-medium tracking-wide shadow-md hover:bg-secondary active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 group" id="submit-btn" type="submit">
+<span class="hidden animate-spin h-5 w-5 text-on-primary" id="submit-spinner">
+<svg class="w-full h-full" fill="none" viewBox="0 0 24 24">
+<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+<path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+</svg>
+</span>
+<span id="submit-text">Log in</span>
+<span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1" id="submit-icon">arrow_forward</span>
+</button>
+</div>
+</form>
+<!-- Bottom Footnote & Registration link -->
+<div class="mt-8 text-center">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                New to TripAi?
+                <a class="font-title-md text-title-md text-secondary hover:text-primary font-medium hover:underline ml-1" href="#" onclick="event.preventDefault(); alert('Redirecting to bespoke itinerary setup...');">
+                  Create an account
+                </a>
+</p>
+</div>
+</div>
+<!-- Bottom Micro-footer -->
+<div class="w-full pt-6 flex flex-wrap items-center justify-between text-outline font-label-sm text-label-sm gap-2">
+<span>© 2025 TripAi Travel Technologies Ltd.</span>
+<div class="flex items-center gap-4">
+<a class="hover:text-primary transition-colors" href="#">Privacy Dispatch</a>
+<span>•</span>
+<a class="hover:text-primary transition-colors" href="#">Journal Terms</a>
+<span>•</span>
+<a class="hover:text-primary transition-colors" href="#">Concierge Support</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  let isMobileViewportActive = false;
+
+  function setAppState(state) {
+    // Reset indicators
+    const buttons = document.querySelectorAll('.state-pill');
+    buttons.forEach(btn => {
+      if (btn.id !== 'viewport-toggle-btn') {
+        btn.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+        btn.classList.add('bg-surface-container', 'text-on-surface');
+      }
+    });
+
+    const activeBtn = document.querySelector(`[data-state-btn="${state}"]`);
+    if (activeBtn && activeBtn.id !== 'viewport-toggle-btn') {
+      activeBtn.classList.remove('bg-surface-container', 'text-on-surface');
+      activeBtn.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+    }
+
+    // Default clean slate
+    const authBanner = document.getElementById('auth-alert-banner');
+    const successBanner = document.getElementById('success-banner');
+    const inlineError = document.getElementById('email-inline-error');
+    const submitBtn = document.getElementById('submit-btn');
+    const submitSpinner = document.getElementById('submit-spinner');
+    const submitText = document.getElementById('submit-text');
+    const submitIcon = document.getElementById('submit-icon');
+    
+    const googleBtnText = document.getElementById('google-btn-text');
+    const googleSpinner = document.getElementById('google-spinner');
+    const googleIcon = document.getElementById('google-icon');
+    const emailInput = document.getElementById('email');
+
+    authBanner.classList.add('hidden');
+    successBanner.classList.add('hidden');
+    inlineError.classList.add('hidden');
+
+    // Reset Submit Button
+    submitSpinner.classList.add('hidden');
+    submitIcon.classList.remove('hidden');
+    submitText.innerText = 'Log in';
+    submitBtn.disabled = false;
+
+    // Reset Google Button
+    googleSpinner.classList.add('hidden');
+    googleIcon.classList.remove('hidden');
+    googleBtnText.innerText = 'Continue with Google';
+
+    // State applications
+    switch(state) {
+      case 'default':
+        emailInput.value = 'alexandra.morris@voyage.co';
+        break;
+
+      case 'auth-error':
+        authBanner.classList.remove('hidden');
+        authBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        break;
+
+      case 'input-error':
+        inlineError.classList.remove('hidden');
+        emailInput.focus();
+        break;
+
+      case 'btn-loading':
+        submitSpinner.classList.remove('hidden');
+        submitIcon.classList.add('hidden');
+        submitText.innerText = 'Logging in...';
+        submitBtn.disabled = true;
+        break;
+
+      case 'google-loading':
+        googleSpinner.classList.remove('hidden');
+        googleIcon.classList.add('hidden');
+        googleBtnText.innerText = 'Connecting Google Account...';
+        break;
+
+      case 'success':
+        successBanner.classList.remove('hidden');
+        break;
+    }
+  }
+
+  function hideAuthError() {
+    document.getElementById('auth-alert-banner').classList.add('hidden');
+  }
+
+  function toggleViewportMode() {
+    const wrapper = document.getElementById('main-frame-wrapper');
+    const toggleBtn = document.getElementById('viewport-toggle-btn');
+    const vText = document.getElementById('viewport-text');
+    const vIcon = document.getElementById('viewport-icon');
+    const visualCol = document.getElementById('visual-column');
+
+    isMobileViewportActive = !isMobileViewportActive;
+
+    if (isMobileViewportActive) {
+      wrapper.classList.remove('max-w-[1360px]');
+      wrapper.classList.add('max-w-[430px]', 'shadow-2xl');
+      visualCol.classList.remove('h-[320px]', 'lg:h-auto', 'min-h-[320px]', 'lg:min-h-[760px]');
+      visualCol.classList.add('h-[240px]', 'min-h-[240px]');
+      
+      toggleBtn.classList.remove('bg-secondary-fixed', 'text-on-secondary-fixed');
+      toggleBtn.classList.add('bg-primary', 'text-on-primary');
+      vText.innerText = 'Exit Mobile';
+      vIcon.innerText = 'desktop_windows';
+    } else {
+      wrapper.classList.remove('max-w-[430px]', 'shadow-2xl');
+      wrapper.classList.add('max-w-[1360px]');
+      visualCol.classList.remove('h-[240px]', 'min-h-[240px]');
+      visualCol.classList.add('h-[320px]', 'lg:h-auto', 'min-h-[320px]', 'lg:min-h-[760px]');
+      
+      toggleBtn.classList.remove('bg-primary', 'text-on-primary');
+      toggleBtn.classList.add('bg-secondary-fixed', 'text-on-secondary-fixed');
+      vText.innerText = '7. Mobile View';
+      vIcon.innerText = 'smartphone';
+    }
+  }
+
+  function togglePasswordVisibility() {
+    const pwdInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('password-toggle-icon');
+    if (pwdInput.type === 'password') {
+      pwdInput.type = 'text';
+      toggleIcon.innerText = 'visibility_off';
+    } else {
+      pwdInput.type = 'password';
+      toggleIcon.innerText = 'visibility';
+    }
+  }
+
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    const emailVal = document.getElementById('email').value;
+
+    if (!emailVal || !emailVal.includes('@')) {
+      setAppState('input-error');
+      return;
+    }
+
+    setAppState('btn-loading');
+    setTimeout(() => {
+      setAppState('success');
+    }, 1200);
+  }
+
+  function triggerGoogleAuth() {
+    setAppState('google-loading');
+    setTimeout(() => {
+      setAppState('success');
+    }, 1400);
+  }
+
+  function resetDemo() {
+    setAppState('default');
+  }
+</script></main><div id="snapdom-sandbox" data-snapdom-sandbox="true" aria-hidden="true" style="position: absolute; left: -9999px; top: -9999px; width: 0px; height: 0px; overflow: hidden;"></div></body></html>

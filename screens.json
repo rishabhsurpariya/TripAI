@@ -1,0 +1,156 @@
+[
+  {
+    "id": "a961222394814f11831b7cab5b2b8d07",
+    "title": "TripAi - Explore Results",
+    "slug": "explore-results",
+    "width": "2560",
+    "height": "4354",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/explore-results.html",
+    "screenshotFile": "screenshots/explore-results.png"
+  },
+  {
+    "id": "ab73247e10d44f42978ae62d837fbcb1",
+    "title": "TripAi - My Trips",
+    "slug": "my-trips",
+    "width": "2560",
+    "height": "2550",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/my-trips.html",
+    "screenshotFile": "screenshots/my-trips.png"
+  },
+  {
+    "id": "2287c1dffeff4752a7a6f94490e7f270",
+    "title": "TripAi - Trip Plan (Edit Mode)",
+    "slug": "trip-plan-edit-mode",
+    "width": "2560",
+    "height": "6968",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/trip-plan-edit-mode.html",
+    "screenshotFile": "screenshots/trip-plan-edit-mode.png"
+  },
+  {
+    "id": "0104c6709c2d4e8588c6e2bd58b7408c",
+    "title": "TripAi - Sign Up",
+    "slug": "sign-up",
+    "width": "2560",
+    "height": "2048",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/sign-up.html",
+    "screenshotFile": "screenshots/sign-up.png"
+  },
+  {
+    "id": "a6d0c9aa430d4cb5a74c1849b0628edb",
+    "title": "TripAi - Home Dashboard",
+    "slug": "home-dashboard",
+    "width": "2560",
+    "height": "5452",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/home-dashboard.html",
+    "screenshotFile": "screenshots/home-dashboard.png"
+  },
+  {
+    "id": "9de86df0e74b4267967495ca1384e580",
+    "title": "Warm editorial travel photography of a charming sun-drenched European stone alleyway and sidewalk cafe in Provence with wicker chairs, potted lavender, and warm terracotta buildings, soft morning light",
+    "slug": "warm-editorial-travel-photography-of-a-charming-sun-drenched-european-stone-alleyway-and-sidewalk-cafe-in-provence-with-wicker-chairs-potted-lavender-and-warm-terracotta-buildings-soft-morning-light",
+    "width": "1200",
+    "height": "896",
+    "deviceType": null,
+    "hasHtml": false,
+    "htmlFile": null,
+    "screenshotFile": "screenshots/warm-editorial-travel-photography-of-a-charming-sun-drenched-european-stone-alleyway-and-sidewalk-cafe-in-provence-with-wicker-chairs-potted-lavender-and-warm-terracotta-buildings-soft-morning-light.png"
+  },
+  {
+    "id": "0f458ce9d72d4c50b76a568c9b3bbb23",
+    "title": "Warm editorial travel photography of a dramatic alpine wooden chalet balcony overlooking lush green valleys and majestic sunlit mountain peaks, golden hour atmospheric haze, warm earthy tones, cinematic composition",
+    "slug": "warm-editorial-travel-photography-of-a-dramatic-alpine-wooden-chalet-balcony-overlooking-lush-green-valleys-and-majestic-sunlit-mountain-peaks-golden-hour-atmospheric-haze-warm-earthy-tones-cinematic-composition",
+    "width": "1200",
+    "height": "896",
+    "deviceType": null,
+    "hasHtml": false,
+    "htmlFile": null,
+    "screenshotFile": "screenshots/warm-editorial-travel-photography-of-a-dramatic-alpine-wooden-chalet-balcony-overlooking-lush-green-valleys-and-majestic-sunlit-mountain-peaks-golden-hour-atmospheric-haze-warm-earthy-tones-cinematic-composition.png"
+  },
+  {
+    "id": "8ab64698fafb4c08ab4a2deaef2b44e6",
+    "title": "TripAi - Generating Your Trip",
+    "slug": "generating-your-trip",
+    "width": "2560",
+    "height": "2048",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/generating-your-trip.html",
+    "screenshotFile": "screenshots/generating-your-trip.png"
+  },
+  {
+    "id": "9a0431860b3b472792a43ad428b194d1",
+    "title": "TripAi - Login",
+    "slug": "login",
+    "width": "2560",
+    "height": "2048",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/login.html",
+    "screenshotFile": "screenshots/login.png"
+  },
+  {
+    "id": "d8d63afd57694ef3924f6f351edeec8c",
+    "title": "TripAi - Error States Suite",
+    "slug": "error-states-suite",
+    "width": "2560",
+    "height": "12968",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/error-states-suite.html",
+    "screenshotFile": "screenshots/error-states-suite.png"
+  },
+  {
+    "id": "c6ec5b43a5d44c8ba6010ca6f74943a3",
+    "title": "TripAi - Shared Trip Plan (Read-Only)",
+    "slug": "shared-trip-plan-read-only",
+    "width": "2560",
+    "height": "5326",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/shared-trip-plan-read-only.html",
+    "screenshotFile": "screenshots/shared-trip-plan-read-only.png"
+  },
+  {
+    "id": "233372b05fc44dfdba9c72ebc2ae32e7",
+    "title": "TripAi - Full 5-Day Trip Plan",
+    "slug": "full-5-day-trip-plan",
+    "width": "2560",
+    "height": "16020",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/full-5-day-trip-plan.html",
+    "screenshotFile": "screenshots/full-5-day-trip-plan.png"
+  },
+  {
+    "id": "d926f15ee04f48bd80c7ba140d5f623f",
+    "title": "TripAi - Landing Page (Image-Led)",
+    "slug": "landing-page-image-led",
+    "width": "2560",
+    "height": "11316",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/landing-page-image-led.html",
+    "screenshotFile": "screenshots/landing-page-image-led.png"
+  },
+  {
+    "id": "e159bb35159042bb901d1c0449387446",
+    "title": "TripAi - Forgot Password",
+    "slug": "forgot-password",
+    "width": "2560",
+    "height": "2048",
+    "deviceType": "DESKTOP",
+    "hasHtml": true,
+    "htmlFile": "screens/forgot-password.html",
+    "screenshotFile": "screenshots/forgot-password.png"
+  }
+]

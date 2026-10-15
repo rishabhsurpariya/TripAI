@@ -1,0 +1,1020 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TripAi - Shared Trip Plan (Goa, India)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&amp;family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --sand: #d9c9ba;
+      --sand-light: #f1eae2;
+      --taupe: #bba591;
+      --clay: #a28973;
+      --mocha: #8c6e52;
+      --deep-brown: #6e4f32;
+      --cream: #fbf7f2;
+      --cream-bg: #f7f2ec;
+    }
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--cream-bg);
+      color: var(--deep-brown);
+    }
+    .font-serif-title {
+      font-family: 'Playfair Display', serif;
+    }
+    .font-handwriting {
+      font-family: 'Caveat', cursive;
+    }
+    /* Paper Shadow & Sticky Note styling */
+    .sticky-note {
+      box-shadow: 2px 4px 12px rgba(110, 79, 50, 0.08), 0 1px 3px rgba(110, 79, 50, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sticky-note:hover {
+      box-shadow: 3px 6px 16px rgba(110, 79, 50, 0.12);
+    }
+    .washi-tape {
+      background: rgba(217, 201, 186, 0.65);
+      backdrop-filter: blur(2px);
+    }
+    /* Timeline Line */
+    .timeline-path::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      bottom: 20px;
+      left: 19px;
+      width: 2px;
+      background: var(--sand);
+      z-index: 0;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f7f2ec;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #bba591;
+      border-radius: 9999px;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#d9c9ba] selection:text-[#6e4f32]">
+
+  <!-- Top State Switcher Bar for Reviewers -->
+  <aside aria-label="Interactive Preview Controls" class="bg-[#2d2218] text-[#f7f2ec] text-xs py-2 px-4 border-b border-[#443323] sticky top-0 z-50 flex flex-wrap items-center justify-between gap-3 shadow-md">
+    <div class="flex items-center gap-2 font-medium">
+      <span class="w-2 h-2 rounded-full bg-[#bba591] animate-pulse"></span>
+      <span class="tracking-wide uppercase text-[10px] text-[#bba591] font-semibold">Shared Trip Preview States:</span>
+    </div>
+    <div class="flex flex-wrap items-center gap-1.5" id="stateSwitcher">
+      <button onclick="switchState('loggedOut')" id="btn-loggedOut" class="px-2.5 py-1 rounded-full bg-[#6e4f32] text-white font-medium hover:bg-[#8c6e52] transition">
+        Logged-out Visitor (Default)
+      </button>
+      <button onclick="switchState('loggedIn')" id="btn-loggedIn" class="px-2.5 py-1 rounded-full bg-[#3d2e20] text-[#d9c9ba] hover:text-white hover:bg-[#6e4f32] transition">
+        Logged-in Visitor
+      </button>
+      <button onclick="switchState('toastSave')" id="btn-toastSave" class="px-2.5 py-1 rounded-full bg-[#3d2e20] text-[#d9c9ba] hover:text-white hover:bg-[#6e4f32] transition">
+        "Saved to Trips" Toast
+      </button>
+      <button onclick="switchState('toastCopy')" id="btn-toastCopy" class="px-2.5 py-1 rounded-full bg-[#3d2e20] text-[#d9c9ba] hover:text-white hover:bg-[#6e4f32] transition">
+        "Link Copied" Toast
+      </button>
+      <button onclick="switchState('linkUnavailable')" id="btn-linkUnavailable" class="px-2.5 py-1 rounded-full bg-[#3d2e20] text-[#d9c9ba] hover:text-white hover:bg-[#6e4f32] transition">
+        Link Unavailable State
+      </button>
+      <button onclick="switchState('tripNotFound')" id="btn-tripNotFound" class="px-2.5 py-1 rounded-full bg-[#3d2e20] text-[#d9c9ba] hover:text-white hover:bg-[#6e4f32] transition">
+        Trip Not Found (404)
+      </button>
+      <button onclick="toggleMobileFrame()" id="btn-mobile" class="px-2.5 py-1 rounded-full bg-[#3d2e20] text-[#d9c9ba] hover:text-white hover:bg-[#6e4f32] transition flex items-center gap-1">
+        <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Mobile View Frame
+      </button>
+    </div>
+  </aside>
+
+  <!-- Interactive Toast Notification Overlay (Hidden by default) -->
+  <div id="toastNotification" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 transform -translate-y-12 opacity-0 pointer-events-none transition-all duration-300 ease-out flex items-center gap-3 bg-[#6e4f32] text-white px-5 py-3 rounded-2xl shadow-xl border border-[#8c6e52]">
+    <div class="w-6 h-6 rounded-full bg-[#8c6e52] flex items-center justify-center shrink-0">
+      <i data-lucide="check" class="w-3.5 h-3.5 text-white"></i>
+    </div>
+    <span id="toastMessage" class="text-sm font-medium">Link copied to clipboard!</span>
+  </div>
+
+  <!-- MAIN WRAPPER CONTAINER (Allows toggling into mobile viewport frame) -->
+  <div id="pageViewportContainer" class="w-full flex flex-col flex-1 transition-all duration-300">
+
+    <!-- 1. PUBLIC NAVBAR -->
+    <header class="w-full bg-[#fbf7f2]/90 backdrop-blur-md sticky top-8 z-40 border-b border-[#bba591]/40">
+      <div class="max-w-[1200px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        
+        <!-- Brand Logo & Mark -->
+        <a href="#" class="flex items-center gap-2.5 group">
+          <div class="w-9 h-9 rounded-full bg-[#6e4f32] flex items-center justify-center text-[#fbf7f2] shadow-sm group-hover:bg-[#8c6e52] transition">
+            <i data-lucide="compass" class="w-5 h-5"></i>
+          </div>
+          <span class="font-serif-title text-2xl font-bold tracking-tight text-[#6e4f32]">TripAi</span>
+        </a>
+
+        <!-- Logged-Out Navigation (Default) -->
+        <div id="nav-logged-out" class="flex items-center gap-4 sm:gap-6">
+          <a href="#" class="text-sm font-medium text-[#6e4f32] hover:text-[#8c6e52] transition">Log in</a>
+          <button onclick="triggerToast('save')" class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#6e4f32] hover:bg-[#8c6e52] text-[#fbf7f2] text-sm font-medium transition shadow-sm hover:shadow">
+            <span>Plan your own trip</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Logged-In Navigation (Variant state) -->
+        <div id="nav-logged-in" class="hidden items-center gap-5 sm:gap-7">
+          <a href="#" class="text-sm font-medium text-[#8c6e52] hover:text-[#6e4f32] transition">Explore</a>
+          <a href="#" class="text-sm font-medium text-[#6e4f32] relative pb-0.5 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#8c6e52]">
+            My Trips
+          </a>
+          <button onclick="triggerToast('save')" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#d9c9ba]/60 hover:bg-[#d9c9ba] text-[#6e4f32] text-xs font-medium transition border border-[#bba591]/50">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Save to My Trips</span>
+          </button>
+          <div class="flex items-center gap-2 pl-2 border-l border-[#bba591]/40">
+            <div class="w-8 h-8 rounded-full bg-[#d9c9ba] text-[#6e4f32] font-serif-title font-semibold text-xs flex items-center justify-center ring-2 ring-[#bba591]/30">
+              EK
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- 2. SHARED BY BANNER -->
+    <section id="sharedByBanner" class="w-full bg-[#d9c9ba]/50 border-b border-[#bba591]/40 py-2.5 px-4">
+      <div class="max-w-[1200px] mx-auto flex items-center justify-between flex-wrap gap-2 text-xs text-[#6e4f32]">
+        <div class="flex items-center gap-2.5">
+          <div class="w-6 h-6 rounded-full bg-[#8c6e52] text-[#fbf7f2] font-medium flex items-center justify-center text-[10px] shadow-xs">
+            A
+          </div>
+          <div>
+            <span class="font-semibold text-[#6e4f32]">Shared by Aarav</span>
+            <span class="text-[#a28973] ml-1.5 hidden sm:inline">· This is a read-only view of their trip plan.</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-[11px] text-[#a28973]">
+          <span class="inline-flex items-center gap-1 bg-[#fbf7f2]/80 px-2 py-0.5 rounded-full border border-[#bba591]/40">
+            <i data-lucide="lock" class="w-3 h-3 text-[#a28973]"></i> Read-only mode
+          </span>
+          <span class="hidden md:inline">Last updated Nov 18, 2024</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN TRIP CONTENT AREA -->
+    <main id="mainTripContent" class="flex-1 w-full max-w-[1200px] mx-auto px-4 sm:px-6 pt-6 pb-20">
+
+      <!-- 3. TRIP HEADER (Read-only Hero Card) -->
+      <section class="relative w-full rounded-3xl overflow-hidden bg-[#2d2218] text-[#fbf7f2] shadow-sm mb-6 border border-[#bba591]/30">
+        <!-- Background Editorial Photo with Warm Brown Gradient Overlay -->
+        <div class="absolute inset-0 z-0">
+          <img src="https://lh3.googleusercontent.com/aida/AEtjO1VWdFv1ysxzCUc21vKtlvs1ysbpz3SVAG2drwz56KIudH4fc5O-Jxuo2z0fiMF4KMD349DhRspkkXavGKRfk6K0KSHW-hSDJwXcXK2JZ-cAgghrc5qeTSNDlFX0DS83gpfg5jA8P8pB330Bm0-51CwC7CAciYmXFxy2wG7ISC9TGZPGqVpyS87AvbB6lmj86ajnza7kBviQsKFXNocjZ0qBxColW3IzgxdtNnsuHewvLR5YN-GvtaN6Sdw" alt="Goa Portuguese heritage villa" class="w-full h-full object-cover object-center opacity-45 transform scale-105 filter blur-[0.5px]">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#201710] via-[#3a2c1f]/85 to-[#3a2c1f]/60"></div>
+        </div>
+
+        <div class="relative z-10 p-6 sm:p-9 flex flex-col justify-between min-h-[290px]">
+          <!-- Breadcrumb & Badge Row -->
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div class="flex items-center gap-2 text-xs tracking-wider uppercase text-[#d9c9ba]">
+              <span>Shared Plan</span>
+              <span>•</span>
+              <span class="font-semibold text-white">Goa Coastal Odyssey</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-[#fbf7f2]/15 backdrop-blur-sm border border-white/20 text-xs font-medium text-[#fbf7f2] flex items-center gap-1.5">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#d9c9ba]"></i>
+                Nov 14 – Nov 18, 2024
+              </span>
+              <span class="px-3 py-1 rounded-full bg-[#fbf7f2]/15 backdrop-blur-sm border border-white/20 text-xs font-medium text-[#fbf7f2] flex items-center gap-1.5">
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#d9c9ba]"></i>
+                Curated by TripAi
+              </span>
+            </div>
+          </div>
+
+          <!-- Hero Destination Title & Subtitle -->
+          <div class="my-4">
+            <div class="text-xs uppercase tracking-widest text-[#d9c9ba] font-medium mb-1.5">Western Coast · Arabian Sea</div>
+            <h1 class="font-serif-title text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-2 leading-tight">
+              Goa, India · Sun, Spice &amp; Heritage
+            </h1>
+            <p class="text-sm sm:text-base text-[#d9c9ba] max-w-2xl font-light leading-relaxed">
+              An intimate 5-day journey through Portuguese colonial architecture, organic spice groves, sheltered riverways, and slow coastal sunsets.
+            </p>
+          </div>
+
+          <!-- Summary Chips, Budget Ring & Actions -->
+          <div class="pt-4 border-t border-white/15 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- Left: Metadata chips -->
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+              <span class="px-3 py-1.5 rounded-full bg-[#fbf7f2]/15 backdrop-blur-sm border border-white/15 text-white font-medium">5 Days</span>
+              <span class="px-3 py-1.5 rounded-full bg-[#fbf7f2]/15 backdrop-blur-sm border border-white/15 text-white font-medium">2 Travelers</span>
+              <span class="px-3 py-1.5 rounded-full bg-[#fbf7f2]/15 backdrop-blur-sm border border-white/15 text-white font-medium">Comfort Style</span>
+              <span class="px-3 py-1.5 rounded-full bg-[#fbf7f2]/15 backdrop-blur-sm border border-white/15 text-white font-medium">Ex-Jaipur</span>
+
+              <!-- Budget Chip -->
+              <div class="flex items-center gap-2 pl-3 ml-1 border-l border-white/20 py-0.5">
+                <div class="flex flex-col">
+                  <span class="text-[10px] text-[#d9c9ba] leading-none uppercase">Est. Budget</span>
+                  <span class="text-sm font-semibold text-white">₹23,400 <span class="text-xs font-normal text-[#d9c9ba]">/ ₹25k</span></span>
+                </div>
+                <div class="px-2 py-0.5 rounded-md bg-[#d9c9ba]/20 text-[#d9c9ba] text-[11px] font-medium border border-[#d9c9ba]/30">
+                  Comfortably within budget
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Actions for Visitor (NO Edit, Regenerate, or Delete) -->
+            <div class="flex items-center gap-2.5">
+              <button onclick="triggerToast('copy')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#fbf7f2]/15 hover:bg-[#fbf7f2]/25 backdrop-blur-sm border border-white/20 text-xs font-medium text-white transition">
+                <i data-lucide="link-2" class="w-3.5 h-3.5"></i>
+                <span>Copy link</span>
+              </button>
+              <button onclick="triggerToast('copy')" class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#fbf7f2]/15 hover:bg-[#fbf7f2]/25 backdrop-blur-sm border border-white/20 text-white transition" title="Share via...">
+                <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="triggerToast('save')" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#6e4f32] hover:bg-[#8c6e52] text-[#fbf7f2] text-xs font-semibold shadow-sm transition border border-[#bba591]/40">
+                <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
+                <span>Save a copy to my trips</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. SECTION TABS (Sticky tab bar with mocha underline for active tab) -->
+      <nav class="sticky top-24 z-30 bg-[#f7f2ec]/95 backdrop-blur-md py-2 border-b border-[#bba591]/40 mb-8 flex items-center justify-between gap-4 overflow-x-auto hide-scrollbar">
+        <div class="flex items-center gap-1 sm:gap-2">
+          <!-- Active Itinerary Tab -->
+          <button class="px-4 py-2 rounded-full text-xs font-semibold text-[#6e4f32] bg-[#d9c9ba]/45 relative flex items-center gap-2 border border-[#bba591]/50">
+            <i data-lucide="calendar-days" class="w-3.5 h-3.5 text-[#8c6e52]"></i>
+            <span>Itinerary</span>
+            <span class="text-[10px] bg-[#6e4f32] text-white px-1.5 py-0.2 rounded-full">5 Days</span>
+            <span class="absolute -bottom-2 left-4 right-4 h-0.5 bg-[#8c6e52] rounded-full"></span>
+          </button>
+          <button onclick="triggerTabNotice('Getting there')" class="px-3.5 py-2 rounded-full text-xs font-medium text-[#8c6e52] hover:text-[#6e4f32] hover:bg-[#d9c9ba]/20 transition flex items-center gap-1.5">
+            <i data-lucide="plane" class="w-3.5 h-3.5"></i>
+            <span>Getting there</span>
+          </button>
+          <button onclick="triggerTabNotice('Local transport')" class="px-3.5 py-2 rounded-full text-xs font-medium text-[#8c6e52] hover:text-[#6e4f32] hover:bg-[#d9c9ba]/20 transition flex items-center gap-1.5">
+            <i data-lucide="car" class="w-3.5 h-3.5"></i>
+            <span>Local transport</span>
+          </button>
+          <button onclick="triggerTabNotice('Hotels')" class="px-3.5 py-2 rounded-full text-xs font-medium text-[#8c6e52] hover:text-[#6e4f32] hover:bg-[#d9c9ba]/20 transition flex items-center gap-1.5">
+            <i data-lucide="hotel" class="w-3.5 h-3.5"></i>
+            <span>Hotels</span>
+            <span class="text-[10px] bg-[#d9c9ba] text-[#6e4f32] px-1.5 py-0.2 rounded-full">3 Selected</span>
+          </button>
+          <button onclick="triggerTabNotice('Budget')" class="px-3.5 py-2 rounded-full text-xs font-medium text-[#8c6e52] hover:text-[#6e4f32] hover:bg-[#d9c9ba]/20 transition flex items-center gap-1.5">
+            <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
+            <span>Budget</span>
+          </button>
+          <button onclick="triggerTabNotice('Map')" class="px-3.5 py-2 rounded-full text-xs font-medium text-[#8c6e52] hover:text-[#6e4f32] hover:bg-[#d9c9ba]/20 transition flex items-center gap-1.5">
+            <i data-lucide="map" class="w-3.5 h-3.5"></i>
+            <span>Map</span>
+          </button>
+        </div>
+
+        <!-- Read-only secondary view option -->
+        <div class="hidden sm:flex items-center gap-2 text-xs text-[#a28973]">
+          <span class="inline-flex items-center gap-1 bg-[#fbf7f2] border border-[#bba591]/40 px-2.5 py-1 rounded-full text-[11px]">
+            <i data-lucide="eye" class="w-3 h-3 text-[#8c6e52]"></i> Public guest view
+          </span>
+        </div>
+      </nav>
+
+      <!-- TWO-COLUMN WORKSPACE: LEFT ITINERARY TIMELINE (8 cols) + RIGHT READ-ONLY PANEL (4 cols) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+        <!-- 5. ITINERARY TAB (Vertical timeline in read-only scrapbook style) -->
+        <div class="lg:col-span-8 flex flex-col gap-10">
+
+          <!-- ==================== DAY 1 ==================== -->
+          <div class="flex flex-col gap-5">
+            
+            <!-- Day 1 Header & Sticky Memo -->
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-3 border-b border-[#bba591]/40">
+              <div>
+                <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#a28973] mb-1">
+                  <span class="w-2 h-2 rounded-full bg-[#6e4f32]"></span>
+                  <span>Day 1 · Thursday, Nov 14</span>
+                  <span>·</span>
+                  <span class="font-normal text-[#a28973]">3 Stops · 6.0 Hours</span>
+                </div>
+                <h2 class="font-serif-title text-2xl font-bold text-[#6e4f32]">Arrival, Latin Quarter &amp; Sunset by the Sea</h2>
+              </div>
+
+              <!-- Static Traveler's Memo Sticky Note -->
+              <div class="sticky-note relative bg-[#f1eae2] border border-[#bba591]/60 p-3.5 rounded-lg max-w-[240px] transform rotate-1 shrink-0 self-start">
+                <!-- Washi Tape element -->
+                <div class="washi-tape absolute -top-2 left-1/2 -translate-x-1/2 w-14 h-4 rounded-sm shadow-xs border-b border-[#bba591]/30"></div>
+                <div class="flex items-center justify-between text-[10px] text-[#a28973] uppercase font-bold tracking-wider mb-1">
+                  <span>Aarav's Memo</span>
+                  <i data-lucide="pin" class="w-3 h-3 text-[#a28973]"></i>
+                </div>
+                <p class="font-handwriting text-base text-[#6e4f32] leading-snug">
+                  Remember to withdraw cash at Panjim market for beach shacks! Sunset timing ~5:45 PM at Reis Magos.
+                </p>
+              </div>
+            </div>
+
+            <!-- Day 1 Timeline Items -->
+            <div class="relative timeline-path flex flex-col gap-6 pl-10 pt-1">
+
+              <!-- Stop 1: Fontainhas -->
+              <div class="relative group">
+                <!-- Timeline Badge -->
+                <div class="absolute -left-10 top-4 w-6 h-6 rounded-full bg-[#fbf7f2] border-2 border-[#8c6e52] text-[#6e4f32] font-semibold text-xs flex items-center justify-center z-10 shadow-xs">
+                  1
+                </div>
+
+                <!-- Activity Card (Read-only) -->
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-[#bba591]/40 shadow-sm relative flex flex-col sm:flex-row gap-4 items-start">
+                  <!-- Photo with Location Badge -->
+                  <div class="relative w-full sm:w-48 h-36 rounded-xl overflow-hidden shrink-0 border border-[#bba591]/30">
+                    <img src="https://lh3.googleusercontent.com/aida/AEtjO1VWdFv1ysxzCUc21vKtlvs1ysbpz3SVAG2drwz56KIudH4fc5O-Jxuo2z0fiMF4KMD349DhRspkkXavGKRfk6K0KSHW-hSDJwXcXK2JZ-cAgghrc5qeTSNDlFX0DS83gpfg5jA8P8pB330Bm0-51CwC7CAciYmXFxy2wG7ISC9TGZPGqVpyS87AvbB6lmj86ajnza7kBviQsKFXNocjZ0qBxColW3IzgxdtNnsuHewvLR5YN-GvtaN6Sdw" alt="Fontainhas historic quarter" class="w-full h-full object-cover">
+                    <div class="absolute bottom-2 left-2 bg-[#2d2218]/80 backdrop-blur-xs text-[10px] text-white px-2 py-0.5 rounded-md font-medium">
+                      Panjim Historic Quarter
+                    </div>
+                  </div>
+
+                  <!-- Details -->
+                  <div class="flex-1 flex flex-col justify-between h-full">
+                    <div>
+                      <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                        <div class="flex items-center gap-1.5 text-xs text-[#a28973]">
+                          <span class="inline-flex items-center gap-1 bg-[#d9c9ba]/30 px-2 py-0.5 rounded-full font-medium text-[#6e4f32]">
+                            <i data-lucide="sun" class="w-3 h-3 text-[#8c6e52]"></i> Morning · 10:30 AM
+                          </span>
+                          <span>•</span>
+                          <span>2.5h</span>
+                        </div>
+                        <span class="text-[11px] font-medium text-[#a28973] bg-[#f7f2ec] px-2 py-0.5 rounded-full border border-[#bba591]/30">
+                          Culture &amp; Walk
+                        </span>
+                      </div>
+
+                      <h3 class="font-serif-title text-lg font-bold text-[#6e4f32] mb-1">
+                        Stroll through Fontainhas &amp; Heritage Bakeries
+                      </h3>
+                      <p class="text-xs text-[#6e4f32]/80 leading-relaxed mb-3">
+                        Explore quiet, sun-drenched alleys flanked by 18th-century Portuguese bungalows, azulejo ceramic tiles, and warm Bebinca fresh from the wood-fired ovens of 31st January Bakery.
+                      </p>
+                    </div>
+
+                    <div class="pt-2 border-t border-[#bba591]/25 flex items-center justify-between text-xs text-[#a28973]">
+                      <div class="flex items-center gap-1.5 font-medium text-[#6e4f32]">
+                        <i data-lucide="tag" class="w-3.5 h-3.5 text-[#a28973]"></i>
+                        <span>Cost: ₹350 (free walk)</span>
+                      </div>
+                      <span class="text-[11px] text-[#a28973]">Footwear: walking sandals</span>
+                    </div>
+                  </div>
+
+                  <!-- Pinned Owner's AI Discovery Sticky Note (Static) -->
+                  <div class="sticky-note absolute -bottom-3 right-4 bg-[#f8f0e5] border border-[#bba591]/70 p-2.5 rounded-md max-w-[210px] transform -rotate-1 z-20 shadow-sm hidden md:block">
+                    <div class="washi-tape absolute -top-1.5 left-1/2 -translate-x-1/2 w-8 h-3 rounded-xs"></div>
+                    <div class="flex items-center gap-1 text-[9px] uppercase font-bold text-[#8c6e52] mb-0.5">
+                      <i data-lucide="sparkles" class="w-2.5 h-2.5"></i>
+                      <span>Aarav's Tip</span>
+                    </div>
+                    <p class="font-handwriting text-xs text-[#6e4f32] leading-tight">
+                      Golden photo window is 10:00–11:15 AM before the heat builds. Grab fresh poi bread early!
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stop 2: Mum's Kitchen -->
+              <div class="relative group mt-2">
+                <div class="absolute -left-10 top-4 w-6 h-6 rounded-full bg-[#fbf7f2] border-2 border-[#8c6e52] text-[#6e4f32] font-semibold text-xs flex items-center justify-center z-10 shadow-xs">
+                  2
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-[#bba591]/40 shadow-sm relative flex flex-col sm:flex-row gap-4 items-start">
+                  <div class="relative w-full sm:w-48 h-36 rounded-xl overflow-hidden shrink-0 border border-[#bba591]/30">
+                    <img src="https://lh3.googleusercontent.com/aida/AEtjO1XEDE1cLpttoIPYmuOJZpxnYgbedr7RFywkwaJtYp7h6CAb9oHyBgaiObdaE2UF9E0c3E1SNvAgQHKRDim4mQtFiDy26hzn_EzI0C-464DYMLZjKbvHUN066witVEJnyYkrrB1DQDRInBcipJJ6kxt2eoy2GkJGwtpuiAMY5iQG0-qNVn2JLkOt0uGjaqgDjvzQcGOdEWeq2aOJEjodbCbl3LB8L4M_k3jc_ELjZfDF7huMhjAEjr74G00" alt="Goan Culinary Heritage" class="w-full h-full object-cover">
+                    <div class="absolute bottom-2 left-2 bg-[#2d2218]/80 backdrop-blur-xs text-[10px] text-white px-2 py-0.5 rounded-md font-medium">
+                      Mum's Kitchen · Panjim
+                    </div>
+                  </div>
+
+                  <div class="flex-1 flex flex-col justify-between h-full">
+                    <div>
+                      <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                        <div class="flex items-center gap-1.5 text-xs text-[#a28973]">
+                          <span class="inline-flex items-center gap-1 bg-[#d9c9ba]/30 px-2 py-0.5 rounded-full font-medium text-[#6e4f32]">
+                            <i data-lucide="utensils" class="w-3 h-3 text-[#8c6e52]"></i> Afternoon · 02:00 PM
+                          </span>
+                          <span>•</span>
+                          <span>1.5h</span>
+                        </div>
+                        <span class="text-[11px] font-medium text-[#a28973] bg-[#f7f2ec] px-2 py-0.5 rounded-full border border-[#bba591]/30">
+                          Culinary Heritage
+                        </span>
+                      </div>
+
+                      <h3 class="font-serif-title text-lg font-bold text-[#6e4f32] mb-1">
+                        Spice Luncheon at Mum's Kitchen
+                      </h3>
+                      <p class="text-xs text-[#6e4f32]/80 leading-relaxed mb-3">
+                        Celebrated preservation kitchen dedicated to forgotten Christian and Hindu Goan ancestral recipes. Savor authentic Meen Koddi, Kokum Solkadhi, and spicy Crab Xec Xec.
+                      </p>
+                    </div>
+
+                    <div class="pt-2 border-t border-[#bba591]/25 flex items-center justify-between text-xs text-[#a28973]">
+                      <span class="font-medium text-[#6e4f32]">₹1,200 for two</span>
+                      <span class="italic text-[11px] text-[#8c6e52]">Reservation recommended</span>
+                    </div>
+                  </div>
+
+                  <!-- Sticky note on Mum's kitchen -->
+                  <div class="sticky-note absolute -bottom-2 right-4 bg-[#f2e7db] border border-[#bba591]/70 p-2 rounded-md max-w-[170px] transform rotate-2 z-20 shadow-sm hidden md:block">
+                    <div class="washi-tape absolute -top-1.5 left-1/2 -translate-x-1/2 w-7 h-2.5 rounded-xs"></div>
+                    <p class="font-handwriting text-xs text-[#6e4f32] leading-tight text-center">
+                      "Book patio table under the frangipani!"
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stop 3: Reis Magos Fort -->
+              <div class="relative group mt-2">
+                <div class="absolute -left-10 top-4 w-6 h-6 rounded-full bg-[#fbf7f2] border-2 border-[#8c6e52] text-[#6e4f32] font-semibold text-xs flex items-center justify-center z-10 shadow-xs">
+                  3
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-[#bba591]/40 shadow-sm relative flex flex-col sm:flex-row gap-4 items-start">
+                  <div class="relative w-full sm:w-48 h-36 rounded-xl overflow-hidden shrink-0 border border-[#bba591]/30">
+                    <img src="https://lh3.googleusercontent.com/aida/AEtjO1U5UDc4vV0HEXtj-fB2D-SKWEnJvUwhJRerJ6FfFfe0jLBTZeW1qkXsrNmDP5s3FDJ9h8iBq7YC7_cjyTDoGxb3NfXusxT5xUdlrIFwAr4WFfmgOe6mO95RrKZcoQ0A2fkTNggT7mSKHX8LT3pDxiA2SgSN2sFO_mJxFI8HvVOc0hCdFQaKh59mTDF7kYdO2Nol1B5AIPaq4LElWkT0IninOK4IBsq3GgtGIlG0u-RTkMzrKKBUTRS7vH4" alt="Reis Magos ramparts at golden hour" class="w-full h-full object-cover">
+                    <div class="absolute bottom-2 left-2 bg-[#2d2218]/80 backdrop-blur-xs text-[10px] text-white px-2 py-0.5 rounded-md font-medium">
+                      Reis Magos Ramparts
+                    </div>
+                  </div>
+
+                  <div class="flex-1 flex flex-col justify-between h-full">
+                    <div>
+                      <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                        <div class="flex items-center gap-1.5 text-xs text-[#a28973]">
+                          <span class="inline-flex items-center gap-1 bg-[#d9c9ba]/30 px-2 py-0.5 rounded-full font-medium text-[#6e4f32]">
+                            <i data-lucide="sunset" class="w-3 h-3 text-[#8c6e52]"></i> Golden Hour · 05:00 PM
+                          </span>
+                          <span>•</span>
+                          <span>2.0h</span>
+                        </div>
+                        <span class="text-[11px] font-medium text-[#a28973] bg-[#f7f2ec] px-2 py-0.5 rounded-full border border-[#bba591]/30">
+                          Scenic &amp; Fort
+                        </span>
+                      </div>
+
+                      <h3 class="font-serif-title text-lg font-bold text-[#6e4f32] mb-1">
+                        Golden Hour Walk at Reis Magos Fort
+                      </h3>
+                      <p class="text-xs text-[#6e4f32]/80 leading-relaxed mb-3">
+                        Climb the restored red laterite fortress ramparts built in 1551. Enjoy panoramic views where the Mandovi River embraces the Arabian Sea as wooden fishing dhows glide home.
+                      </p>
+                    </div>
+
+                    <div class="pt-2 border-t border-[#bba591]/25 flex items-center justify-between text-xs text-[#a28973]">
+                      <span class="font-medium text-[#6e4f32]">₹100 entry per person</span>
+                      <span class="text-[11px] text-[#a28973]">Closes at 6:00 PM</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tonight's Stay Card (Read-only, NO "Change Hotel" button) -->
+              <div class="bg-[#f1eae2] rounded-2xl p-4 sm:p-5 border border-[#bba591]/60 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-[#bba591]/40">
+                    <img src="https://lh3.googleusercontent.com/aida/AEtjO1VWdFv1ysxzCUc21vKtlvs1ysbpz3SVAG2drwz56KIudH4fc5O-Jxuo2z0fiMF4KMD349DhRspkkXavGKRfk6K0KSHW-hSDJwXcXK2JZ-cAgghrc5qeTSNDlFX0DS83gpfg5jA8P8pB330Bm0-51CwC7CAciYmXFxy2wG7ISC9TGZPGqVpyS87AvbB6lmj86ajnza7kBviQsKFXNocjZ0qBxColW3IzgxdtNnsuHewvLR5YN-GvtaN6Sdw" alt="Ahilya by the Sea" class="w-full h-full object-cover">
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-1.5 text-[11px] font-semibold text-[#8c6e52] uppercase tracking-wide">
+                      <i data-lucide="bed-double" class="w-3.5 h-3.5"></i>
+                      <span>Tonight's Stay · Night 1 of 2</span>
+                    </div>
+                    <div class="font-serif-title text-base font-bold text-[#6e4f32]">Ahilya by the Sea (Dolphin Bay)</div>
+                    <div class="text-xs text-[#a28973]">Nerul, North Goa · 8 mins from Reis Magos · ★ 4.9</div>
+                  </div>
+                </div>
+
+                <div class="text-right shrink-0">
+                  <div class="text-xs font-semibold text-[#6e4f32]">₹6,800 <span class="text-[11px] font-normal text-[#a28973]">/ night</span></div>
+                  <div class="text-[10px] text-[#8c6e52] font-medium bg-white/70 px-2 py-0.5 rounded border border-[#bba591]/30 mt-1 inline-block">
+                    Confirmed Stay
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+          <!-- ==================== DAY 2 PREVIEW ==================== -->
+          <div class="flex flex-col gap-5 pt-4">
+            
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-3 border-b border-[#bba591]/40">
+              <div>
+                <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#a28973] mb-1">
+                  <span class="w-2 h-2 rounded-full bg-[#6e4f32]"></span>
+                  <span>Day 2 · Friday, Nov 15</span>
+                  <span>·</span>
+                  <span class="font-normal text-[#a28973]">3 Stops · 7.0 Hours</span>
+                </div>
+                <h2 class="font-serif-title text-2xl font-bold text-[#6e4f32]">Ancient Temples, Spice Groves &amp; River Twilight</h2>
+              </div>
+
+              <!-- Static Sticky Note for Day 2 -->
+              <div class="sticky-note relative bg-[#f8f0e5] border border-[#bba591]/60 p-3 rounded-lg max-w-[220px] transform -rotate-1 shrink-0 self-start">
+                <div class="washi-tape absolute -top-1.5 left-1/2 -translate-x-1/2 w-12 h-3 rounded-xs"></div>
+                <div class="flex items-center justify-between text-[10px] text-[#a28973] uppercase font-bold tracking-wider mb-0.5">
+                  <span>Packing Memo</span>
+                  <i data-lucide="pin" class="w-3 h-3 text-[#a28973]"></i>
+                </div>
+                <p class="font-handwriting text-sm text-[#6e4f32] leading-snug">
+                  Wear breathable linen &amp; footwear that slips off easily for spice farm walks and temple sanctums.
+                </p>
+              </div>
+            </div>
+
+            <div class="relative timeline-path flex flex-col gap-6 pl-10 pt-1">
+              
+              <!-- Stop 1: Sahakari Spice Farm -->
+              <div class="relative group">
+                <div class="absolute -left-10 top-4 w-6 h-6 rounded-full bg-[#fbf7f2] border-2 border-[#8c6e52] text-[#6e4f32] font-semibold text-xs flex items-center justify-center z-10 shadow-xs">
+                  1
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-[#bba591]/40 shadow-sm relative flex flex-col sm:flex-row gap-4 items-start">
+                  <div class="relative w-full sm:w-48 h-36 rounded-xl overflow-hidden shrink-0 border border-[#bba591]/30">
+                    <img src="https://lh3.googleusercontent.com/aida/AEtjO1VyAITd8D27_V5Dm9xDlf9kOBh4_tRqDk6VV2Zl-jlvY0wFn0SkN-udkSS8hQTMOca9yLdocBE67lt4Wk9HU8mLD_qP9towWwXLsR_uU8kYSATgJbxt8T1jOT_Y2YxmFGkQGgFe9Lj0AlSkiqre38fq1qt1-a4fYtkxuJyBoDjD4yIPBU7MlW-Rz2AmHSWvYGls6GDnidP1YwTrKV8PdPE5-pIUpxmml4VDM1dqhY8pDP8Eckl93gnuDuU" alt="Sahakari Spice Farm" class="w-full h-full object-cover">
+                    <div class="absolute bottom-2 left-2 bg-[#2d2218]/80 backdrop-blur-xs text-[10px] text-white px-2 py-0.5 rounded-md font-medium">
+                      Ponda Spice Belt
+                    </div>
+                  </div>
+
+                  <div class="flex-1 flex flex-col justify-between h-full">
+                    <div>
+                      <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                        <div class="flex items-center gap-1.5 text-xs text-[#a28973]">
+                          <span class="inline-flex items-center gap-1 bg-[#d9c9ba]/30 px-2 py-0.5 rounded-full font-medium text-[#6e4f32]">
+                            <i data-lucide="sun" class="w-3 h-3 text-[#8c6e52]"></i> Morning · 09:30 AM
+                          </span>
+                          <span>•</span>
+                          <span>3.0h</span>
+                        </div>
+                        <span class="text-[11px] font-medium text-[#a28973] bg-[#f7f2ec] px-2 py-0.5 rounded-full border border-[#bba591]/30">
+                          Nature &amp; Food
+                        </span>
+                      </div>
+
+                      <h3 class="font-serif-title text-lg font-bold text-[#6e4f32] mb-1">
+                        Sahakari Spice Farm Tour &amp; Traditional Buffet
+                      </h3>
+                      <p class="text-xs text-[#6e4f32]/80 leading-relaxed mb-3">
+                        Guided walk through aromatic vanilla, cinnamon, and pepper orchards. Followed by a fresh banana-leaf lunch prepared with estate-grown spices and cashew feni tasting.
+                      </p>
+                    </div>
+
+                    <div class="pt-2 border-t border-[#bba591]/25 flex items-center justify-between text-xs text-[#a28973]">
+                      <span class="font-medium text-[#6e4f32]">₹500 / person incl. buffet</span>
+                      <span class="text-[11px] text-[#a28973]">45 mins drive from hotel</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stop 2: Mandovi Sunset Catamaran -->
+              <div class="relative group mt-2">
+                <div class="absolute -left-10 top-4 w-6 h-6 rounded-full bg-[#fbf7f2] border-2 border-[#8c6e52] text-[#6e4f32] font-semibold text-xs flex items-center justify-center z-10 shadow-xs">
+                  2
+                </div>
+
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-[#bba591]/40 shadow-sm relative flex flex-col sm:flex-row gap-4 items-start">
+                  <div class="relative w-full sm:w-48 h-36 rounded-xl overflow-hidden shrink-0 border border-[#bba591]/30">
+                    <img src="https://lh3.googleusercontent.com/aida/AEtjO1U5UDc4vV0HEXtj-fB2D-SKWEnJvUwhJRerJ6FfFfe0jLBTZeW1qkXsrNmDP5s3FDJ9h8iBq7YC7_cjyTDoGxb3NfXusxT5xUdlrIFwAr4WFfmgOe6mO95RrKZcoQ0A2fkTNggT7mSKHX8LT3pDxiA2SgSN2sFO_mJxFI8HvVOc0hCdFQaKh59mTDF7kYdO2Nol1B5AIPaq4LElWkT0IninOK4IBsq3GgtGIlG0u-RTkMzrKKBUTRS7vH4" alt="Sunset Catamaran on Mandovi" class="w-full h-full object-cover">
+                    <div class="absolute bottom-2 left-2 bg-[#2d2218]/80 backdrop-blur-xs text-[10px] text-white px-2 py-0.5 rounded-md font-medium">
+                      Old Goa Jetty
+                    </div>
+                  </div>
+
+                  <div class="flex-1 flex flex-col justify-between h-full">
+                    <div>
+                      <div class="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                        <div class="flex items-center gap-1.5 text-xs text-[#a28973]">
+                          <span class="inline-flex items-center gap-1 bg-[#d9c9ba]/30 px-2 py-0.5 rounded-full font-medium text-[#6e4f32]">
+                            <i data-lucide="sunset" class="w-3 h-3 text-[#8c6e52]"></i> Sunset · 04:45 PM
+                          </span>
+                          <span>•</span>
+                          <span>2.0h</span>
+                        </div>
+                        <span class="text-[11px] font-medium text-[#a28973] bg-[#f7f2ec] px-2 py-0.5 rounded-full border border-[#bba591]/30">
+                          River Cruise
+                        </span>
+                      </div>
+
+                      <h3 class="font-serif-title text-lg font-bold text-[#6e4f32] mb-1">
+                        Sunset Catamaran on the Mandovi Estuary
+                      </h3>
+                      <p class="text-xs text-[#6e4f32]/80 leading-relaxed mb-3">
+                        Sail past sleepy mangrove channels and Chorao island bird sanctuaries away from crowded tourist boats. Complimentary local port wine and acoustic Goan folk melodies.
+                      </p>
+                    </div>
+
+                    <div class="pt-2 border-t border-[#bba591]/25 flex items-center justify-between text-xs text-[#a28973]">
+                      <span class="font-medium text-[#6e4f32]">₹1,400 for two</span>
+                      <span class="text-[11px] text-[#a28973]">Departs 5:15 PM sharp</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Days 3 to 5 Summary Pill (Collapsible indicator) -->
+              <div class="p-4 rounded-2xl bg-[#f1eae2]/70 border border-dashed border-[#bba591] flex items-center justify-between text-xs text-[#6e4f32]">
+                <div class="flex items-center gap-2.5">
+                  <i data-lucide="calendar" class="w-4 h-4 text-[#8c6e52]"></i>
+                  <span><strong>Days 3, 4 &amp; 5</strong> included in this shared plan (Anjuna Sundowner, Divar Island cycling, &amp; Morjim farewell).</span>
+                </div>
+                <button onclick="triggerToast('save')" class="text-xs font-semibold text-[#8c6e52] hover:text-[#6e4f32] flex items-center gap-1 underline underline-offset-2">
+                  <span>Save plan to view all 5 days</span>
+                  <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 8. SIGN-UP CALL TO ACTION BANNER (At the bottom of the itinerary) -->
+          <section class="mt-4 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#f1eae2] via-[#d9c9ba]/60 to-[#f1eae2] border border-[#bba591]/70 shadow-sm relative overflow-hidden">
+            <!-- Decorative scrapbook corner accent -->
+            <div class="washi-tape absolute top-3 right-6 w-20 h-5 rounded-xs transform rotate-12 opacity-70"></div>
+
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+              <!-- Compass Graphic Icon -->
+              <div class="w-16 h-16 rounded-2xl bg-[#6e4f32] text-[#fbf7f2] flex items-center justify-center shrink-0 shadow-md">
+                <i data-lucide="sparkles" class="w-8 h-8 text-[#d9c9ba]"></i>
+              </div>
+
+              <!-- Text Content -->
+              <div class="flex-1 text-center sm:text-left">
+                <h3 class="font-serif-title text-2xl font-bold text-[#6e4f32] mb-1">
+                  Love this plan? Make it yours.
+                </h3>
+                <p class="text-xs sm:text-sm text-[#6e4f32]/85 mb-4 leading-relaxed">
+                  Save a copy, tweak it your way, or let TripAi plan a brand new trip in seconds with custom budgets, interactive corkboard memos, and local discoveries.
+                </p>
+
+                <!-- Actions -->
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                  <button onclick="triggerToast('save')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#6e4f32] hover:bg-[#8c6e52] text-white text-xs sm:text-sm font-semibold transition shadow-sm">
+                    <i data-lucide="bookmark" class="w-4 h-4"></i>
+                    <span>Save a copy to my trips</span>
+                  </button>
+                  <button onclick="triggerToast('save')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white hover:bg-[#fbf7f2] text-[#6e4f32] text-xs sm:text-sm font-medium transition border border-[#bba591]/60">
+                    <i data-lucide="compass" class="w-4 h-4 text-[#8c6e52]"></i>
+                    <span>Plan my own trip</span>
+                  </button>
+                </div>
+                
+                <p class="text-[11px] text-[#a28973] mt-2.5">
+                  <i data-lucide="info" class="w-3 h-3 inline mr-1"></i> You'll be asked to sign up or log in first.
+                </p>
+              </div>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- 7. SIDE PANEL (Desktop Only, Read-Only Budget Summary & Route Map) -->
+        <aside class="hidden lg:flex lg:col-span-4 flex-col gap-6 sticky top-24">
+          
+          <!-- Read-only Live Budget Summary Card -->
+          <div class="bg-white rounded-3xl p-5 border border-[#bba591]/40 shadow-sm flex flex-col gap-4">
+            <div class="flex items-center justify-between pb-3 border-b border-[#bba591]/30">
+              <div>
+                <span class="text-[10px] uppercase font-bold tracking-wider text-[#a28973]">Financial Overview</span>
+                <h3 class="font-serif-title text-base font-bold text-[#6e4f32]">Estimated Trip Budget</h3>
+              </div>
+              <span class="px-2 py-0.5 rounded-md bg-[#d9c9ba]/30 text-[#6e4f32] text-[10px] font-semibold border border-[#bba591]/40">
+                Comfort Tier
+              </span>
+            </div>
+
+            <!-- Big Stat & Progress Bar -->
+            <div>
+              <div class="flex items-baseline justify-between mb-1.5">
+                <span class="font-serif-title text-2xl font-bold text-[#6e4f32]">₹23,400</span>
+                <span class="text-xs text-[#a28973]">of ₹25,000 target</span>
+              </div>
+              <!-- Progress Bar -->
+              <div class="w-full h-2.5 bg-[#f1eae2] rounded-full overflow-hidden p-0.5 border border-[#bba591]/30">
+                <div class="h-full bg-[#8c6e52] rounded-full" style="width: 93.6%;"></div>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-[#a28973] mt-1.5">
+                <span>93.6% allocated</span>
+                <span class="text-[#6e4f32] font-medium">+₹1,600 buffer left</span>
+              </div>
+            </div>
+
+            <!-- Category Breakdown Rows (Read-only) -->
+            <div class="space-y-2.5 pt-2 border-t border-[#bba591]/25 text-xs">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-[#6e4f32]">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#6e4f32]"></span>
+                  <span>Boutique Stays (4 nights)</span>
+                </div>
+                <span class="font-semibold text-[#6e4f32]">₹11,200</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-[#6e4f32]">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#8c6e52]"></span>
+                  <span>Transport &amp; Scooter</span>
+                </div>
+                <span class="font-semibold text-[#6e4f32]">₹5,100</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-[#6e4f32]">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#a28973]"></span>
+                  <span>Activities &amp; Farm Tours</span>
+                </div>
+                <span class="font-semibold text-[#6e4f32]">₹3,800</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-[#6e4f32]">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#d9c9ba]"></span>
+                  <span>Food, Cafes &amp; Drinks</span>
+                </div>
+                <span class="font-semibold text-[#6e4f32]">₹3,300</span>
+              </div>
+            </div>
+
+            <!-- Prompt to save for detailed spreadsheets -->
+            <div class="p-3 rounded-xl bg-[#f7f2ec] border border-[#bba591]/30 text-center">
+              <span class="text-[11px] text-[#8c6e52]">Want to adjust budgets or currencies?</span>
+              <button onclick="triggerToast('save')" class="block w-full text-center text-xs font-semibold text-[#6e4f32] hover:text-[#8c6e52] mt-1 underline underline-offset-2">
+                Save a copy to customize →
+              </button>
+            </div>
+          </div>
+
+          <!-- Day 1 Trail Map Mini Preview -->
+          <div class="bg-white rounded-3xl p-5 border border-[#bba591]/40 shadow-sm flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-[10px] uppercase font-bold tracking-wider text-[#a28973]">Route Geography</span>
+                <h3 class="font-serif-title text-base font-bold text-[#6e4f32]">Day 1 Trail Map</h3>
+              </div>
+              <span class="text-xs text-[#8c6e52] font-medium bg-[#f1eae2] px-2 py-0.5 rounded-md border border-[#bba591]/30">
+                14.2 km total
+              </span>
+            </div>
+
+            <!-- Cartographic SVG Mockup Map -->
+            <div class="relative w-full h-44 rounded-2xl overflow-hidden bg-[#e8e2d8] border border-[#bba591]/40 flex items-center justify-center">
+              <svg class="w-full h-full object-cover" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Ocean background -->
+                <rect width="320" height="180" fill="#cbdad5"></rect>
+                <!-- Land Mass -->
+                <path d="M70,0 C120,40 100,90 140,110 C180,130 190,160 210,180 L320,180 L320,0 Z" fill="#e8decb"></path>
+                <path d="M120,30 C150,50 170,40 220,55 C270,70 290,60 320,80 L320,0 Z" fill="#ded2bc"></path>
+                <!-- River channel (Mandovi) -->
+                <path d="M80,85 C140,88 180,75 250,90 C290,100 320,95 320,95" stroke="#cbdad5" stroke-width="12" stroke-linecap="round"></path>
+                <!-- Dashed Trail Route -->
+                <path d="M95,78 Q 140,82 175,95 Q 210,110 235,90" stroke="#8c6e52" stroke-width="2.5" stroke-dasharray="4 3"></path>
+                <!-- Pin 1: Panjim Fontainhas -->
+                <circle cx="140" cy="85" r="7" fill="#6e4f32" stroke="#ffffff" stroke-width="2"></circle>
+                <text x="140" y="88" fill="#ffffff" font-size="8" font-family="sans-serif" text-anchor="middle" font-weight="bold">1</text>
+                <!-- Pin 2: Mum's Kitchen -->
+                <circle cx="175" cy="95" r="7" fill="#6e4f32" stroke="#ffffff" stroke-width="2"></circle>
+                <text x="175" y="98" fill="#ffffff" font-size="8" font-family="sans-serif" text-anchor="middle" font-weight="bold">2</text>
+                <!-- Pin 3: Reis Magos -->
+                <circle cx="95" cy="78" r="7" fill="#8c6e52" stroke="#ffffff" stroke-width="2"></circle>
+                <text x="95" y="81" fill="#ffffff" font-size="8" font-family="sans-serif" text-anchor="middle" font-weight="bold">3</text>
+              </svg>
+              <!-- Ride duration chip -->
+              <div class="absolute bottom-2.5 right-2.5 bg-[#fbf7f2]/95 backdrop-blur-xs text-[10px] text-[#6e4f32] font-semibold px-2 py-0.5 rounded-full shadow-xs border border-[#bba591]/40 flex items-center gap-1">
+                <i data-lucide="clock" class="w-3 h-3 text-[#8c6e52]"></i>
+                <span>28 min ride time</span>
+              </div>
+            </div>
+
+            <button onclick="triggerTabNotice('Interactive Map')" class="w-full py-2 px-3 rounded-xl bg-[#f7f2ec] hover:bg-[#d9c9ba]/40 border border-[#bba591]/40 text-xs font-semibold text-[#6e4f32] transition flex items-center justify-center gap-1.5">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#8c6e52]"></i>
+              <span>Open full interactive route map</span>
+            </button>
+          </div>
+
+          <!-- TripAi Brand Card -->
+          <div class="p-4 rounded-2xl bg-[#d9c9ba]/30 border border-[#bba591]/40 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-[#6e4f32] text-white flex items-center justify-center shrink-0">
+              <i data-lucide="heart" class="w-4 h-4 text-[#d9c9ba]"></i>
+            </div>
+            <div class="text-[11px] text-[#6e4f32]/90 leading-tight">
+              <strong>Crafted with TripAi:</strong> Personalized AI journeys that balance cultural depth, relaxation, and local heritage.
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </main>
+
+    <!-- ALTERNATIVE STATE VIEW: LINK UNAVAILABLE STATE (Hidden by default, switched via controls) -->
+    <section id="stateLinkUnavailable" class="hidden flex-1 w-full max-w-[640px] mx-auto px-4 py-20 text-center my-auto">
+      <div class="bg-white rounded-3xl p-8 sm:p-12 border border-[#bba591]/40 shadow-sm flex flex-col items-center">
+        <!-- Quiet illustration compass / journal icon -->
+        <div class="w-20 h-20 rounded-full bg-[#f1eae2] text-[#8c6e52] flex items-center justify-center mb-5 border border-[#bba591]/50 shadow-inner">
+          <i data-lucide="lock" class="w-10 h-10 text-[#a28973]"></i>
+        </div>
+        <span class="text-xs uppercase font-bold tracking-widest text-[#a28973] mb-1">Trip Sharing Ended</span>
+        <h2 class="font-serif-title text-3xl font-bold text-[#6e4f32] mb-3">This trip is no longer shared</h2>
+        <p class="text-sm text-[#6e4f32]/80 leading-relaxed max-w-md mb-8">
+          The traveler who created this plan has turned off public link sharing or updated their privacy settings.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
+          <button onclick="switchState('loggedOut')" class="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#6e4f32] hover:bg-[#8c6e52] text-white text-sm font-semibold transition shadow-sm">
+            Plan your own trip
+          </button>
+          <button onclick="switchState('loggedOut')" class="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#f1eae2] hover:bg-[#d9c9ba] text-[#6e4f32] text-sm font-medium transition border border-[#bba591]/50">
+            Explore curated itineraries
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALTERNATIVE STATE VIEW: TRIP NOT FOUND STATE (Hidden by default) -->
+    <section id="stateTripNotFound" class="hidden flex-1 w-full max-w-[640px] mx-auto px-4 py-20 text-center my-auto">
+      <div class="bg-white rounded-3xl p-8 sm:p-12 border border-[#bba591]/40 shadow-sm flex flex-col items-center">
+        <div class="w-20 h-20 rounded-full bg-[#f1eae2] text-[#8c6e52] flex items-center justify-center mb-5 border border-[#bba591]/50 shadow-inner">
+          <i data-lucide="compass" class="w-10 h-10 text-[#a28973]"></i>
+        </div>
+        <span class="text-xs uppercase font-bold tracking-widest text-[#a28973] mb-1">404 · Link Not Found</span>
+        <h2 class="font-serif-title text-3xl font-bold text-[#6e4f32] mb-3">We couldn't find this trip</h2>
+        <p class="text-sm text-[#6e4f32]/80 leading-relaxed max-w-md mb-8">
+          The link might be mistyped, expired, or the trip plan was moved. Let's get you back on course.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
+          <button onclick="switchState('loggedOut')" class="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#6e4f32] hover:bg-[#8c6e52] text-white text-sm font-semibold transition shadow-sm">
+            Create a new itinerary
+          </button>
+          <button onclick="switchState('loggedOut')" class="w-full sm:w-auto px-6 py-2.5 rounded-full bg-[#f1eae2] hover:bg-[#d9c9ba] text-[#6e4f32] text-sm font-medium transition border border-[#bba591]/50">
+            Back to TripAi home
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MOBILE STICKY BOTTOM ACTION BAR (Visible on mobile/responsive or mobile frame) -->
+    <div id="mobileBottomBar" class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#fbf7f2]/95 backdrop-blur-md border-t border-[#bba591]/40 p-3 px-4 flex items-center justify-between gap-3 shadow-lg">
+      <div class="flex flex-col">
+        <span class="text-[10px] text-[#a28973] uppercase font-semibold">Shared by Aarav</span>
+        <span class="font-serif-title text-sm font-bold text-[#6e4f32]">Goa 5-Day Plan</span>
+      </div>
+      <button onclick="triggerToast('save')" class="px-5 py-2.5 rounded-full bg-[#6e4f32] text-white text-xs font-semibold shadow-sm flex items-center gap-1.5">
+        <i data-lucide="bookmark" class="w-3.5 h-3.5"></i>
+        <span>Save to my trips</span>
+      </button>
+    </div>
+
+    <!-- 9. MINIMAL PUBLIC FOOTER ("Made with TripAi" acceptable on public page only) -->
+    <footer class="w-full border-t border-[#bba591]/30 py-6 px-4 bg-[#fbf7f2]/60 text-center text-xs text-[#a28973] mb-14 lg:mb-0">
+      <div class="max-w-[1200px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-1.5">
+          <i data-lucide="compass" class="w-3.5 h-3.5 text-[#8c6e52]"></i>
+          <span>Made with <strong>TripAi</strong> — The AI Travel Itinerary Planner</span>
+        </div>
+        <div class="flex items-center gap-4 text-[11px]">
+          <a href="#" class="hover:text-[#6e4f32] transition">Privacy</a>
+          <a href="#" class="hover:text-[#6e4f32] transition">Terms</a>
+          <a href="#" class="hover:text-[#6e4f32] transition">Create your own trip</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // State switcher logic
+    function switchState(stateName) {
+      const mainContent = document.getElementById('mainTripContent');
+      const sharedBanner = document.getElementById('sharedByBanner');
+      const unavailableState = document.getElementById('stateLinkUnavailable');
+      const notFoundState = document.getElementById('stateTripNotFound');
+      const navLoggedOut = document.getElementById('nav-logged-out');
+      const navLoggedIn = document.getElementById('nav-logged-in');
+
+      // Reset button highlights in switcher
+      const buttons = document.querySelectorAll('#stateSwitcher button');
+      buttons.forEach(btn => {
+        btn.classList.remove('bg-[#6e4f32]', 'text-white');
+        btn.classList.add('bg-[#3d2e20]', 'text-[#d9c9ba]');
+      });
+      const activeBtn = document.getElementById('btn-' + stateName);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-[#6e4f32]', 'text-white');
+        activeBtn.classList.remove('bg-[#3d2e20]', 'text-[#d9c9ba]');
+      }
+
+      // Hide all dynamic states first
+      unavailableState.classList.add('hidden');
+      notFoundState.classList.add('hidden');
+      mainContent.classList.remove('hidden');
+      sharedBanner.classList.remove('hidden');
+
+      if (stateName === 'loggedOut') {
+        navLoggedOut.classList.remove('hidden');
+        navLoggedIn.classList.add('hidden');
+      } else if (stateName === 'loggedIn') {
+        navLoggedOut.classList.add('hidden');
+        navLoggedIn.classList.remove('hidden');
+        triggerToast('info', 'Logged-in visitor view: Avatar and "My Trips" active');
+      } else if (stateName === 'toastSave') {
+        triggerToast('save');
+      } else if (stateName === 'toastCopy') {
+        triggerToast('copy');
+      } else if (stateName === 'linkUnavailable') {
+        mainContent.classList.add('hidden');
+        sharedBanner.classList.add('hidden');
+        unavailableState.classList.remove('hidden');
+      } else if (stateName === 'tripNotFound') {
+        mainContent.classList.add('hidden');
+        sharedBanner.classList.add('hidden');
+        notFoundState.classList.remove('hidden');
+      }
+
+      lucide.createIcons();
+    }
+
+    // Toast handler
+    let toastTimeout;
+    function triggerToast(type, customText) {
+      const toast = document.getElementById('toastNotification');
+      const toastMsg = document.getElementById('toastMessage');
+
+      if (type === 'save') {
+        toastMsg.textContent = '✓ Saved a copy of this itinerary to My Trips!';
+      } else if (type === 'copy') {
+        toastMsg.textContent = '✓ Shared link copied to clipboard!';
+      } else if (customText) {
+        toastMsg.textContent = customText;
+      }
+
+      // Animate in
+      toast.classList.remove('-translate-y-12', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('-translate-y-12', 'opacity-0', 'pointer-events-none');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3200);
+    }
+
+    function triggerTabNotice(tabName) {
+      triggerToast('info', `Switched to read-only ${tabName} view.`);
+    }
+
+    // Toggle Mobile Frame Viewport Simulation
+    let isMobile = false;
+    function toggleMobileFrame() {
+      const container = document.getElementById('pageViewportContainer');
+      const btn = document.getElementById('btn-mobile');
+      isMobile = !isMobile;
+
+      if (isMobile) {
+        container.classList.add('max-w-[414px]', 'mx-auto', 'border-x', 'border-[#bba591]/50', 'shadow-2xl', 'bg-[#f7f2ec]');
+        btn.classList.add('bg-[#6e4f32]', 'text-white');
+        btn.classList.remove('bg-[#3d2e20]', 'text-[#d9c9ba]');
+        triggerToast('info', 'Mobile viewport frame preview active (390–414px)');
+      } else {
+        container.classList.remove('max-w-[414px]', 'mx-auto', 'border-x', 'border-[#bba591]/50', 'shadow-2xl', 'bg-[#f7f2ec]');
+        btn.classList.remove('bg-[#6e4f32]', 'text-white');
+        btn.classList.add('bg-[#3d2e20]', 'text-[#d9c9ba]');
+      }
+    }
+  </script>
+
+</body></html>

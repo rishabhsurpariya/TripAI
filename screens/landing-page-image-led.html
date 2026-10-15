@@ -1,0 +1,795 @@
+<!DOCTYPE html><html lang="en" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-container":"#795d42","inverse-primary":"#e9bf9a","on-tertiary-fixed-variant":"#574331","on-tertiary-container":"#e2c5ad","tertiary":"#4d3a28","error":"#ba1a1a","tertiary-container":"#66513e","surface-container-lowest":"#ffffff","primary-container":"#6e4f32","on-tertiary-fixed":"#271809","on-secondary":"#ffffff","tertiary-fixed":"#fbddc4","on-primary-container":"#edc39e","surface-container":"#f2ede7","surface-bright":"#fef9f2","surface-container-low":"#f8f3ed","primary-fixed":"#ffdcbf","secondary-fixed":"#ffdcbe","primary":"#54381d","on-primary-fixed":"#2c1601","on-primary-fixed-variant":"#5e4125","surface-tint":"#78583a","surface-container-high":"#ece7e1","secondary-fixed-dim":"#e4c09f","primary-fixed-dim":"#e9bf9a","outline":"#81756b","on-error-container":"#93000a","outline-variant":"#d3c4b9","on-tertiary":"#ffffff","secondary":"#75593e","secondary-container":"#ffd9b7","inverse-surface":"#32302c","surface-dim":"#ded9d4","on-secondary-fixed-variant":"#5b4229","on-surface":"#1d1b18","on-error":"#ffffff","on-secondary-fixed":"#2a1703","tertiary-fixed-dim":"#dec1a9","on-primary":"#ffffff","error-container":"#ffdad6","inverse-on-surface":"#f5f0ea","background":"#fef9f2","surface-variant":"#e6e2dc","surface":"#fef9f2","on-background":"#1d1b18","surface-container-highest":"#e6e2dc","on-surface-variant":"#4f453c"},borderRadius:{"DEFAULT":"1rem","lg":"2rem","xl":"3rem","full":"9999px"},spacing:{"space-lg":"1.5rem","space-xl":"2.5rem","space-sm":"0.5rem","gutter-mobile":"1rem","margin-mobile":"1.25rem","space-xs":"0.25rem","space-md":"1rem","gutter":"1.5rem","margin":"3rem"},fontFamily:{"body-sm":["Plus Jakarta Sans"],"label-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"headline-lg":["Playfair Display"],"title-lg":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"display":["Playfair Display"],"headline-lg-mobile":["Playfair Display"],"headline-sm":["Playfair Display"],"headline-md":["Playfair Display"],"body-lg":["Plus Jakarta Sans"],"display-mobile":["Playfair Display"],"label-sm":["Plus Jakarta Sans"],"title-md":["Plus Jakarta Sans"]},fontSize:{"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.015em",fontWeight:"400"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.02em",fontWeight:"500"}],"body-md":["14px",{lineHeight:"22px",letterSpacing:"0.01em",fontWeight:"400"}],"headline-lg":["40px",{lineHeight:"48px",letterSpacing:"-0.015em",fontWeight:"600"}],"title-lg":["18px",{lineHeight:"26px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"500"}],"display":["56px",{lineHeight:"64px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-lg-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-sm":["22px",{lineHeight:"30px",letterSpacing:"0em",fontWeight:"500"}],"headline-md":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"500"}],"body-lg":["16px",{lineHeight:"26px",letterSpacing:"0.01em",fontWeight:"400"}],"display-mobile":["38px",{lineHeight:"44px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"title-md":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}]}}}};</script><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&amp;family=Instrument+Serif:ital@0;1&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet" class=""><style class="">.aesthetic-headline, h1, h2, h3, .font-serif, .font-headline-lg, .font-headline-sm { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important; letter-spacing: -0.025em; font-weight: 600; color: #54381d; }</style></head><body class="bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col"><header class="fixed top-0 left-0 right-0 z-50 bg-[#f7f2ec]/95 backdrop-blur-md border-b border-[#bba591]/40 shadow-[0_10px_30px_-10px_rgba(110,79,50,0.06)]"><div class="h-16 max-w-[1320px] mx-auto px-margin-mobile lg:px-margin flex items-center justify-between"><a class="flex items-center gap-space-sm group" data-path="landing" href="#"><span class="material-symbols-outlined text-primary text-[26px] transition-transform duration-300 group-hover:rotate-45">explore</span><span class="font-headline-sm text-headline-sm text-primary font-semibold tracking-tight">TripAi</span></a><div class="flex items-center gap-space-md lg:gap-space-lg"><nav data-active-classes="text-primary font-semibold"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors py-2 px-3" data-path="login" href="#">Log in</a></nav><a class="inline-flex items-center justify-center font-label-lg text-label-lg bg-primary-container text-on-primary hover:bg-secondary transition-all duration-200 rounded-full px-5 py-2.5 shadow-[0_10px_30px_-10px_rgba(110,79,50,0.18)] active:scale-95" data-path="signup" href="#">Get started</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full flex-1 pt-16 bg-surface max-w-[1320px] mx-auto px-margin-mobile lg:px-margin"><link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+  .font-handwriting {
+    font-family: 'Caveat', cursive;
+  }
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0px) rotate(-3deg); }
+    50% { transform: translateY(-8px) rotate(-1deg); }
+  }
+  @keyframes floatOpposite {
+    0%, 100% { transform: translateY(0px) rotate(4deg); }
+    50% { transform: translateY(-10px) rotate(2deg); }
+  }
+  @keyframes planeFlight {
+    0% { offset-distance: 0%; }
+    100% { offset-distance: 100%; }
+  }
+  .animate-float-slow {
+    animation: floatSlow 6s ease-in-out infinite;
+  }
+  .animate-float-alt {
+    animation: floatOpposite 7s ease-in-out infinite;
+  }
+  .washi-tape {
+    background: rgba(230, 218, 204, 0.85);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 1px 3px rgba(110, 79, 50, 0.08);
+  }
+</style>
+<div class="flex flex-col w-full text-primary overflow-hidden">
+<!-- Interactive State Switcher Demo Bar -->
+<div class="w-full flex justify-center py-3">
+<div class="inline-flex items-center gap-1.5 p-1.5 bg-[#d9c9ba]/40 rounded-full shadow-sm text-xs font-label-md">
+<button class="mode-btn px-4 py-1.5 rounded-full bg-primary-container text-surface transition-all font-medium" id="btn-mode-1" onclick="switchTripMode(1)">1. Full Visual Story</button>
+<button class="mode-btn px-4 py-1.5 rounded-full hover:bg-surface/60 text-secondary transition-all font-medium" id="btn-mode-2" onclick="switchTripMode(2)">2. Highlight Callouts</button>
+<button class="mode-btn px-4 py-1.5 rounded-full hover:bg-surface/60 text-secondary transition-all font-medium" id="btn-mode-3" onclick="switchTripMode(3)">3. Scrapbook Focus</button>
+<button class="mode-btn px-4 py-1.5 rounded-full hover:bg-surface/60 text-secondary transition-all font-medium flex items-center gap-1" id="btn-mode-4" onclick="switchTripMode(4)">
+<span class="material-symbols-outlined text-[14px]">smartphone</span> 4. Mobile View
+      </button>
+</div>
+</div>
+<div class="w-full flex flex-col transition-all duration-500 ease-out mx-auto" id="main-canvas-wrapper">
+<!-- 1. HERO SECTION: VISUAL FIRST SCRAPBOOK -->
+<section class="relative pt-6 pb-20 lg:pb-32 px-2 sm:px-4">
+<div class="max-w-4xl mx-auto text-center flex flex-col items-center">
+<!-- Max 6 words headline -->
+<h1 class="aesthetic-headline text-[40px] sm:text-[56px] lg:text-[64px] leading-[1.1] text-primary tracking-tight font-semibold" style="font-family: Fraunces, &quot;Instrument Serif&quot;, Georgia, serif; font-weight: 500; letter-spacing: -0.02em;">Your trip, planned in <em class="italic font-normal font-serif">seconds.</em></h1>
+<!-- Max 8 words caption -->
+<p class="mt-4 font-body-lg text-secondary text-lg sm:text-xl">
+          Enter a place and a budget.
+        </p>
+<!-- CTA Buttons -->
+<div class="mt-8 flex items-center gap-4 flex-wrap justify-center">
+<a class="px-8 py-3.5 rounded-full bg-primary-container text-surface hover:bg-secondary font-label-lg transition-all duration-200 shadow-[0_12px_28px_-8px_rgba(110,79,50,0.22)] active:scale-95" href="#">
+            Get started
+          </a>
+<a class="px-7 py-3.5 rounded-full bg-transparent border border-secondary text-primary hover:bg-[#d9c9ba]/30 font-label-lg transition-all duration-200" href="#sample-trips">
+            See a sample trip
+          </a>
+</div>
+</div>
+<!-- STAR VISUAL: Corkboard Collage UI Showcase -->
+<div class="relative max-w-5xl mx-auto mt-14 sm:mt-18 min-h-[580px] sm:min-h-[640px] flex items-center justify-center">
+<!-- Ambient Warm Backlight Glow -->
+<div class="absolute inset-0 bg-gradient-to-tr from-[#d9c9ba]/30 via-[#fbddc4]/20 to-transparent rounded-[3rem] blur-2xl -z-10"></div>
+<!-- Central Trip Dossier (Goa) -->
+<div class="relative w-full max-w-lg sm:max-w-xl bg-surface-container-lowest rounded-[28px] p-5 sm:p-7 shadow-[0_22px_45px_-12px_rgba(110,79,50,0.18)] rotate-[-1.5deg] z-20 transition-transform duration-300 hover:rotate-0">
+<!-- Dossier Header & Tag -->
+<div class="flex items-center justify-between pb-4">
+<div class="flex items-center gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="font-headline-sm text-lg text-primary font-semibold">Goa Heritage Escape</span>
+<span class="px-2.5 py-0.5 rounded-full bg-[#d9c9ba]/40 text-primary text-[11px] font-label-sm">5 Days · Curated</span>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]">auto_awesome</span>
+</div>
+<!-- Destination Photo -->
+<div class="relative w-full h-56 sm:h-64 rounded-2xl overflow-hidden shadow-inner group">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Warm sunlight shining on a serene historic Portuguese heritage villa courtyard in Goa India with lush bougainvillea, red clay roof tiles, terracotta garden pots, and vintage wooden veranda, bathed in soft afternoon sun" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA48wpMMOZOzKXbd1142-H1AhaWi5koc4cjUwQQk_BnbhwbT3XB5XQyTFKL9s2GZ2a7G2noN3Km06QgfPm7MWttC3EQU2VPVKMPOHr9Jx1Xokt8-VTx9owO_eYXQg4YHYzK9uCp8s2_QsbfF_7r4KV5tvlwiFSnrAB0ib5ALw0k6CXgeyIDWJfkz0pUB1LZ_ldMZFPaauziHosF1YBhQ5m6xAXtzOmSG4p6pdSYmwiyJJ6iYX69P9o2">
+<div class="absolute bottom-3 left-3 px-3 py-1 bg-surface/90 backdrop-blur-sm rounded-full text-xs font-label-md text-primary flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">hotel</span> Panaji &amp; Reis Magos
+            </div>
+</div>
+<!-- Trip Quick Metrics Bar -->
+<div class="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-[#bba591]/25">
+<div class="bg-surface-container-low rounded-xl p-2.5 text-center">
+<div class="text-[11px] text-secondary font-label-sm uppercase tracking-wide">Pace</div>
+<div class="text-sm font-semibold text-primary mt-0.5">Leisurely</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-2.5 text-center">
+<div class="text-[11px] text-secondary font-label-sm uppercase tracking-wide">Vibe</div>
+<div class="text-sm font-semibold text-primary mt-0.5">Architecture</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-2.5 text-center">
+<div class="text-[11px] text-secondary font-label-sm uppercase tracking-wide">Transit</div>
+<div class="text-sm font-semibold text-primary mt-0.5">Vintage Vespa</div>
+</div>
+</div>
+</div>
+<!-- Overlapping Card 1: Fontainhas Morning Walk -->
+<div class="absolute left-2 sm:-left-4 top-10 sm:top-16 w-56 sm:w-64 bg-surface-container-lowest rounded-2xl p-3.5 shadow-[0_16px_36px_-10px_rgba(110,79,50,0.14)] -rotate-6 z-30 transition-transform duration-300 hover:rotate-0 hover:scale-105">
+<div class="washi-tape absolute -top-3 left-12 w-16 h-5 -rotate-2"></div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs px-2 py-0.5 rounded-full bg-[#f2ede7] text-secondary font-label-sm">09:30 AM</span>
+<span class="text-xs font-semibold text-primary truncate">Latin Quarter Stroll</span>
+</div>
+<div class="w-full h-24 rounded-xl overflow-hidden mb-2">
+<img class="w-full h-full object-cover" data-alt="Charming vibrant yellow and pale blue pastel Portuguese colonial houses in Fontainhas Goa with wooden balconies and cobblestone alleys in morning sun" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAN8WtjJo2v-LH50dXFhE5youLuqZxMolnDMkR_zzZYEHdFTsB9rzrGcp09AV-qIiMlfnO9JpzwLrpzKH1YL0C_UlAmnUe7THXqgwcq3QAygvrDqnZ0NYGT9ihLz2gVobs0z3kPE9ewoP3G3cRHXm0w7CuZNwFv5XUJ3TwVz7ci3Q25BXlXj7vn27Y0DgRmZZc3mpN7cUY-szLmTn3mxEFfsuHThrNdzJA21yPGundJno8wcPtpmonl">
+</div>
+<div class="text-[11px] text-secondary flex items-center justify-between">
+<span class="">Fontainhas Walk</span>
+<span class="flex items-center gap-0.5 text-primary font-medium">
+<span class="material-symbols-outlined text-[13px]">star</span> 4.9
+            </span>
+</div>
+</div>
+<!-- Overlapping Card 2: Mum's Kitchen Lunch -->
+<div class="absolute -right-2 sm:-right-8 top-12 sm:top-20 w-52 sm:w-60 bg-surface-container-lowest rounded-2xl p-3.5 shadow-[0_16px_36px_-10px_rgba(110,79,50,0.14)] rotate-6 z-25 transition-transform duration-300 hover:rotate-0 hover:scale-105">
+<div class="washi-tape absolute -top-3 right-10 w-16 h-5 rotate-3"></div>
+<div class="flex items-center gap-2 mb-2">
+<span class="text-xs px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm">01:00 PM</span>
+<span class="text-xs font-semibold text-primary">Mum's Kitchen</span>
+</div>
+<div class="w-full h-20 rounded-xl overflow-hidden mb-2">
+<img class="w-full h-full object-cover" data-alt="Authentic traditional Goan lunch served in clay pots with local seafood coconut curry fresh herbs and warm poi bread on rustic wooden dining table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDg7kDNcvluVHhLlcxWHNtpRdQGy6YzJlverdOkxR27VnMj1zr5g5b3gFQb3_bkH7dWYtHZSo4IFtFZCLzsYDZOu1ApPo_kaWnYiw-6MCGZhtUgKax-Yv56kVrGLfRvzEGzvBcBCJa2yearN-cONskAhMA_bZtwj5miVBEVUpYGV670Iobp1ZCkCKgE3Fg_RTr29AcycaMHASC_koxum-Fal2_2_WvZxS_qxV6eUqBM3jDQ_kV3vmp">
+</div>
+<div class="text-[11px] text-secondary flex items-center justify-between">
+<span class="">Heritage Dining</span>
+<span class="font-medium text-primary">₹1,800 for two</span>
+</div>
+</div>
+<!-- Sticky Note 1: Golden Photo Hour (Floats) -->
+<div class="absolute left-6 sm:left-12 -bottom-4 sm:bottom-4 w-44 bg-[#fffae0] p-4 rounded-md shadow-[0_10px_20px_-6px_rgba(110,79,50,0.12)] z-35 animate-float-slow">
+<div class="washi-tape absolute -top-2.5 left-1/2 -translate-x-1/2 w-12 h-4 rotate-1"></div>
+<span class="material-symbols-outlined text-[#a28973] text-[18px]">wb_sunny</span>
+<p class="font-handwriting text-xl text-primary leading-tight mt-1">Golden photo hour 9am!</p>
+<p class="font-handwriting text-base text-secondary mt-0.5">Light hits the yellow walls</p>
+</div>
+<!-- Sticky Note 2: Fresh poi bread -->
+<div class="absolute -right-2 sm:right-6 bottom-16 sm:bottom-24 w-40 bg-[#fde8d7] p-3.5 rounded-md shadow-[0_10px_20px_-6px_rgba(110,79,50,0.12)] z-35 animate-float-alt">
+<div class="washi-tape absolute -top-2.5 left-1/2 -translate-x-1/2 w-12 h-4 -rotate-2"></div>
+<p class="font-handwriting text-2xl text-primary leading-none">Fresh poi bread!</p>
+<p class="font-handwriting text-base text-secondary mt-1">From local bakery cart</p>
+</div>
+<!-- Mini Budget Ring Meter Card -->
+<div class="absolute left-1/2 -translate-x-1/2 -bottom-10 sm:-bottom-8 bg-surface rounded-2xl px-5 py-3 shadow-[0_14px_30px_-8px_rgba(110,79,50,0.16)] flex items-center gap-4 z-40 border border-[#bba591]/30">
+<div class="relative w-12 h-12 flex items-center justify-center">
+<svg class="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
+<path class="text-[#d9c9ba]/50" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="92, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="material-symbols-outlined absolute text-[16px] text-primary">account_balance_wallet</span>
+</div>
+<div>
+<div class="text-[11px] text-secondary font-label-sm uppercase">Smart Budget Bar</div>
+<div class="text-sm font-semibold text-primary flex items-center gap-1.5">
+<span class="">₹23,400</span>
+<span class="text-xs font-normal text-secondary">/ ₹25,000</span>
+</div>
+</div>
+<div class="w-2 h-2 rounded-full bg-emerald-600"></div>
+</div>
+</div>
+</section>
+<!-- 2. HOW IT WORKS: VISUAL FLOW (STRICT: NO PARAGRAPHS, MAX 6-WORD HEADLINE) -->
+<section class="py-16 lg:py-24 px-4 bg-[#f2ede7]/60 rounded-3xl my-6">
+<div class="max-w-5xl mx-auto">
+<!-- Max 6 words headline -->
+<div class="text-center mb-14">
+<span class="text-xs uppercase tracking-widest text-secondary font-label-sm">Simplicity</span>
+<h2 class="aesthetic-headline text-3xl sm:text-4xl text-primary font-semibold mt-1 tracking-tight" style="font-family: Fraunces, &quot;Instrument Serif&quot;, Georgia, serif; font-weight: 500; letter-spacing: -0.02em;">
+            Three steps to your trip
+          </h2>
+</div>
+<!-- 3 Cards Horizontal Flow with Connected Path -->
+<div class="relative grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+<!-- Animated Paper Airplane SVG line connecting across cards on desktop -->
+<div class="hidden md:block absolute top-1/2 left-10 right-10 -translate-y-16 -z-0 pointer-events-none">
+<svg class="w-full h-12" fill="none" viewBox="0 0 800 48">
+<path d="M 20 24 Q 200 -8 400 24 T 780 24" stroke="#bba591" stroke-dasharray="6 6" stroke-width="2"></path>
+</svg>
+<span class="material-symbols-outlined absolute right-4 top-1 text-primary text-[20px] rotate-45">flight</span>
+</div>
+<!-- Step 1 Card: Form Inputs -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-[0_10px_25px_-8px_rgba(110,79,50,0.08)] flex flex-col justify-between relative z-10 transition-all duration-300 hover:-translate-y-1">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-7 h-7 rounded-full bg-[#f2ede7] text-primary flex items-center justify-center font-bold text-xs">1</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">tune</span>
+</div>
+<!-- UI Mockup Snippet -->
+<div class="space-y-2.5 bg-[#f8f3ed] p-3.5 rounded-xl">
+<div class="flex items-center gap-2 bg-surface px-3 py-2 rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">location_on</span>
+<span class="text-xs font-medium text-primary">Goa, India</span>
+</div>
+<div class="flex items-center gap-2 bg-surface px-3 py-2 rounded-lg shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">payments</span>
+<span class="text-xs font-medium text-primary">₹25,000 budget</span>
+</div>
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="px-2 py-0.5 rounded-full bg-primary text-surface text-[10px] font-label-sm">5 Days</span>
+<span class="px-2 py-0.5 rounded-full bg-[#d9c9ba]/50 text-primary text-[10px] font-label-sm">Cultural</span>
+<span class="px-2 py-0.5 rounded-full bg-[#d9c9ba]/50 text-primary text-[10px] font-label-sm">Relaxed</span>
+</div>
+</div>
+</div>
+<!-- 2 Words Caption -->
+<div class="mt-6 pt-4 border-t border-[#bba591]/20 flex items-center justify-between">
+<span class="font-headline-sm text-lg font-semibold text-primary">Tell us</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">arrow_forward</span>
+</div>
+</div>
+<!-- Step 2 Card: Instant Itinerary Generation -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-[0_10px_25px_-8px_rgba(110,79,50,0.08)] flex flex-col justify-between relative z-10 transition-all duration-300 hover:-translate-y-1">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-7 h-7 rounded-full bg-[#f2ede7] text-primary flex items-center justify-center font-bold text-xs">2</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">magic_button</span>
+</div>
+<!-- Graphic: Stacked Cards & Glowing Sparkle -->
+<div class="relative bg-[#f8f3ed] p-3.5 rounded-xl h-36 flex flex-col justify-center items-center overflow-hidden">
+<div class="absolute -top-3 w-4/5 h-10 bg-surface rounded-xl shadow-sm opacity-60"></div>
+<div class="w-full bg-surface rounded-xl p-3 shadow-md z-10 space-y-1.5">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold text-primary">Day 1: Old Heritage</span>
+<span class="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">Optimized</span>
+</div>
+<div class="w-full h-1.5 bg-[#f2ede7] rounded-full overflow-hidden">
+<div class="w-4/5 h-full bg-primary rounded-full"></div>
+</div>
+<div class="text-[10px] text-secondary truncate">Se Cathedral → Fontainhas → Sunset Cruise</div>
+</div>
+<div class="absolute -bottom-2 w-3/4 h-8 bg-surface rounded-lg opacity-40"></div>
+</div>
+</div>
+<!-- 3 Words Caption -->
+<div class="mt-6 pt-4 border-t border-[#bba591]/20 flex items-center justify-between">
+<span class="font-headline-sm text-lg font-semibold text-primary">Get your plan</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">arrow_forward</span>
+</div>
+</div>
+<!-- Step 3 Card: Tactile Personalization -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-[0_10px_25px_-8px_rgba(110,79,50,0.08)] flex flex-col justify-between relative z-10 transition-all duration-300 hover:-translate-y-1">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="w-7 h-7 rounded-full bg-[#f2ede7] text-primary flex items-center justify-center font-bold text-xs">3</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">edit_note</span>
+</div>
+<!-- Graphic: Drag note, washi tape, share -->
+<div class="bg-[#f8f3ed] p-3.5 rounded-xl space-y-2">
+<div class="relative bg-[#fffae0] p-2.5 rounded-lg shadow-sm -rotate-2">
+<span class="font-handwriting text-base text-primary">Book Reis Magos sunset!</span>
+<span class="material-symbols-outlined absolute top-1 right-1 text-[14px] text-secondary">drag_indicator</span>
+</div>
+<div class="flex items-center justify-between bg-surface p-2 rounded-lg text-xs">
+<span class="text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">share</span> Share link
+                  </span>
+<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-medium">Ready</span>
+</div>
+</div>
+</div>
+<!-- 3 Words Caption -->
+<div class="mt-6 pt-4 border-t border-[#bba591]/20 flex items-center justify-between">
+<span class="font-headline-sm text-lg font-semibold text-primary">Make it yours</span>
+<span class="material-symbols-outlined text-secondary text-[18px]">check</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. WHAT YOU GET: INTERACTIVE PRODUCT MOCKUP WITH 5 CALLOUTS -->
+<section class="py-16 lg:py-24 px-2 sm:px-4">
+<div class="max-w-5xl mx-auto">
+<!-- Max 4 words headline -->
+<div class="text-center mb-12">
+<span class="text-xs uppercase tracking-widest text-secondary font-label-sm">Comprehensive</span>
+<h2 class="aesthetic-headline text-3xl sm:text-4xl text-primary font-semibold mt-1 tracking-tight" style="font-family: Fraunces, &quot;Instrument Serif&quot;, Georgia, serif; font-weight: 500; letter-spacing: -0.02em;">
+            Everything in one plan
+          </h2>
+</div>
+<!-- 5 Interactive Floating Callout Badges -->
+<div class="flex flex-wrap items-center justify-center gap-2.5 mb-8" id="callouts-bar">
+<button class="callout-pill flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-primary hover:bg-primary hover:text-surface transition-all text-xs font-semibold shadow-sm" onmouseenter="focusCallout('timeline')">
+<span class="material-symbols-outlined text-[16px]">view_timeline</span> Day-by-day plan
+          </button>
+<button class="callout-pill flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-primary hover:bg-primary hover:text-surface transition-all text-xs font-semibold shadow-sm" onmouseenter="focusCallout('transit')">
+<span class="material-symbols-outlined text-[16px]">directions_boat</span> Transport
+          </button>
+<button class="callout-pill flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-primary hover:bg-primary hover:text-surface transition-all text-xs font-semibold shadow-sm" onmouseenter="focusCallout('hotels')">
+<span class="material-symbols-outlined text-[16px]">night_shelter</span> Hotels
+          </button>
+<button class="callout-pill flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-primary hover:bg-primary hover:text-surface transition-all text-xs font-semibold shadow-sm" onmouseenter="focusCallout('budget')">
+<span class="material-symbols-outlined text-[16px]">savings</span> Budget
+          </button>
+<button class="callout-pill flex items-center gap-1.5 px-4 py-2 rounded-full bg-surface-container text-primary hover:bg-primary hover:text-surface transition-all text-xs font-semibold shadow-sm" onmouseenter="focusCallout('map')">
+<span class="material-symbols-outlined text-[16px]">map</span> Map
+          </button>
+</div>
+<!-- Master Product Browser Frame Mockup -->
+<div class="bg-surface-container-lowest rounded-3xl p-4 sm:p-7 shadow-[0_25px_60px_-15px_rgba(110,79,50,0.14)] border border-[#bba591]/30">
+<!-- Mockup Window Bar -->
+<div class="flex items-center justify-between pb-5 border-b border-[#bba591]/20">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-[#d3c4b9]"></span>
+<span class="w-3 h-3 rounded-full bg-[#d3c4b9]"></span>
+<span class="w-3 h-3 rounded-full bg-[#d3c4b9]"></span>
+<span class="ml-3 text-xs font-mono text-secondary">tripai.com/plan/goa-heritage-5d</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-[#d9c9ba]/30 text-xs font-medium text-primary">PDF Export</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">ios_share</span>
+</div>
+</div>
+<!-- Trip Planner Content Canvas (Split Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+<!-- Left 8-col: Daily Itinerary Schedule -->
+<div class="lg:col-span-7 space-y-4">
+<!-- Tab Navigation -->
+<div class="flex gap-2 border-b border-[#bba591]/20 pb-3 overflow-x-auto">
+<button class="px-3 py-1 rounded-full bg-primary text-surface text-xs font-medium shrink-0">Day 1 · Old Goa</button>
+<button class="px-3 py-1 rounded-full bg-[#f2ede7] text-primary text-xs font-medium shrink-0">Day 2 · Fontainhas</button>
+<button class="px-3 py-1 rounded-full bg-[#f2ede7] text-primary text-xs font-medium shrink-0">Day 3 · Divar Island</button>
+<button class="px-3 py-1 rounded-full bg-[#f2ede7] text-primary text-xs font-medium shrink-0">Day 4 · Spice Route</button>
+</div>
+<!-- Day Timeline Block (Callout 1 Target) -->
+<div class="p-4 rounded-2xl bg-surface transition-all duration-300" id="mockup-timeline">
+<div class="relative pl-6 space-y-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#bba591]">
+<!-- Timeline Node 1 -->
+<div class="relative">
+<span class="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-primary ring-4 ring-surface"></span>
+<div class="text-xs font-medium text-secondary">09:00 AM · Architecture</div>
+<div class="text-sm font-semibold text-primary">Basilica of Bom Jesus</div>
+<div class="text-xs text-secondary mt-0.5">Baroque architecture tour with certified guide</div>
+</div>
+<!-- Timeline Node 2 with Transit Badge (Callout 2 Target) -->
+<div class="relative">
+<span class="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-secondary ring-4 ring-surface"></span>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#ffdcbe] text-primary text-[11px] font-medium my-1" id="mockup-transit">
+<span class="material-symbols-outlined text-[13px]">download_for_offline</span> Mandovi River Ferry · 15m
+                    </div>
+<div class="text-xs font-medium text-secondary">11:30 AM · Island Life</div>
+<div class="text-sm font-semibold text-primary">Divar Island Cycling Trail</div>
+</div>
+<!-- Timeline Node 3 -->
+<div class="relative">
+<span class="absolute -left-6 top-1 w-3.5 h-3.5 rounded-full bg-primary ring-4 ring-surface"></span>
+<div class="text-xs font-medium text-secondary">06:00 PM · Sunset Highlight</div>
+<div class="text-sm font-semibold text-primary">Reis Magos Fort Cocktails</div>
+</div>
+</div>
+</div>
+<!-- Accommodations Card (Callout 3 Target) -->
+<div class="p-4 rounded-2xl bg-surface-container-low transition-all duration-300 flex items-center justify-between" id="mockup-hotels">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Charming boutique seaside villa room balcony overlooking palm trees and ocean in Goa" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbyE6d96goLc_gACz73e5tnmrtgksiRqyqprBnSzwDkDqQ7-beY-jhSmZws_a7RNjf04CdPlorubUE7zJOj1jNTPVde6Fm8gQ8olOVx9FHNJPQdb0L0SH5oCgKicxUaMKWDANUGUaFLcXj82FedHFk4g2jAvib_u85iY_nca6Z10dcd51wUOdxDMTyMQDkMhuhxY0ukTVmMvMsaCU05Pxi-u2OVsE5152rWIbRgrkrPMaIpo_6FNRW">
+</div>
+<div>
+<span class="text-[10px] uppercase font-label-sm tracking-wide text-secondary">Boutique Stay</span>
+<div class="text-sm font-semibold text-primary">Ahilya by the Sea</div>
+<div class="text-xs text-secondary">Dolphin Bay, Nerul · ₹9,200/night</div>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-full bg-primary-container text-surface text-xs font-medium shrink-0">Reserved</span>
+</div>
+</div>
+<!-- Right 5-col: Budget Widget & Map -->
+<div class="lg:col-span-5 space-y-4">
+<!-- Budget Live Card (Callout 4 Target) -->
+<div class="p-4 rounded-2xl bg-[#f2ede7] transition-all duration-300" id="mockup-budget">
+<div class="flex items-center justify-between text-xs font-medium mb-2">
+<span class="text-primary font-semibold">Live Budget Tracker</span>
+<span class="text-secondary">₹23,400 of ₹25,000</span>
+</div>
+<!-- Progress bar -->
+<div class="w-full h-2.5 bg-surface rounded-full overflow-hidden mb-3">
+<div class="h-full bg-primary-container rounded-full" style="width: 88%;"></div>
+</div>
+<div class="grid grid-cols-3 gap-1 text-[11px] text-center">
+<div class="bg-surface/80 rounded py-1">₹11k Stays</div>
+<div class="bg-surface/80 rounded py-1">₹7.2k Food</div>
+<div class="bg-surface/80 rounded py-1">₹5.2k Tours</div>
+</div>
+</div>
+<!-- Trail Map Card (Callout 5 Target) -->
+<div class="relative rounded-2xl overflow-hidden shadow-sm h-52 transition-all duration-300" id="mockup-map">
+<div class="w-full h-full bg-cover bg-center" data-location="Goa, India" style="background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuAwfC2QPRq3rKZSGlZ_1irXC8ctvq_mMenfYOIic5s68s02NcYq7k3dhZj2MoaRrLQqtmqivcCfZnPvY8Nq9GlmYgLGdrg18qr-ga_rvJxwXTKCS0VLXF02DEsSyChp8HGywWzAiL38C6XOby7fmtcxfRTj3OL6exUo415j-JDzkJ6Ja14wf3h9AiePDA74LE6zJvxtZfoShW7hPb8ZRfh1mvJMxvErCUn9xOuwWyhvVOrwwAtaV9Sm&quot;);"></div>
+<!-- Map overlay pins -->
+<div class="absolute inset-0 bg-primary/10 pointer-events-none"></div>
+<div class="absolute top-3 left-3 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[11px] font-semibold text-primary shadow flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">near_me</span> 4 stops · 18 km total
+                </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. STICKY NOTES MOMENT: TACTILE SCRAPBOOKING -->
+<section class="py-16 lg:py-24 px-4 bg-[#efe7dc] rounded-3xl my-6">
+<div class="max-w-5xl mx-auto">
+<!-- Max 5 words headline -->
+<div class="text-center mb-14">
+<span class="text-xs uppercase tracking-widest text-secondary font-label-sm">Bespoke</span>
+<h2 class="aesthetic-headline text-3xl sm:text-4xl text-primary font-semibold mt-1 tracking-tight" style="font-family: Fraunces, &quot;Instrument Serif&quot;, Georgia, serif; font-weight: 500; letter-spacing: -0.02em;">
+            Plans that feel like yours.
+          </h2>
+</div>
+<!-- Tactile Photographic Composition -->
+<div class="relative max-w-4xl mx-auto min-h-[460px] flex items-center justify-center p-4">
+<!-- Antique Accessories (Luggage Tag, Pencil, Brass Paperclip) -->
+<div class="absolute -top-4 left-6 sm:left-14 flex items-center gap-3 z-10">
+<div class="bg-[#54381d] text-[#dec1a9] px-4 py-1.5 rounded-md shadow-md text-xs font-mono tracking-wider rotate-[-5deg]">
+              TRIPAI · TAG #402
+            </div>
+<span class="material-symbols-outlined text-secondary text-[26px] rotate-45">attach_file</span>
+</div>
+<!-- Oversized Central Activity Card -->
+<div class="relative w-full max-w-md bg-surface-container-lowest rounded-3xl p-6 shadow-[0_20px_40px_-10px_rgba(110,79,50,0.16)] z-20">
+<div class="washi-tape absolute -top-3.5 left-1/2 -translate-x-1/2 w-24 h-6 rotate-1"></div>
+<div class="w-full h-44 rounded-2xl overflow-hidden mb-4 shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Evening sunset over ancient stone sea fort with golden light reflecting on calm ocean waters and silhouettes of people enjoying chilled drinks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl1PkITgaebcGEMpnHe-6L-ty9hoqA6WEPQppaJICBpemF-NdUHDpaTQtuew3lyg7u-uTexntBfIHQF3eEGU8ExgDfLU-G3CLl6XzAjaCpvC_y71FM4XD8Mj20vqY-_zQqMq8UF3JflDB6pzajZHRLkdGLKfdanTX7KfFO46uKqQl-5XncoRtoTzoTTSp9DoEM6CvLIMS0_Ny-uYa4UVB_T5aPMYK_ZlZlSBTxvQQB2CW9ESP6YosN">
+</div>
+<div class="flex items-center justify-between">
+<div>
+<span class="text-xs font-medium text-secondary">Sunset Session · Day 4</span>
+<div class="text-lg font-headline-sm font-semibold text-primary">Reis Magos Fort Cocktails</div>
+</div>
+<span class="w-8 h-8 rounded-full bg-[#f2ede7] flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</span>
+</div>
+<!-- Simulated Hand Cursor Dragging Interaction -->
+<div class="absolute -right-6 -bottom-6 bg-surface px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-xs font-medium text-primary border border-[#bba591]/30">
+<span class="material-symbols-outlined text-secondary text-[16px]">pan_tool_alt</span> Drag to Day 3
+            </div>
+</div>
+<!-- Handwritten Note 1 -->
+<div class="absolute -left-2 sm:left-6 top-16 sm:top-24 w-44 bg-[#ffebe6] p-4 rounded-sm shadow-md rotate-[-8deg] z-30 transition-transform duration-300 hover:rotate-0">
+<div class="washi-tape absolute -top-2 left-6 w-12 h-3.5"></div>
+<p class="font-handwriting text-2xl text-primary leading-tight">Sunset at Reis Magos!</p>
+<p class="font-handwriting text-base text-secondary mt-1">Get table by west wall</p>
+</div>
+<!-- Handwritten Note 2 -->
+<div class="absolute -right-2 sm:right-10 top-8 sm:top-14 w-44 bg-[#e8f5e9] p-4 rounded-sm shadow-md rotate-[6deg] z-30 transition-transform duration-300 hover:rotate-0">
+<div class="washi-tape absolute -top-2 right-6 w-12 h-3.5"></div>
+<p class="font-handwriting text-2xl text-primary leading-tight">Pack linen shirts!</p>
+<p class="font-handwriting text-base text-secondary mt-1">Breezy afternoon walks</p>
+</div>
+<!-- Handwritten Note 3 -->
+<div class="absolute right-4 sm:right-16 -bottom-4 sm:bottom-6 w-44 bg-[#fff9c4] p-4 rounded-sm shadow-md rotate-[-4deg] z-30 transition-transform duration-300 hover:rotate-0">
+<div class="washi-tape absolute -top-2 left-10 w-12 h-3.5"></div>
+<p class="font-handwriting text-2xl text-primary leading-tight">Try cashew feni</p>
+<p class="font-handwriting text-base text-secondary mt-1">At Joseph Bar tavern</p>
+</div>
+</div>
+</div>
+</section>
+<!-- 5. SAMPLE TRIPS: PHOTO WALL GALLERY -->
+<section class="py-16 lg:py-24 px-2 sm:px-4" id="sample-trips">
+<div class="max-w-5xl mx-auto">
+<!-- Max 2 words headline & explore link -->
+<div class="flex items-end justify-between mb-10">
+<div>
+<span class="text-xs uppercase tracking-widest text-secondary font-label-sm">Inspiration</span>
+<h2 class="aesthetic-headline text-3xl sm:text-4xl text-primary font-semibold mt-1 tracking-tight" style="font-family: Fraunces, &quot;Instrument Serif&quot;, Georgia, serif; font-weight: 500; letter-spacing: -0.02em;">
+              Get inspired
+            </h2>
+</div>
+<a class="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:text-secondary transition-colors" href="#">
+            Explore trips →
+          </a>
+</div>
+<!-- Dense Grid of 4 Photographic Destination Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+<!-- Card 1: Goa -->
+<div class="group relative rounded-2xl overflow-hidden bg-surface-container-lowest shadow-[0_12px_28px_-10px_rgba(110,79,50,0.12)] transition-all duration-300 hover:-translate-y-1.5">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Traditional terracotta-tiled heritage villa veranda in Goa surrounded by lush green tropical palms and warm sunset illumination" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD9Fi-x_H2esgnMVky5-FBiJ3tHItpPU23ZzzAZZnHnqpW8V1zHKJruYHQc_6ZNb9BpubODJ8x-KFnhlaCYC30x0kkT91cm103hLLzjDRHW6mrxuUun-ol_Y66Za8yLF58G8LKVahDNN2HL3Fcc-VDh64XxLtHR9Kw32ZWarAfKByrfxZP40IU98KHohT0MOGrZfzCdWNUt88ibIL44ySCk8NynxOcTR228RtK6zMalacWNmJXTigZ">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent"></div>
+<div class="absolute top-3 right-3 flex gap-1">
+<span class="px-2 py-0.5 rounded-full bg-surface/90 text-primary text-[11px] font-label-sm">5 Days</span>
+<span class="px-2 py-0.5 rounded-full bg-surface/90 text-primary text-[11px] font-label-sm">₹23,400</span>
+</div>
+<div class="absolute bottom-3 left-3 text-surface">
+<h3 class="font-headline-sm text-lg font-semibold leading-tight">Goa, India</h3>
+<span class="text-xs text-surface/80">Colonial &amp; Coastal</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Kyoto -->
+<div class="group relative rounded-2xl overflow-hidden bg-surface-container-lowest shadow-[0_12px_28px_-10px_rgba(110,79,50,0.12)] transition-all duration-300 hover:-translate-y-1.5">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Breathtaking illuminated traditional Japanese pagoda in Kyoto surrounded by vibrant fiery red maple leaves at twilight with lantern lit wooden terraces" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3bIdNukOuwu32qBw_jjxpCXNsrM9eFimd9JfEeKc_vvsryMcPN0JtkY4CR7HgNKVryffzHJDwbBQeQohdvjnOEx_9cii1IRNh_VAimXlOvG5WshJzlt27D5OQBLPkmhecLSsNJwDPFGDZGbucFeY0c9mKcSx3KqnqXAjmQ89LyrmB1DbeScK4Ez8ZL0YUAt-G1alGdue3IPAHxftIXu3fe8zRd3piw_pbnwJT2uYNMVerangNmq0n">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent"></div>
+<div class="absolute top-3 right-3 flex gap-1">
+<span class="px-2 py-0.5 rounded-full bg-surface/90 text-primary text-[11px] font-label-sm">6 Days</span>
+<span class="px-2 py-0.5 rounded-full bg-surface/90 text-primary text-[11px] font-label-sm">$1,850</span>
+</div>
+<div class="absolute bottom-3 left-3 text-surface">
+<h3 class="font-headline-sm text-lg font-semibold leading-tight">Kyoto &amp; Nara</h3>
+<span class="text-xs text-surface/80">Autumn Lanterns</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Amalfi -->
+<div class="group relative rounded-2xl overflow-hidden bg-surface-container-lowest shadow-[0_12px_28px_-10px_rgba(110,79,50,0.12)] transition-all duration-300 hover:-translate-y-1.5">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Panoramic scenic cliffside village of Positano on the Amalfi Coast with pastel colored buildings cascading down to turquoise sea dotted with boats under warm Italian sunshine" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC7Wuf-mERcNkw_zKOFHdqzuG4itaWL2GMP1ybP9SD0xmYCUcWtpkdhKEhewon0OQGpAhvsGtboIAQS6DGtEpCNtfv4BAKb0AdX-9d5vjUoAMwTSk-wnt79WRsxEaOutYFJd1WcfFR9DvCKzMI78Vrl7XR-r0RPYssXJENH9goiX7OBVyoRr6R__XXkDlyzw3egFIDFgsJ_-2-Q7LkTyZhwd-sqTYDgoX_6bZem9s0KWKN-ojVh9D0">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent"></div>
+<div class="absolute top-3 right-3 flex gap-1">
+<span class="px-2 py-0.5 rounded-full bg-surface/90 text-primary text-[11px] font-label-sm">7 Days</span>
+<span class="px-2 py-0.5 rounded-full bg-surface/90 text-primary text-[11px] font-label-sm">€2,400</span>
+</div>
+<div class="absolute bottom-3 left-3 text-surface">
+<h3 class="font-headline-sm text-lg font-semibold leading-tight">Amalfi Coast</h3>
+<span class="text-xs text-surface/80">Cliffside Wine</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Reykjavik -->
+<div class="group relative rounded-2xl overflow-hidden bg-surface-container-lowest shadow-[0_12px_28px_-10px_rgba(110,79,50,0.12)] transition-all duration-300 hover:-translate-y-1.5">
+<div class="relative h-64 overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Majestic towering Icelandic waterfall cascading down lush mossy green volcanic cliffs into a river with tiny hikers standing in awe on a winding trail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4Z5eI8O0ctfOiQeEOhFfEIHflvFLzzy0iQDDy0EUjK4yAX2Fo3VHh9DfbY7OVWQYDq_OYDwhn6inPbOtTcGD4Au_6HlLznk_Aa8_92wykIFCk_j_3eCeJEzoSNDFErjBakC36Rki5I6LTx-q4WBiSRv1bXlUOzz7iKEse0a9WZ0z0966tc-8rzWaRu1RBBLjCoUgZhgBEoQRqnS2lRPCObHGB0gKlX0E9L8lCu6l70EprLVi-GIfg">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent"></div>
+<div class="absolute top-3 right-3 flex gap-1">
+<span class="px-2 py-0.5 rounded-full bg-surface/90 text-primary text-[11px] font-label-sm">6 Days</span>
+<span class="px-2 py-0.5 rounded-full bg-surface/90 text-primary text-[11px] font-label-sm">$2,200</span>
+</div>
+<div class="absolute bottom-3 left-3 text-surface">
+<h3 class="font-headline-sm text-lg font-semibold leading-tight">Reykjavik &amp; Glaciers</h3>
+<span class="text-xs text-surface/80">Fjords &amp; Thermal</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. WORLDWIDE: VISUAL ROUTE MAP -->
+<section class="py-16 lg:py-24 px-4 bg-[#f2ede7]/50 rounded-3xl my-6"><div class="max-w-5xl mx-auto">
+  <!-- Header with clean metadata tag and concise headline -->
+  <div class="text-center mb-10">
+    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#d9c9ba]/40 text-secondary text-[11px] font-label-sm uppercase tracking-widest mb-2">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+      Global Reach · 120+ Countries
+    </div>
+    <h2 class="aesthetic-headline text-3xl sm:text-4xl text-primary font-semibold mt-1 tracking-tight" style="font-family: Fraunces, &quot;Instrument Serif&quot;, Georgia, serif; font-weight: 500; letter-spacing: -0.02em;">
+      Anywhere in the world
+    </h2>
+    <p class="mt-2 font-handwriting text-xl text-secondary">From coastal villages to volcanic highlands, planned to your taste.</p>
+  </div>
+
+  <!-- Rich Illustrated World Map & Scrapbook Canvas -->
+  <div class="relative w-full min-h-[580px] sm:min-h-[640px] rounded-3xl bg-[#f8f3ed] p-4 sm:p-8 shadow-[0_20px_40px_-10px_rgba(110,79,50,0.12)] border border-[#bba591]/30 overflow-hidden select-none">
+    
+    <!-- Vintage Map Grid & Contour Lines -->
+    <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#bba591 1px, transparent 1px); background-size: 28px 28px;"></div>
+
+    <!-- Detailed Stylized Illustrated Continents Background SVG -->
+    <svg class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 580" fill="none">
+      <!-- Stylized Continent Landmasses in warm taupe clay tone #ded4c8 -->
+      <g fill="#e8decb" opacity="0.85" stroke="#d3c4b9" stroke-width="1.5" stroke-linejoin="round">
+        <!-- North America -->
+        <path d="M 100 90 Q 140 70 190 75 Q 240 85 240 120 Q 230 150 200 170 Q 210 200 180 230 Q 160 250 140 230 Q 110 200 90 150 Z"></path>
+        <path d="M 180 50 Q 220 40 240 60 Q 220 80 180 70 Z"></path> <!-- Greenland silhouette -->
+        <!-- South America -->
+        <path d="M 190 270 Q 250 270 260 310 Q 270 370 230 440 Q 200 480 185 450 Q 170 380 180 320 Z"></path>
+        <!-- Europe & Scandinavia -->
+        <path d="M 450 90 Q 480 70 510 90 Q 500 130 460 140 Q 430 130 435 105 Z"></path>
+        <path d="M 420 130 Q 480 130 490 170 Q 470 210 420 190 Q 410 160 420 130 Z"></path>
+        <!-- Africa -->
+        <path d="M 430 210 Q 520 200 540 260 Q 550 330 500 390 Q 470 420 450 370 Q 420 310 410 250 Z"></path>
+        <!-- Asia & Eurasia -->
+        <path d="M 520 110 Q 640 80 780 100 Q 820 130 840 170 Q 820 220 760 230 Q 720 220 680 260 Q 630 250 600 210 Q 540 180 520 110 Z"></path>
+        <!-- India Subcontinent -->
+        <path d="M 610 230 Q 660 240 655 285 Q 635 320 625 295 Q 615 260 610 230 Z"></path>
+        <!-- Japan Archipelago -->
+        <path d="M 820 160 Q 835 155 845 170 Q 830 195 815 190 Z"></path>
+        <!-- Australia -->
+        <path d="M 740 340 Q 820 330 835 380 Q 810 430 750 420 Q 720 380 740 340 Z"></path>
+      </g>
+
+      <!-- Dashed Navigation & Flight Route Trajectories -->
+      <g stroke="#a28973" stroke-width="2" stroke-dasharray="6 6" fill="none" opacity="0.75">
+        <!-- Route 1: Reykjavik to Amalfi -->
+        <path d="M 380 120 Q 430 150 465 215"></path>
+        <!-- Route 2: Amalfi to Goa -->
+        <path d="M 475 225 Q 540 235 625 285"></path>
+        <!-- Route 3: Goa to Kyoto -->
+        <path d="M 635 280 Q 710 230 805 180"></path>
+        <!-- Route 4: Transpacific arc Kyoto to Americas -->
+        <path d="M 825 175 Q 920 140 980 160"></path>
+      </g>
+    </svg>
+
+    <!-- Scrapbook Vignette & Stamp: Top Left Vintage Postmark -->
+    <div class="absolute left-4 sm:left-8 top-6 opacity-60 rotate-[-12deg] pointer-events-none hidden sm:block">
+      <div class="w-24 h-24 rounded-full border-2 border-dashed border-[#8c6e52] flex flex-col items-center justify-center text-[#8c6e52] text-[9px] font-mono tracking-widest text-center leading-tight p-2">
+        <span class="">AIR MAIL</span>
+        <span class="font-bold text-[11px] my-0.5">GLOBAL · EXP</span>
+        <span class="">NO. 4882-TRIP</span>
+      </div>
+    </div>
+
+    <!-- Vintage Compass Rose Accent -->
+    <div class="absolute right-6 top-6 opacity-45 pointer-events-none hidden md:flex items-center flex-col text-secondary">
+      <span class="material-symbols-outlined text-[36px]">explore</span>
+      <span class="text-[9px] font-mono tracking-widest uppercase mt-0.5">Wanderlust Index</span>
+    </div>
+
+    <!-- DESTINATION 1: REYKJAVIK (ICELAND) POLAROID -->
+    <div class="absolute left-[8%] sm:left-[16%] top-12 sm:top-14 w-44 sm:w-52 bg-surface-container-lowest p-3 rounded-2xl shadow-[0_12px_28px_-8px_rgba(110,79,50,0.22)] -rotate-6 transition-all duration-300 hover:rotate-0 hover:scale-105 hover:z-40 group cursor-pointer z-20 border border-[#bba591]/30">
+      <!-- Brass Push Pin -->
+      <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-gradient-to-tr from-[#75593e] to-[#ffdcbe] border-2 border-surface shadow-md flex items-center justify-center z-10">
+        <div class="w-1.5 h-1.5 rounded-full bg-[#2c1601]"></div>
+      </div>
+      <div class="w-full h-28 sm:h-32 rounded-xl overflow-hidden mb-2.5 relative bg-[#efe7dc]">
+        <img src="https://lh3.googleusercontent.com/aida/AEtjO1VyAITd8D27_V5Dm9xDlf9kOBh4_tRqDk6VV2Zl-jlvY0wFn0SkN-udkSS8hQTMOca9yLdocBE67lt4Wk9HU8mLD_qP9towWwXLsR_uU8kYSATgJbxt8T1jOT_Y2YxmFGkQGgFe9Lj0AlSkiqre38fq1qt1-a4fYtkxuJyBoDjD4yIPBU7MlW-Rz2AmHSWvYGls6GDnidP1YwTrKV8PdPE5-pIUpxmml4VDM1dqhY8pDP8Eckl93gnuDuU" alt="Iceland majestic waterfalls and volcanic green moss canyons" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+        <span class="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-md bg-surface/90 backdrop-blur-sm text-[10px] font-semibold text-primary">Iceland</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-headline-sm text-sm font-semibold text-primary leading-tight">Reykjavik</div>
+          <span class="text-[11px] text-secondary">6 Days · Glaciers &amp; Thermal</span>
+        </div>
+        <span class="w-6 h-6 rounded-full bg-[#f2ede7] flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-surface transition-colors">
+          <span class="material-symbols-outlined text-[14px]">north_east</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Handwritten Tape Note near Reykjavik -->
+    <div class="absolute left-[2%] sm:left-[8%] top-56 sm:top-60 w-36 bg-[#fffae0] p-2.5 rounded-md shadow-sm rotate-[-4deg] z-25 pointer-events-none hidden sm:block border border-[#bba591]/20">
+      <div class="washi-tape absolute -top-2 left-6 w-10 h-3.5"></div>
+      <p class="font-handwriting text-base text-primary leading-tight">Fjords &amp; hot springs</p>
+      <p class="font-handwriting text-xs text-secondary">Pack thermal layers!</p>
+    </div>
+
+    <!-- DESTINATION 2: AMALFI COAST (ITALY) POLAROID -->
+    <div class="absolute left-[28%] sm:left-[35%] top-[42%] sm:top-[38%] w-48 sm:w-56 bg-surface-container-lowest p-3 rounded-2xl shadow-[0_16px_36px_-10px_rgba(110,79,50,0.22)] rotate-3 transition-all duration-300 hover:rotate-0 hover:scale-105 hover:z-40 group cursor-pointer z-30 border border-[#bba591]/30">
+      <!-- Mini Washi Tape on top -->
+      <div class="washi-tape absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-5 rotate-[-2deg]"></div>
+      <div class="w-full h-28 sm:h-32 rounded-xl overflow-hidden mb-2.5 relative bg-[#efe7dc]">
+        <img src="https://lh3.googleusercontent.com/aida/AEtjO1XEDE1cLpttoIPYmuOJZpxnYgbedr7RFywkwaJtYp7h6CAb9oHyBgaiObdaE2UF9E0c3E1SNvAgQHKRDim4mQtFiDy26hzn_EzI0C-464DYMLZjKbvHUN066witVEJnyYkrrB1DQDRInBcipJJ6kxt2eoy2GkJGwtpuiAMY5iQG0-qNVn2JLkOt0uGjaqgDjvzQcGOdEWeq2aOJEjodbCbl3LB8L4M_k3jc_ELjZfDF7huMhjAEjr74G00" alt="Amalfi coast colorful cliffside village over turquoise waters" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+        <div class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-surface/95 text-[10px] font-bold text-primary shadow-sm flex items-center gap-1">
+          <span class="material-symbols-outlined text-[12px] text-emerald-700">check_circle</span> 7 Days
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-headline-sm text-sm font-semibold text-primary leading-tight">Amalfi Coast</div>
+          <span class="text-[11px] text-secondary">Positano &amp; Capri Ferries</span>
+        </div>
+        <span class="px-2 py-0.5 rounded-full bg-[#ffdcbe] text-[10px] font-semibold text-primary">€2,400</span>
+      </div>
+    </div>
+
+    <!-- Travel Stamp Sticker: Positano -->
+    <div class="absolute left-[22%] sm:left-[28%] bottom-16 sm:bottom-20 rotate-[-10deg] z-20 pointer-events-none hidden sm:block">
+      <div class="px-3 py-1.5 rounded-lg border-2 border-[#8c6e52] bg-[#f8f3ed]/90 text-[#8c6e52] text-[10px] font-mono tracking-widest flex items-center gap-1.5 shadow-sm">
+        <span class="material-symbols-outlined text-[14px]">sailing</span>
+        <span class="">MEDITERRANEAN · 2025</span>
+      </div>
+    </div>
+
+    <!-- DESTINATION 3: GOA (INDIA) POLAROID -->
+    <div class="absolute left-[45%] sm:left-[52%] bottom-6 sm:bottom-12 w-48 sm:w-56 bg-surface-container-lowest p-3.5 rounded-2xl shadow-[0_20px_40px_-10px_rgba(110,79,50,0.22)] -rotate-2 transition-all duration-300 hover:rotate-0 hover:scale-105 hover:z-40 group cursor-pointer z-35 border-2 border-primary-container/30">
+      <!-- Golden Pin Badge -->
+      <div class="absolute -top-3 left-8 w-7 h-7 rounded-full bg-primary text-surface shadow-md flex items-center justify-center z-10">
+        <span class="material-symbols-outlined text-[15px]">star</span>
+      </div>
+      <div class="w-full h-32 sm:h-36 rounded-xl overflow-hidden mb-2.5 relative bg-[#efe7dc]">
+        <img src="https://lh3.googleusercontent.com/aida/AEtjO1VWdFv1ysxzCUc21vKtlvs1ysbpz3SVAG2drwz56KIudH4fc5O-Jxuo2z0fiMF4KMD349DhRspkkXavGKRfk6K0KSHW-hSDJwXcXK2JZ-cAgghrc5qeTSNDlFX0DS83gpfg5jA8P8pB330Bm0-51CwC7CAciYmXFxy2wG7ISC9TGZPGqVpyS87AvbB6lmj86ajnza7kBviQsKFXNocjZ0qBxColW3IzgxdtNnsuHewvLR5YN-GvtaN6Sdw" alt="Sunlit Goan Portuguese heritage villa veranda and bougainvillea" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+        <div class="absolute bottom-2 left-2 px-2.5 py-1 bg-surface/90 backdrop-blur-sm rounded-full text-[10px] font-semibold text-primary flex items-center gap-1">
+          <span class="material-symbols-outlined text-[12px]">villa</span> Goa · 5 Days
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-headline-sm text-sm font-semibold text-primary leading-tight">Goa Heritage</div>
+          <span class="text-[11px] text-secondary">Latin Quarter &amp; Estuary</span>
+        </div>
+        <span class="text-xs font-bold text-primary">₹23,400</span>
+      </div>
+    </div>
+
+    <!-- DESTINATION 4: KYOTO (JAPAN) POLAROID -->
+    <div class="absolute right-[4%] sm:right-[10%] top-16 sm:top-20 w-48 sm:w-56 bg-surface-container-lowest p-3 rounded-2xl shadow-[0_16px_36px_-10px_rgba(110,79,50,0.22)] rotate-4 transition-all duration-300 hover:rotate-0 hover:scale-105 hover:z-40 group cursor-pointer z-30 border border-[#bba591]/30">
+      <!-- Mini washi tape and brass clip -->
+      <div class="washi-tape absolute -top-3 right-8 w-16 h-5 rotate-[3deg]"></div>
+      <div class="w-full h-32 sm:h-36 rounded-xl overflow-hidden mb-2.5 relative bg-[#efe7dc]">
+        <img src="https://lh3.googleusercontent.com/aida/AEtjO1U5UDc4vV0HEXtj-fB2D-SKWEnJvUwhJRerJ6FfFfe0jLBTZeW1qkXsrNmDP5s3FDJ9h8iBq7YC7_cjyTDoGxb3NfXusxT5xUdlrIFwAr4WFfmgOe6mO95RrKZcoQ0A2fkTNggT7mSKHX8LT3pDxiA2SgSN2sFO_mJxFI8HvVOc0hCdFQaKh59mTDF7kYdO2Nol1B5AIPaq4LElWkT0IninOK4IBsq3GgtGIlG0u-RTkMzrKKBUTRS7vH4" alt="Kyoto illuminated pagoda surrounded by fiery red maple foliage at twilight" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-surface/90 text-[10px] font-bold text-primary shadow-sm">Kyoto · 6d</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-headline-sm text-sm font-semibold text-primary leading-tight">Kyoto &amp; Nara</div>
+          <span class="text-[11px] text-secondary">Autumn Temple Walk</span>
+        </div>
+        <span class="px-2 py-0.5 rounded-full bg-[#f2ede7] text-[10px] font-semibold text-primary">$1,850</span>
+      </div>
+    </div>
+
+    <!-- Handwritten Note tag near Kyoto -->
+    <div class="absolute right-[2%] sm:right-[6%] bottom-16 sm:bottom-24 w-40 bg-[#ffebe6] p-3 rounded-md shadow-sm rotate-[-3deg] z-25 pointer-events-none hidden sm:block border border-[#bba591]/20">
+      <div class="washi-tape absolute -top-2 left-10 w-10 h-3.5"></div>
+      <p class="font-handwriting text-base text-primary leading-tight">Autumn foliage season!</p>
+      <p class="font-handwriting text-xs text-secondary mt-0.5">Night lantern illuminations</p>
+    </div>
+
+    <!-- Floating Little Airplane Icon on Flight Path -->
+    <div class="flight-path-airplane-container absolute inset-0 pointer-events-none z-20"><svg class="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1000 580" fill="none"><path id="airplane-flight-route" d="M 380 120 Q 430 150 465 215 L 475 225 Q 540 235 625 285 L 635 280 Q 710 230 805 180 L 825 175 Q 920 140 980 160" fill="none" stroke="#8c6e52" stroke-width="2.5" stroke-dasharray="6 6" class="airplane-contrail-trail" opacity="0.55"></path><path d="M 380 120 Q 430 150 465 215 L 475 225 Q 540 235 625 285 L 635 280 Q 710 230 805 180 L 825 175 Q 920 140 980 160" fill="none" stroke="#75593e" stroke-width="1.5" stroke-dasharray="3 5" class="airplane-contrail-pulse" opacity="0.7"></path></svg><style class="">@keyframes flyFlightLoop { 0% { offset-distance: 0%; } 100% { offset-distance: 100%; } } @keyframes contrailDash { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -200; } } .animated-airplane-tracker { offset-path: path('M 380 120 Q 430 150 465 215 L 475 225 Q 540 235 625 285 L 635 280 Q 710 230 805 180 L 825 175 Q 920 140 980 160'); offset-rotate: auto 90deg; animation: flyFlightLoop 14s linear infinite; } .airplane-contrail-trail { stroke-linecap: round; animation: contrailDash 14s linear infinite; } .airplane-contrail-pulse { stroke-linecap: round; animation: contrailDash 7s linear infinite; } @media (prefers-reduced-motion: reduce) { .animated-airplane-tracker { animation: none; offset-distance: 45%; } .airplane-contrail-trail, .airplane-contrail-pulse { animation: none; } }</style><div class="animated-airplane-tracker absolute left-0 top-0"><div class="-translate-x-1/2 -translate-y-1/2 bg-surface p-2 rounded-full shadow-md border border-[#bba591]/30 flex items-center justify-center text-primary"><span class="material-symbols-outlined text-[18px]">flight</span></div></div></div>
+
+    <!-- Floating Mini Compass Legend Pill -->
+    <div class="absolute left-4 sm:left-8 bottom-4 sm:bottom-8 bg-surface/90 backdrop-blur-md px-4 py-2 rounded-full border border-[#bba591]/30 shadow-md flex items-center gap-3 z-30 text-xs font-label-md text-primary">
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-primary"></span>
+        <span class="">Curated Trails</span>
+      </div>
+      <span class="text-[#d3c4b9]">|</span>
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+        <span class="">Live Optimized</span>
+      </div>
+    </div>
+  </div>
+</div></section>
+<!-- 7. FINAL CALL TO ACTION (STRICT: MAX 3-WORD HEADLINE, BUTTON ONLY) -->
+<section class="py-16 lg:py-24 px-4 mb-12"><div class="max-w-5xl mx-auto bg-[#d9c9ba]/40 rounded-[2.5rem] p-6 sm:p-12 lg:p-16 text-center relative overflow-hidden shadow-[0_20px_45px_-12px_rgba(110,79,50,0.14)] border border-[#bba591]/30"><div class="absolute -right-10 -bottom-10 opacity-20 pointer-events-none"><svg fill="none" height="280" viewBox="0 0 200 200" width="280"><circle cx="100" cy="100" r="80" stroke="#6e4f32" stroke-dasharray="8 8" stroke-width="2"></circle><path d="M 20 180 C 60 100 140 100 180 20" stroke="#6e4f32" stroke-width="2.5"></path></svg></div><div class="relative z-10 flex flex-col items-center"><div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface/90 text-primary text-[11px] font-label-sm uppercase tracking-widest mb-4 shadow-sm border border-[#bba591]/30"><span class="material-symbols-outlined text-[15px] text-secondary">explore</span><span class="">Begin your next chapter</span></div><h2 class="aesthetic-headline text-4xl sm:text-5xl lg:text-[54px] text-primary font-semibold tracking-tight leading-tight max-w-3xl" style="font-family: Fraunces, &quot;Instrument Serif&quot;, Georgia, serif; font-weight: 500; letter-spacing: -0.02em;">Where to next?</h2><p class="mt-4 max-w-2xl font-body-lg text-secondary text-base sm:text-lg leading-relaxed">Whether it's morning coffee on an alpine balcony, drifting through Provence's sunlit stone alleys, or lantern-lit temple walks at dusk — your bespoke journey is seconds away.</p><div class="w-full max-w-2xl mt-8 bg-surface p-2 rounded-2xl sm:rounded-full shadow-[0_12px_28px_-8px_rgba(110,79,50,0.16)] border border-[#bba591]/30 flex flex-col sm:flex-row items-center gap-2"><div class="flex items-center gap-2.5 px-4 w-full flex-1 text-left"><span class="material-symbols-outlined text-secondary text-[20px]">search</span><input type="text" placeholder="Where would you love to travel? (e.g. 5 days in Provence, Alpine cabin...)" class="w-full bg-transparent text-primary placeholder-[#a28973] text-sm focus:outline-none font-body-md"></div><button class="w-full sm:w-auto px-7 py-3 rounded-xl sm:rounded-full bg-primary-container text-surface hover:bg-secondary font-label-lg transition-all duration-200 shadow-sm shrink-0 flex items-center justify-center gap-1.5 text-sm font-medium"><span class="">Plan my trip</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span></button></div><div class="flex flex-wrap items-center justify-center gap-2 mt-4 text-xs font-label-md"><span class="text-secondary text-[11px]">Try exploring:</span><span class="px-3 py-1 rounded-full bg-surface/70 hover:bg-surface text-primary border border-[#bba591]/25 cursor-pointer transition-colors">🏔️ Italian Dolomites</span><span class="px-3 py-1 rounded-full bg-surface/70 hover:bg-surface text-primary border border-[#bba591]/25 cursor-pointer transition-colors">☕ Provence Cafes</span><span class="px-3 py-1 rounded-full bg-surface/70 hover:bg-surface text-primary border border-[#bba591]/25 cursor-pointer transition-colors">🏮 Kyoto Lanterns</span><span class="px-3 py-1 rounded-full bg-surface/70 hover:bg-surface text-primary border border-[#bba591]/25 cursor-pointer transition-colors">🌊 Amalfi Cliffside</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 w-full max-w-4xl mt-12 text-left"><div class="group relative bg-surface-container-lowest p-4 sm:p-5 rounded-2xl shadow-[0_16px_36px_-10px_rgba(110,79,50,0.18)] rotate-[-1.5deg] hover:rotate-0 hover:-translate-y-1 transition-all duration-300 border border-[#bba591]/30"><div class="washi-tape absolute -top-3 left-10 w-20 h-5 -rotate-2 z-20"></div><div class="relative w-full h-56 sm:h-64 rounded-xl overflow-hidden mb-3.5 bg-[#efe7dc]"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrIFjDoBhaX0ChKhku3Y2JKWNY9BnRC4BrO4gkz4SlO6XltfoTdwAdfs5duxMJkNc3GOBeMXeXZY3dKFu0xalS4Cw6Sx1K8EmDmFh36k-XTFv0oh_43KhRwGXrxScFXc8mEuUcax1Mt05VvMw_0tmXks_50weC4wqE1MeN8jF0xW8_x5Wb6iaognjSiWK_KeZ3Z6nJOEjWMoyp9w-2u1TPbk96jVulM0Miyw3KPYghg1pa7nVhjyyu" alt="Warm alpine wooden chalet balcony overlooking majestic mountain peaks" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"><div class="absolute bottom-2.5 left-2.5 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-sm text-[11px] font-semibold text-primary shadow-sm flex items-center gap-1"><span class="material-symbols-outlined text-[13px] text-secondary">landscape</span> 4 Days · Curated</div></div><div class="flex items-start justify-between"><div class="flex-1"><div class="flex items-center gap-2"><h3 class="font-headline-sm text-lg font-semibold text-primary">Dolomite High Trails</h3><span class="px-2 py-0.5 rounded-full bg-[#f2ede7] text-secondary text-[10px] font-label-sm">Scenic &amp; Relaxed</span></div><p class="font-handwriting text-lg text-[#6e4f32] mt-1">Morning espresso with mountain fog 🏔️</p></div><div class="text-right shrink-0 ml-2"><span class="text-xs font-bold text-primary block">€1,920</span><span class="text-[10px] text-secondary">2 travelers</span></div></div></div><div class="group relative bg-surface-container-lowest p-4 sm:p-5 rounded-2xl shadow-[0_16px_36px_-10px_rgba(110,79,50,0.18)] rotate-[1.5deg] hover:rotate-0 hover:-translate-y-1 transition-all duration-300 border border-[#bba591]/30"><div class="washi-tape absolute -top-3 right-10 w-20 h-5 rotate-2 z-20"></div><div class="relative w-full h-56 sm:h-64 rounded-xl overflow-hidden mb-3.5 bg-[#efe7dc]"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaPnu-FMFlr-sssLvgm2XotHwCqnTIkkBoh2qh_93BDorQFgANKpZ38n0C5TRF5hndAsY1YTsR3YDbaiBakzNV_41OTrWNv3wjk00COcGHv7x7KBCigP_MeffVGUKZgW0T4gTTKbZH10-HaX_b2gnifpJnEalmBQrtKnI8UrmM9KPgy_48cH-B5xmpVwMP8rb4Xkxx5kU7aY3TbsHEtWbjH-NbBYwhIJzKO6ARlouiZnXxQXyrHHYx" alt="Sunlit European stone alleyway and sidewalk cafe in Provence" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"><div class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-md bg-surface/90 border border-[#bba591]/30 text-[9px] font-mono tracking-widest text-[#8c6e52] shadow-sm uppercase">EXPEDITION DISPATCH · NO. 842</div><div class="absolute bottom-2.5 left-2.5 px-3 py-1 rounded-full bg-surface/90 backdrop-blur-sm text-[11px] font-semibold text-primary shadow-sm flex items-center gap-1"><span class="material-symbols-outlined text-[13px] text-secondary">cottage</span> 5 Days · Curated</div></div><div class="flex items-start justify-between"><div class="flex-1"><div class="flex items-center gap-2"><h3 class="font-headline-sm text-lg font-semibold text-primary">Provence Village Hideaway</h3><span class="px-2 py-0.5 rounded-full bg-[#ffd9b7] text-primary text-[10px] font-label-sm">Food &amp; Wine</span></div><p class="font-handwriting text-lg text-[#6e4f32] mt-1">Saturday market lavender &amp; fresh brioche ☕</p></div><div class="text-right shrink-0 ml-2"><span class="text-xs font-bold text-primary block">€2,150</span><span class="text-[10px] text-secondary">2 travelers</span></div></div></div></div><div class="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-10 pt-8 border-t border-[#bba591]/30 w-full max-w-3xl text-secondary text-xs sm:text-sm font-label-md"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[17px]">pace</span><span class="">Instant day-by-day pacing</span></div><span class="text-[#d3c4b9] hidden sm:inline">•</span><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[17px]">payments</span><span class="">Real-time budget tracking</span></div><span class="text-[#d3c4b9] hidden sm:inline">•</span><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-primary text-[17px]">edit_calendar</span><span class="">100% customizable journal notes</span></div></div><div class="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center"><a class="px-9 py-4 rounded-full bg-primary-container text-surface hover:bg-secondary font-label-lg transition-all duration-200 shadow-[0_12px_28px_-8px_rgba(110,79,50,0.25)] active:scale-95 text-base font-semibold" href="#">Get started for free</a><a class="px-8 py-4 rounded-full bg-surface border border-secondary text-primary hover:bg-[#d9c9ba]/30 font-label-lg transition-all duration-200 text-sm font-medium shadow-sm" href="#sample-trips">Browse community itineraries</a></div><p class="mt-4 text-xs text-secondary/80 font-body-sm flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-emerald-600 text-[14px]">verified</span> Joined by 18,400+ mindful travelers · Free to plan &amp; share</p></div></div></section>
+</div>
+</div>
+<script>
+  function switchTripMode(modeNumber) {
+    const wrapper = document.getElementById('main-canvas-wrapper');
+    const buttons = document.querySelectorAll('.mode-btn');
+    
+    // Update active tab styles
+    buttons.forEach((btn, idx) => {
+      if (idx + 1 === modeNumber) {
+        btn.classList.add('bg-primary-container', 'text-surface');
+        btn.classList.remove('text-secondary', 'hover:bg-surface/60');
+      } else {
+        btn.classList.remove('bg-primary-container', 'text-surface');
+        btn.classList.add('text-secondary', 'hover:bg-surface/60');
+      }
+    });
+
+    if (modeNumber === 4) {
+      // Mobile Viewport simulation
+      wrapper.style.maxWidth = '420px';
+      wrapper.classList.add('shadow-2xl', 'border', 'border-[#bba591]/40', 'rounded-[2.5rem]', 'p-2', 'bg-surface');
+    } else {
+      wrapper.style.maxWidth = '100%';
+      wrapper.classList.remove('shadow-2xl', 'border', 'border-[#bba591]/40', 'rounded-[2.5rem]', 'p-2');
+    }
+
+    if (modeNumber === 2) {
+      // Highlight callouts section
+      const calloutTarget = document.getElementById('callouts-bar');
+      if (calloutTarget) {
+        calloutTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        focusCallout('timeline');
+      }
+    } else if (modeNumber === 3) {
+      // Tactile Scrapbook Zoom
+      const stickySection = document.querySelector('.bg-\\[\\#efe7dc\\]');
+      if (stickySection) {
+        stickySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } else if (modeNumber === 1) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function focusCallout(section) {
+    const targets = ['timeline', 'transit', 'hotels', 'budget', 'map'];
+    targets.forEach(t => {
+      const el = document.getElementById('mockup-' + t);
+      if (el) {
+        if (t === section) {
+          el.classList.add('ring-2', 'ring-secondary', 'bg-[#ffdcbe]/20', 'scale-[1.01]');
+        } else {
+          el.classList.remove('ring-2', 'ring-secondary', 'bg-[#ffdcbe]/20', 'scale-[1.01]');
+        }
+      }
+    });
+  }
+</script></main><footer class="w-full bg-[#6e4f32] text-inverse-on-surface mt-space-xl"><div class="max-w-[1320px] mx-auto px-margin-mobile lg:px-margin py-12 lg:py-16"><div class="flex flex-col md:flex-row md:items-center justify-between gap-8 pb-10 border-b border-[#bba591]/25"><div class="flex flex-col gap-space-xs"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-tertiary-fixed text-[28px]">explore</span><span class="font-headline-sm text-headline-sm text-surface tracking-tight font-semibold">TripAi</span></div><p class="font-body-md text-body-md text-on-tertiary-container italic">Bespoke travel intelligence</p></div><nav class="flex flex-wrap items-center gap-6 lg:gap-8" data-active-classes="text-surface font-semibold"><a class="font-label-md text-label-md text-surface-container-highest/80 hover:text-surface transition-colors" data-path="privacy" href="#">Privacy</a><a class="font-label-md text-label-md text-surface-container-highest/80 hover:text-surface transition-colors" data-path="terms" href="#">Terms</a><a class="font-label-md text-label-md text-surface-container-highest/80 hover:text-surface transition-colors" data-path="contact" href="#">Contact</a></nav></div><div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4"><p class="font-body-sm text-body-sm text-surface-container-highest/60">© 2025 TripAi Intelligence Ltd. All rights reserved.</p><p class="font-label-sm text-label-sm text-tertiary-fixed-dim/70">Crafted with atmospheric warmth &amp; AI precision</p></div></div></footer>
+
+</body></html>

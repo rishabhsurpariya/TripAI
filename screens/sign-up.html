@@ -1,0 +1,497 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_blank" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"secondary-fixed":"#ffdcbe","surface-container-lowest":"#ffffff","inverse-surface":"#32302c","on-secondary":"#ffffff","tertiary-container":"#66513e","outline":"#81756b","tertiary":"#4d3a28","on-error":"#ffffff","on-primary":"#ffffff","primary-fixed":"#ffdcbf","on-primary-container":"#edc39e","primary-container":"#6e4f32","on-secondary-fixed":"#2a1703","secondary-fixed-dim":"#e4c09f","surface-container-highest":"#e6e2dc","on-primary-fixed":"#2c1601","primary-fixed-dim":"#e9bf9a","surface-container":"#f2ede7","surface-bright":"#fef9f2","on-tertiary-fixed-variant":"#574331","surface-dim":"#ded9d4","surface-container-low":"#f8f3ed","on-tertiary":"#ffffff","tertiary-fixed":"#fbddc4","error-container":"#ffdad6","surface":"#fef9f2","on-surface":"#1d1b18","inverse-on-surface":"#f5f0ea","outline-variant":"#d3c4b9","surface-variant":"#e6e2dc","on-error-container":"#93000a","on-tertiary-container":"#e2c5ad","secondary-container":"#ffd9b7","on-background":"#1d1b18","on-surface-variant":"#4f453c","inverse-primary":"#e9bf9a","secondary":"#75593e","surface-container-high":"#ece7e1","background":"#fef9f2","on-tertiary-fixed":"#271809","error":"#ba1a1a","surface-tint":"#78583a","on-secondary-fixed-variant":"#5b4229","tertiary-fixed-dim":"#dec1a9","on-secondary-container":"#795d42","primary":"#54381d","on-primary-fixed-variant":"#5e4125"},borderRadius:{DEFAULT:"1rem",lg:"2rem",xl:"3rem",full:"9999px"},spacing:{"space-md":"1rem","space-xl":"2.5rem","space-xs":"0.25rem",gutter:"1.5rem","space-sm":"0.5rem","margin-mobile":"1.25rem",margin:"3rem","gutter-mobile":"1rem","space-lg":"1.5rem"},fontFamily:{"display-mobile":["Playfair Display"],"label-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Playfair Display"],"headline-lg":["Playfair Display"],"headline-sm":["Playfair Display"],"title-lg":["Plus Jakarta Sans"],"label-lg":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],display:["Playfair Display"],"headline-md":["Playfair Display"],"title-md":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"]},fontSize:{"display-mobile":["38px",{lineHeight:"44px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.04em",fontWeight:"600"}],"headline-lg-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-lg":["40px",{lineHeight:"48px",letterSpacing:"-0.015em",fontWeight:"600"}],"headline-sm":["22px",{lineHeight:"30px",letterSpacing:"0em",fontWeight:"500"}],"title-lg":["18px",{lineHeight:"26px",letterSpacing:"-0.01em",fontWeight:"600"}],"label-lg":["14px",{lineHeight:"20px",letterSpacing:"0.02em",fontWeight:"500"}],"body-lg":["16px",{lineHeight:"26px",letterSpacing:"0.01em",fontWeight:"400"}],"body-md":["14px",{lineHeight:"22px",letterSpacing:"0.01em",fontWeight:"400"}],display:["56px",{lineHeight:"64px",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-md":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"500"}],"title-md":["16px",{lineHeight:"24px",letterSpacing:"0em",fontWeight:"600"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.03em",fontWeight:"500"}],"body-sm":["12px",{lineHeight:"18px",letterSpacing:"0.015em",fontWeight:"400"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased min-h-screen selection:bg-secondary-container selection:text-on-secondary-container"><main class="w-full min-h-screen bg-surface"><div class="flex flex-col w-full">
+<!-- Top State Switcher Bar (Interactive Preview Controller) -->
+<header class="w-full bg-surface-container-low px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 shadow-sm select-none z-30">
+<div class="flex items-center gap-2.5">
+<span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-primary-container text-surface-container-lowest text-xs font-semibold">AI</span>
+<span class="font-title-md text-title-md text-primary tracking-tight">TripAi — UX State Suite</span>
+<span class="hidden md:inline-flex px-2 py-0.5 rounded-full bg-surface-container text-secondary text-body-sm font-medium">Bespoke Travel Journal</span>
+</div>
+<!-- State Buttons -->
+<div class="flex items-center gap-1.5 overflow-x-auto py-1 max-w-full">
+<button class="state-btn active-state px-3 py-1.5 rounded-full text-body-sm font-label-md transition-all whitespace-nowrap bg-primary-container text-surface-container-lowest" id="btn-default" onclick="setAppState('default')" type="button">
+        Default
+      </button>
+<button class="state-btn px-3 py-1.5 rounded-full text-body-sm font-label-md transition-all whitespace-nowrap bg-surface-container text-secondary hover:bg-surface-container-highest" id="btn-strength" onclick="setAppState('strength')" type="button">
+        Password Strength
+      </button>
+<button class="state-btn px-3 py-1.5 rounded-full text-body-sm font-label-md transition-all whitespace-nowrap bg-surface-container text-secondary hover:bg-surface-container-highest" id="btn-registered" onclick="setAppState('registered')" type="button">
+        Already Registered
+      </button>
+<button class="state-btn px-3 py-1.5 rounded-full text-body-sm font-label-md transition-all whitespace-nowrap bg-surface-container text-secondary hover:bg-surface-container-highest" id="btn-validation" onclick="setAppState('validation')" type="button">
+        Validation Error
+      </button>
+<button class="state-btn px-3 py-1.5 rounded-full text-body-sm font-label-md transition-all whitespace-nowrap bg-surface-container text-secondary hover:bg-surface-container-highest" id="btn-loading" onclick="setAppState('loading')" type="button">
+        Signing Up...
+      </button>
+<button class="state-btn px-3 py-1.5 rounded-full text-body-sm font-label-md transition-all whitespace-nowrap bg-surface-container text-secondary hover:bg-surface-container-highest" id="btn-success" onclick="setAppState('success')" type="button">
+        Success Screen
+      </button>
+<button class="state-btn px-3 py-1.5 rounded-full text-body-sm font-label-md transition-all whitespace-nowrap bg-surface-container text-secondary hover:bg-surface-container-highest flex items-center gap-1" id="btn-mobile" onclick="toggleMobileView()" type="button">
+<span class="material-symbols-outlined text-[16px]">smartphone</span>
+        Mobile View
+      </button>
+</div>
+</header>
+<!-- Root Stage Viewport Wrapper -->
+<div class="w-full flex-1 flex justify-center items-center p-3 sm:p-6 lg:p-8 transition-all duration-300" id="viewport-stage">
+<!-- Main Shell Container (Switches between Desktop 50/50 and Mobile Container) -->
+<div class="w-full max-w-[1280px] bg-surface-container-low rounded-[2rem] shadow-xl overflow-hidden flex flex-col lg:flex-row transition-all duration-300" id="layout-container">
+<!-- ================= LEFT HALF: Atmospheric Travel Visuals ================= -->
+<div class="relative w-full lg:w-1/2 min-h-[380px] lg:min-h-[760px] p-6 sm:p-10 flex flex-col justify-between overflow-hidden" id="left-column">
+<!-- Visual Backdrop with Kyoto Dusk Pagoda & Maple Foliage -->
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 scale-100 hover:scale-105" data-alt="Dusk in Kyoto, Japan featuring the grand illuminated multi-tier Kiyomizu-dera pagoda surrounded by fiery scarlet and golden autumn maple canopies. Atmospheric evening twilight sky with warm lantern glow reflecting on stone terraces, deep mocha shadows, and soft ambient warmth." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA9Nm-5VAC48MUZwLlnpfzbL5T1sxSCQ_2EbXKIWSwQYrQqBZbB5cHpWoxWzKEqS_a85YZd77Q7iqQKTM3Rx1DyTYKVlthYbGQVurYdJU98IH8Oh_uzF16z8pG0Olxj1spCamhiA6-MNA70EQ3B-m2b8Y2CeqslbxVT_4UR2ccXDCYtFTuCNfjobjvFUDLhxcgdJMQWjyj_NgF902mTUxDXpg33Eea-HK6N9nk7FC0ULy4P-81Y3Fk0')">
+</div>
+<!-- Earthen Warm Brown Gradient Overlays -->
+<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/45 to-primary/20 mix-blend-multiply"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/60 via-transparent to-primary/40"></div>
+<!-- Top Left Brand Badge & Washi Tape Note -->
+<div class="relative z-10 flex flex-col items-start gap-5">
+<!-- TripAi Wordmark -->
+<div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-surface-container-lowest/80 backdrop-blur-md shadow-md">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-headline-sm text-headline-sm text-primary tracking-tight font-semibold">TripAi</span>
+</div>
+<!-- Washi-Pinned Journal Sticky Note -->
+<div class="relative group mt-2">
+<!-- Washi Tape strip -->
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-4 bg-secondary-fixed/90 backdrop-blur-sm -rotate-2 rounded-sm shadow-sm z-20"></div>
+<!-- Cream Note Box -->
+<div class="relative bg-surface-bright px-5 py-3.5 rounded-lg shadow-md -rotate-1 transform transition hover:rotate-0 duration-200 max-w-[270px]">
+<div class="flex items-start gap-2">
+<span class="text-base select-none">🌿</span>
+<p class="font-display text-body-lg text-primary leading-snug italic font-medium">
+                  “Collect moments, not itineraries.”
+                </p>
+</div>
+<div class="mt-1 text-right">
+<span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">Kyoto Autumn Edition</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Center Interactive Travel Milestone Indicator (Subtle UI Accent) -->
+<div class="relative z-10 hidden sm:flex items-center gap-3 my-auto self-start bg-surface-container-lowest/75 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-sm">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-surface-container-lowest text-xs">
+<span class="material-symbols-outlined text-sm">temple_buddhist</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Recommended Sunset Timing</span>
+<span class="font-title-md text-title-md text-primary font-medium">Higashiyama Ward • 17:15</span>
+</div>
+</div>
+<!-- Bottom Narrative Editorial Vignette -->
+<div class="relative z-10 space-y-2.5 pt-6">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/85 text-on-secondary-container text-label-sm font-semibold tracking-wider uppercase">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+<span>Intelligent Wayfinding</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-surface-container-lowest font-medium tracking-tight drop-shadow-sm">
+            Craft your bespoke adventure.
+          </h2>
+<p class="font-body-md text-body-md text-surface-container-highest max-w-md leading-relaxed font-light">
+            Day-by-day pacing, authentic stays, and real-time budgets harmonized through quiet, attentive intelligence.
+          </p>
+<!-- Traveler Dots/Avatars -->
+<div class="flex items-center gap-3 pt-3">
+<div class="flex -space-x-2 overflow-hidden">
+<div class="inline-block h-7 w-7 rounded-full bg-surface-container-highest ring-2 ring-surface-container-lowest flex items-center justify-center text-primary font-bold text-xs">MK</div>
+<div class="inline-block h-7 w-7 rounded-full bg-secondary ring-2 ring-surface-container-lowest flex items-center justify-center text-surface-container-lowest font-bold text-xs">AL</div>
+<div class="inline-block h-7 w-7 rounded-full bg-primary ring-2 ring-surface-container-lowest flex items-center justify-center text-surface-container-lowest font-bold text-xs">JP</div>
+</div>
+<span class="font-label-sm text-label-sm text-surface-container-lowest/90 font-medium">Joined by 18,400+ mindful travelers</span>
+</div>
+</div>
+</div>
+<!-- ================= RIGHT HALF: Form Column ================= -->
+<div class="w-full lg:w-1/2 bg-surface-container-low px-6 sm:px-12 py-8 lg:py-12 flex flex-col justify-center items-center relative" id="right-column">
+<div class="w-full max-w-[420px] flex flex-col">
+<!-- Top Back Link -->
+<div class="mb-5 flex items-center justify-between">
+<a class="inline-flex items-center gap-1.5 text-secondary hover:text-primary transition-colors font-label-lg text-label-lg group" href="#back" onclick="event.preventDefault(); resetAppToDefault();">
+<span class="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-1">arrow_back</span>
+<span>Back to home</span>
+</a>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest hidden sm:inline">Step 1 of 2</span>
+</div>
+<!-- Alert Container: Used for "Email Already Registered" State -->
+<div class="hidden mb-5 p-3.5 rounded-2xl bg-secondary-fixed text-on-secondary-fixed shadow-sm transition-all duration-300" id="alert-banner">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary mt-0.5 text-lg">info</span>
+<div class="flex-1">
+<p class="font-title-md text-body-md font-semibold text-primary leading-tight">An account with this email already exists.</p>
+<p class="font-body-sm text-body-sm text-secondary mt-1">
+                  Would you like to <a class="underline font-semibold text-primary hover:text-secondary" href="#login" onclick="event.preventDefault();">log in instead</a> or reset password?
+                </p>
+</div>
+<button class="text-secondary hover:text-primary" onclick="closeAlert()" type="button">
+<span class="material-symbols-outlined text-base">close</span>
+</button>
+</div>
+</div>
+<!-- Normal Form Card Wrapper -->
+<div class="w-full" id="form-content-area">
+<!-- Header Group -->
+<div class="mb-6 space-y-1.5">
+<h1 class="font-headline-md text-headline-md text-primary font-semibold tracking-tight">
+                Create your account
+              </h1>
+<p class="font-body-md text-body-md text-secondary leading-relaxed">
+                Save your trips, edit them and share them with friends.
+              </p>
+</div>
+<!-- Social Provider: Continue with Google -->
+<button class="w-full h-12 px-4 rounded-full bg-surface-container-lowest hover:bg-surface-container transition duration-200 flex items-center justify-center gap-3 shadow-sm group" onclick="simulateGoogleLogin()" type="button">
+<svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path>
+</svg>
+<span class="font-title-md text-title-md text-primary font-medium group-hover:text-primary-container">
+                Continue with Google
+              </span>
+</button>
+<!-- Subtle Divider -->
+<div class="relative my-5 flex items-center justify-center">
+<div class="w-full h-px bg-surface-container-highest"></div>
+<span class="absolute px-3 bg-surface-container-low font-label-md text-label-md text-secondary uppercase tracking-widest">
+                or
+              </span>
+</div>
+<!-- Form Start -->
+<form class="space-y-4" id="signup-form" onsubmit="handleFormSubmit(event)">
+<!-- Full Name Field -->
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-primary font-medium" for="fullname">
+                  Full Name
+                </label>
+<div class="relative rounded-2xl transition-all">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-lg">person</span>
+</div>
+<input class="w-full h-12 pl-10 pr-4 rounded-2xl bg-surface-container-highest/60 focus:bg-surface-container-lowest text-primary placeholder:text-secondary/70 font-body-md text-body-md outline-none transition duration-150 focus:shadow-md" id="fullname" name="fullname" placeholder="e.g. Maya Chen" type="text" value="Maya Chen">
+</div>
+<!-- Validation Badge -->
+<p class="hidden font-body-sm text-body-sm text-secondary bg-secondary-fixed/50 px-2 py-1 rounded-md mt-1" id="val-name">
+                  Please enter your full name.
+                </p>
+</div>
+<!-- Email Field -->
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-primary font-medium" for="email">
+                  Email Address
+                </label>
+<div class="relative rounded-2xl transition-all">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-lg">mail</span>
+</div>
+<input class="w-full h-12 pl-10 pr-4 rounded-2xl bg-surface-container-highest/60 focus:bg-surface-container-lowest text-primary placeholder:text-secondary/70 font-body-md text-body-md outline-none transition duration-150 focus:shadow-md" id="email" name="email" placeholder="name@example.com" type="email" value="maya.chen@voyagejournal.com">
+</div>
+<!-- Validation Badge -->
+<p class="hidden font-body-sm text-body-sm text-secondary bg-secondary-fixed/50 px-2 py-1 rounded-md mt-1" id="val-email">
+                  Please provide a valid email format.
+                </p>
+</div>
+<!-- Password Field -->
+<div class="space-y-1">
+<div class="flex items-center justify-between">
+<label class="block font-label-md text-label-md text-primary font-medium" for="password">
+                    Password
+                  </label>
+<span class="font-label-sm text-label-sm text-secondary font-semibold" id="strength-label-text">Strong</span>
+</div>
+<div class="relative rounded-2xl transition-all">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-secondary">
+<span class="material-symbols-outlined text-lg">lock</span>
+</div>
+<input class="w-full h-12 pl-10 pr-11 rounded-2xl bg-surface-container-highest/60 focus:bg-surface-container-lowest text-primary placeholder:text-secondary/70 font-body-md text-body-md outline-none transition duration-150 focus:shadow-md" id="password" name="password" oninput="evaluatePasswordLive(this.value)" placeholder="Create a strong password" type="password" value="Kyoto2025!Travel">
+<button class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-secondary hover:text-primary transition-colors focus:outline-none" onclick="togglePasswordVisibility()" title="Toggle password view" type="button">
+<span class="material-symbols-outlined text-lg" id="pw-eye-icon">visibility</span>
+</button>
+</div>
+<!-- Password 4-segment Strength Bar -->
+<div class="pt-2">
+<div class="grid grid-cols-4 gap-1.5 h-1.5 w-full">
+<div class="rounded-full bg-primary-container transition-colors duration-300" id="bar-seg-1"></div>
+<div class="rounded-full bg-primary-container transition-colors duration-300" id="bar-seg-2"></div>
+<div class="rounded-full bg-primary-container transition-colors duration-300" id="bar-seg-3"></div>
+<div class="rounded-full bg-primary-container transition-colors duration-300" id="bar-seg-4"></div>
+</div>
+<div class="flex items-center justify-between mt-1.5">
+<span class="font-body-sm text-body-sm text-secondary font-light">
+                      At least 8 characters with a number or symbol
+                    </span>
+</div>
+</div>
+<!-- Validation Badge -->
+<p class="hidden font-body-sm text-body-sm text-secondary bg-secondary-fixed/50 px-2 py-1 rounded-md mt-1" id="val-password">
+                  Password must satisfy minimum requirements.
+                </p>
+</div>
+<!-- Terms Checkbox -->
+<div class="pt-1">
+<label class="flex items-start gap-2.5 cursor-pointer select-none">
+<input checked="" class="mt-1 w-4 h-4 rounded text-primary focus:ring-0 cursor-pointer accent-primary" id="terms-agree" type="checkbox">
+<span class="font-body-sm text-body-sm text-primary leading-tight">
+                    I agree to the <a class="underline text-secondary hover:text-primary font-medium" href="#terms" onclick="event.preventDefault();">Terms of Service</a> and <a class="underline text-secondary hover:text-primary font-medium" href="#privacy" onclick="event.preventDefault();">Privacy Policy</a>.
+                  </span>
+</label>
+<p class="hidden font-body-sm text-body-sm text-secondary bg-secondary-fixed/50 px-2 py-1 rounded-md mt-1" id="val-terms">
+                  You must accept the terms to proceed.
+                </p>
+</div>
+<!-- Primary Submit Button -->
+<div class="pt-2">
+<button class="w-full h-12 px-6 rounded-full bg-primary-container hover:bg-primary text-surface-container-lowest font-title-md text-title-md font-medium tracking-wide shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 transform active:scale-[0.98]" id="submit-btn" type="submit">
+<span class="hidden animate-spin material-symbols-outlined text-lg" id="submit-spinner">progress_activity</span>
+<span id="submit-text">Create account</span>
+</button>
+</div>
+</form>
+<!-- Bottom Log In Navigation -->
+<div class="mt-6 text-center">
+<p class="font-body-md text-body-md text-secondary">
+                Already have an account? 
+                <a class="font-semibold text-secondary hover:text-primary underline ml-1 transition-colors" href="#login" onclick="event.preventDefault(); alert('Redirecting to TripAi Secure Login...');">
+                  Log in
+                </a>
+</p>
+</div>
+</div>
+<!-- Success Screen (Shown during 'success' state) -->
+<div class="hidden flex-col items-center text-center py-8 space-y-4" id="success-view">
+<div class="w-16 h-16 rounded-full bg-secondary-fixed flex items-center justify-center text-primary shadow-sm mb-2">
+<span class="material-symbols-outlined text-3xl">mark_email_read</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-primary font-semibold">
+              Welcome to TripAi, Maya!
+            </h2>
+<p class="font-body-md text-body-md text-secondary max-w-sm leading-relaxed">
+              We’ve sent a gentle verification note to <span class="text-primary font-medium">maya.chen@voyagejournal.com</span>. Setting up your journal workspace now.
+            </p>
+<!-- Loading bar indicator -->
+<div class="w-full max-w-xs bg-surface-container-highest rounded-full h-2 overflow-hidden mt-3">
+<div class="bg-primary h-full rounded-full animate-pulse w-3/4"></div>
+</div>
+<div class="pt-6 w-full space-y-2">
+<button class="w-full h-11 px-6 rounded-full bg-primary-container text-surface-container-lowest font-title-md text-title-md" onclick="resetAppToDefault()" type="button">
+                Open Itinerary Planner
+              </button>
+<button class="w-full py-2 text-secondary hover:text-primary text-body-sm font-medium" onclick="resetAppToDefault()" type="button">
+                Back to Sign Up demo
+              </button>
+</div>
+</div>
+<!-- Micro journal footer info -->
+<div class="mt-6 pt-4 flex items-center justify-between text-secondary/70">
+<span class="font-label-sm text-label-sm">TripAi • Kyoto • Paris • Oaxaca</span>
+<div class="flex items-center gap-1.5 font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-xs">lock</span>
+<span>256-bit encryption</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Controller Logic -->
+<script>
+  let strengthStep = 0; // 0=weak, 1=okay, 2=strong
+
+  function updateActiveButton(id) {
+    document.querySelectorAll('.state-btn').forEach(btn => {
+      btn.classList.remove('bg-primary-container', 'text-surface-container-lowest', 'shadow-sm');
+      btn.classList.add('bg-surface-container', 'text-secondary');
+    });
+    const active = document.getElementById(id);
+    if (active) {
+      active.classList.add('bg-primary-container', 'text-surface-container-lowest', 'shadow-sm');
+      active.classList.remove('bg-surface-container', 'text-secondary');
+    }
+  }
+
+  function hideAllAlerts() {
+    document.getElementById('alert-banner').classList.add('hidden');
+    document.getElementById('val-name').classList.add('hidden');
+    document.getElementById('val-email').classList.add('hidden');
+    document.getElementById('val-password').classList.add('hidden');
+    document.getElementById('val-terms').classList.add('hidden');
+  }
+
+  function setPasswordStrengthDisplay(level) {
+    const s1 = document.getElementById('bar-seg-1');
+    const s2 = document.getElementById('bar-seg-2');
+    const s3 = document.getElementById('bar-seg-3');
+    const s4 = document.getElementById('bar-seg-4');
+    const lbl = document.getElementById('strength-label-text');
+
+    const empty = 'bg-surface-container-highest';
+    const filled = 'bg-primary-container';
+
+    // Reset
+    [s1, s2, s3, s4].forEach(el => el.className = 'rounded-full ' + empty + ' transition-colors duration-300');
+
+    if (level === 'weak') {
+      s1.className = 'rounded-full ' + filled + ' transition-colors duration-300';
+      lbl.innerText = 'Weak';
+      lbl.className = 'font-label-sm text-label-sm text-secondary font-medium';
+    } else if (level === 'okay') {
+      s1.className = 'rounded-full ' + filled + ' transition-colors duration-300';
+      s2.className = 'rounded-full ' + filled + ' transition-colors duration-300';
+      lbl.innerText = 'Okay';
+      lbl.className = 'font-label-sm text-label-sm text-secondary font-medium';
+    } else if (level === 'strong') {
+      s1.className = 'rounded-full ' + filled + ' transition-colors duration-300';
+      s2.className = 'rounded-full ' + filled + ' transition-colors duration-300';
+      s3.className = 'rounded-full ' + filled + ' transition-colors duration-300';
+      s4.className = 'rounded-full ' + filled + ' transition-colors duration-300';
+      lbl.innerText = 'Strong';
+      lbl.className = 'font-label-sm text-label-sm text-primary font-semibold';
+    }
+  }
+
+  function evaluatePasswordLive(val) {
+    if (!val || val.length < 4) {
+      setPasswordStrengthDisplay('weak');
+    } else if (val.length < 8) {
+      setPasswordStrengthDisplay('okay');
+    } else {
+      setPasswordStrengthDisplay('strong');
+    }
+  }
+
+  function setAppState(state) {
+    hideAllAlerts();
+    const formView = document.getElementById('form-content-area');
+    const successView = document.getElementById('success-view');
+    const submitBtn = document.getElementById('submit-btn');
+    const spinner = document.getElementById('submit-spinner');
+    const btnText = document.getElementById('submit-text');
+
+    // Default view state
+    formView.classList.remove('hidden');
+    successView.classList.add('hidden');
+    spinner.classList.add('hidden');
+    btnText.innerText = 'Create account';
+    submitBtn.disabled = false;
+
+    if (state === 'default') {
+      updateActiveButton('btn-default');
+      document.getElementById('fullname').value = 'Maya Chen';
+      document.getElementById('email').value = 'maya.chen@voyagejournal.com';
+      document.getElementById('password').value = 'Kyoto2025!Travel';
+      setPasswordStrengthDisplay('strong');
+    } 
+    else if (state === 'strength') {
+      updateActiveButton('btn-strength');
+      const states = ['weak', 'okay', 'strong'];
+      strengthStep = (strengthStep + 1) % states.length;
+      const current = states[strengthStep];
+      
+      if (current === 'weak') {
+        document.getElementById('password').value = 'travel';
+      } else if (current === 'okay') {
+        document.getElementById('password').value = 'kyoto2025';
+      } else {
+        document.getElementById('password').value = 'Kyoto2025!Travel';
+      }
+      setPasswordStrengthDisplay(current);
+    } 
+    else if (state === 'registered') {
+      updateActiveButton('btn-registered');
+      document.getElementById('alert-banner').classList.remove('hidden');
+      document.getElementById('email').value = 'maya.chen@voyagejournal.com';
+    } 
+    else if (state === 'validation') {
+      updateActiveButton('btn-validation');
+      document.getElementById('fullname').value = '';
+      document.getElementById('email').value = 'invalid-email-address';
+      document.getElementById('password').value = '123';
+      document.getElementById('terms-agree').checked = false;
+      document.getElementById('val-name').classList.remove('hidden');
+      document.getElementById('val-email').classList.remove('hidden');
+      document.getElementById('val-password').classList.remove('hidden');
+      document.getElementById('val-terms').classList.remove('hidden');
+      setPasswordStrengthDisplay('weak');
+    } 
+    else if (state === 'loading') {
+      updateActiveButton('btn-loading');
+      spinner.classList.remove('hidden');
+      btnText.innerText = 'Setting up journal...';
+      submitBtn.disabled = true;
+    } 
+    else if (state === 'success') {
+      updateActiveButton('btn-success');
+      formView.classList.add('hidden');
+      successView.classList.remove('hidden');
+      successView.classList.add('flex');
+    }
+  }
+
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    setAppState('loading');
+    setTimeout(() => {
+      setAppState('success');
+    }, 1200);
+  }
+
+  function simulateGoogleLogin() {
+    setAppState('loading');
+    setTimeout(() => {
+      setAppState('success');
+    }, 900);
+  }
+
+  function togglePasswordVisibility() {
+    const pwInput = document.getElementById('password');
+    const eyeIcon = document.getElementById('pw-eye-icon');
+    if (pwInput.type === 'password') {
+      pwInput.type = 'text';
+      eyeIcon.innerText = 'visibility_off';
+    } else {
+      pwInput.type = 'password';
+      eyeIcon.innerText = 'visibility';
+    }
+  }
+
+  function closeAlert() {
+    document.getElementById('alert-banner').classList.add('hidden');
+  }
+
+  function resetAppToDefault() {
+    setAppState('default');
+  }
+
+  let isMobilePreview = false;
+  function toggleMobileView() {
+    const layout = document.getElementById('layout-container');
+    const leftCol = document.getElementById('left-column');
+    const rightCol = document.getElementById('right-column');
+    const mobileBtn = document.getElementById('btn-mobile');
+
+    isMobilePreview = !isMobilePreview;
+
+    if (isMobilePreview) {
+      layout.classList.remove('max-w-[1280px]', 'lg:flex-row');
+      layout.classList.add('max-w-[420px]', 'flex-col', 'border-4', 'border-primary/10');
+      leftCol.classList.remove('lg:w-1/2', 'lg:min-h-[760px]');
+      leftCol.classList.add('min-h-[220px]', 'p-5');
+      rightCol.classList.remove('lg:w-1/2', 'lg:py-12');
+      rightCol.classList.add('py-6', 'px-5');
+      mobileBtn.classList.add('bg-primary-container', 'text-surface-container-lowest');
+      mobileBtn.classList.remove('bg-surface-container', 'text-secondary');
+    } else {
+      layout.classList.add('max-w-[1280px]', 'lg:flex-row');
+      layout.classList.remove('max-w-[420px]', 'flex-col', 'border-4', 'border-primary/10');
+      leftCol.classList.add('lg:w-1/2', 'lg:min-h-[760px]');
+      leftCol.classList.remove('min-h-[220px]', 'p-5');
+      rightCol.classList.add('lg:w-1/2', 'lg:py-12');
+      rightCol.classList.remove('py-6', 'px-5');
+      mobileBtn.classList.remove('bg-primary-container', 'text-surface-container-lowest');
+      mobileBtn.classList.add('bg-surface-container', 'text-secondary');
+    }
+  }
+</script></main></body></html>

@@ -1,38 +1,37 @@
-import Link from "next/link";
+import { PublicNavbar } from "@/components/layout/PublicNavbar";
+import Hero from "@/components/home/landing/Hero";
+import HowItWorks from "@/components/home/landing/HowItWorks";
+import FeatureShowcase from "@/components/home/landing/FeatureShowcase";
+import StickyNotesSection from "@/components/home/landing/StickyNotesSection";
+import SampleTrips from "@/components/home/landing/SampleTrips";
+import WorldMap from "@/components/home/landing/WorldMap";
+import FinalCta from "@/components/home/landing/FinalCta";
+import Footer from "@/components/home/landing/Footer";
+
+export const metadata = {
+  title: "TripAi — Your trip, planned in seconds",
+  description: "Bespoke AI journey architect and travel itinerary planner. Enter a place and a budget, get your handcrafted route.",
+};
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[#fef9f2] text-[#1d1b18]">
-      <div className="max-w-xl w-full bg-white border border-[#d3c4b9]/50 rounded-2xl p-8 shadow-sm space-y-6 text-center">
-        <div className="inline-block px-3 py-1 rounded-full bg-[#ffd9b7] text-[#54381d] text-xs font-semibold">
-          Public Route: /
-        </div>
-        <h1 className="text-3xl font-serif font-bold text-[#54381d]">Landing Page</h1>
-        <p className="text-sm text-[#4f453c]">
-          Foundation placeholder for TripAi landing page.
-        </p>
+    <div className="min-h-screen flex flex-col bg-surface text-on-surface antialiased">
+      {/* Public Navbar */}
+      <PublicNavbar />
 
-        <div className="pt-4 border-t border-[#d3c4b9]/40 flex flex-wrap gap-2 justify-center text-xs">
-          <Link href="/login" className="px-3 py-1.5 rounded-full bg-[#6e4f32] text-white hover:bg-[#54381d]">
-            Login
-          </Link>
-          <Link href="/signup" className="px-3 py-1.5 rounded-full bg-[#f2ede7] text-[#54381d] hover:bg-[#ece7e1]">
-            Sign Up
-          </Link>
-          <Link href="/home" className="px-3 py-1.5 rounded-full bg-[#f2ede7] text-[#54381d] hover:bg-[#ece7e1]">
-            Home (Protected)
-          </Link>
-          <Link href="/trips" className="px-3 py-1.5 rounded-full bg-[#f2ede7] text-[#54381d] hover:bg-[#ece7e1]">
-            My Trips
-          </Link>
-          <Link href="/trip/trip-kyoto-5day" className="px-3 py-1.5 rounded-full bg-[#f2ede7] text-[#54381d] hover:bg-[#ece7e1]">
-            Sample Trip
-          </Link>
-          <Link href="/shared/kyoto-spring-2026" className="px-3 py-1.5 rounded-full bg-[#f2ede7] text-[#54381d] hover:bg-[#ece7e1]">
-            Shared Trip
-          </Link>
-        </div>
-      </div>
+      {/* Main Landing Page Content */}
+      <main className="w-full flex-1 max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <Hero />
+        <HowItWorks />
+        <FeatureShowcase />
+        <StickyNotesSection />
+        <SampleTrips />
+        <WorldMap />
+        <FinalCta />
+      </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

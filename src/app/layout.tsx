@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Playfair_Display, Plus_Jakarta_Sans, Caveat } from "next/font/google";
 import { Toaster } from "@/components/common/toast";
+import LayoutShell from "@/components/motion/LayoutShell";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -10,6 +11,11 @@ const playfair = Playfair_Display({
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
+  subsets: ["latin"],
+});
+
+const caveat = Caveat({
+  variable: "--font-caveat",
   subsets: ["latin"],
 });
 
@@ -26,10 +32,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${plusJakarta.variable} h-full antialiased`}
+      className={`${playfair.variable} ${plusJakarta.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-[#fef9f2] text-[#1d1b18]">
-        {children}
+        {/* LayoutShell provides AnimatePresence for page exit/enter transitions */}
+        <LayoutShell>{children}</LayoutShell>
         <Toaster />
       </body>
     </html>

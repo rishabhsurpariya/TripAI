@@ -3,6 +3,7 @@
 @theme {
   --font-serif: var(--font-playfair), Georgia, serif;
   --font-sans: var(--font-plus-jakarta), system-ui, sans-serif;
+  --font-handwriting: var(--font-caveat), cursive;
 
   --color-primary: #54381d;
   --color-primary-container: #6e4f32;
@@ -10,11 +11,20 @@
   --color-secondary-container: #ffd9b7;
   --color-surface: #fef9f2;
   --color-surface-container: #f2ede7;
+  --color-surface-container-low: #f8f3ed;
   --color-surface-container-high: #ece7e1;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-highest: #e6e2dc;
   --color-on-surface: #1d1b18;
   --color-on-surface-variant: #4f453c;
+  --color-on-primary: #ffffff;
+  --color-on-tertiary-container: #e2c5ad;
   --color-outline: #81756b;
   --color-outline-variant: #d3c4b9;
+  --color-inverse-on-surface: #f5f0ea;
+  --color-tertiary-fixed: #fbddc4;
+  --color-tertiary-fixed-dim: #dec1a9;
+  --color-primary-fixed-dim: #e9bf9a;
 }
 
 :root {
@@ -27,3 +37,74 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+
+/* ─── Landing page utilities ─────────────────────────────────────── */
+.font-handwriting {
+  font-family: var(--font-handwriting);
+}
+
+.washi-tape {
+  background: rgba(230, 218, 204, 0.85);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 1px 3px rgba(110, 79, 50, 0.08);
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) rotate(-3deg); }
+  50%       { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes floatOpposite {
+  0%, 100% { transform: translateY(0px) rotate(4deg); }
+  50%       { transform: translateY(-10px) rotate(2deg); }
+}
+
+@keyframes flyFlightLoop {
+  0%   { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
+}
+
+@keyframes contrailDash {
+  0%   { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -200; }
+}
+
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.animate-float-alt {
+  animation: floatOpposite 7s ease-in-out infinite;
+}
+
+.animated-airplane-tracker {
+  offset-path: path('M 380 120 Q 430 150 465 215 L 475 225 Q 540 235 625 285 L 635 280 Q 710 230 805 180 L 825 175 Q 920 140 980 160');
+  offset-rotate: auto 90deg;
+  animation: flyFlightLoop 14s linear infinite;
+}
+
+.airplane-contrail-trail {
+  stroke-linecap: round;
+  animation: contrailDash 14s linear infinite;
+}
+
+.airplane-contrail-pulse {
+  stroke-linecap: round;
+  animation: contrailDash 7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-slow,
+  .animate-float-alt {
+    animation: none;
+  }
+  .animated-airplane-tracker {
+    animation: none;
+    offset-distance: 45%;
+  }
+  .airplane-contrail-trail,
+  .airplane-contrail-pulse {
+    animation: none;
+  }
+}
+

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { motion, useReducedMotion, useInView } from "framer-motion";
 import { Reveal } from "@/components/motion";
 
 const CALLOUTS = [
@@ -16,14 +17,33 @@ type CalloutId = (typeof CALLOUTS)[number]["id"];
 
 export default function FeatureShowcase() {
   const [active, setActive] = useState<CalloutId>("timeline");
+  const [isPaused, setIsPaused] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(containerRef, { amount: 0.3 });
+  const prefersReduced = useReducedMotion();
+
+  // Auto-cycle callouts sequentially when in view
+  useEffect(() => {
+    if (prefersReduced || !inView || isPaused) return;
+
+    const interval = setInterval(() => {
+      setActive((prev) => {
+        const currentIndex = CALLOUTS.findIndex((c) => c.id === prev);
+        const nextIndex = (currentIndex + 1) % CALLOUTS.length;
+        return CALLOUTS[nextIndex].id;
+      });
+    }, 2800);
+
+    return () => clearInterval(interval);
+  }, [inView, isPaused, prefersReduced]);
 
   const highlight = (id: CalloutId) =>
     active === id
-      ? "ring-2 ring-secondary bg-[#ffdcbe]/20 scale-[1.01] transition-all duration-300"
-      : "transition-all duration-300";
+      ? "ring-2 ring-primary bg-[#ffdcbe]/25 scale-[1.015] shadow-md transition-all duration-300"
+      : "transition-all duration-300 opacity-90";
 
   return (
-    <section className="py-16 lg:py-24 px-2 sm:px-4">
+    <section ref={containerRef} className="py-16 lg:py-24 px-2 sm:px-4">
       <div className="max-w-5xl mx-auto">
         <Reveal>
           <div className="text-center mb-12">
@@ -37,29 +57,45 @@ export default function FeatureShowcase() {
           </div>
         </Reveal>
 
-        {/* Callout pills */}
-        <Reveal>
-          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-8">
-            {CALLOUTS.map((c) => (
-              <button
-                key={c.id}
-                onMouseEnter={() => setActive(c.id)}
-                onClick={() => setActive(c.id)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold shadow-sm transition-all ${
-                  active === c.id
-                    ? "bg-primary text-white"
-                    : "bg-surface-container text-primary hover:bg-primary hover:text-white"
-                }`}
-              >
-                <span>{c.icon}</span> {c.label}
-              </button>
-            ))}
-          </div>
-        </Reveal>
+        {/* Callout pills appearing one after another */}
+        <div
+          className="flex flex-wrap items-center justify-center gap-2.5 mb-8"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          {CALLOUTS.map((c, idx) => (
+            <motion.button
+              key={c.id}
+              initial={prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: 15, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{
+                delay: prefersReduced ? 0 : idx * 0.1,
+                duration: 0.4,
+                ease: "easeOut",
+              }}
+              onClick={() => {
+                setActive(c.id);
+                setIsPaused(true);
+              }}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold shadow-xs transition-all cursor-pointer ${
+                active === c.id
+                  ? "bg-primary text-white shadow-sm ring-2 ring-primary/30"
+                  : "bg-surface-container text-primary hover:bg-primary hover:text-white"
+              }`}
+            >
+              <span>{c.icon}</span> {c.label}
+            </motion.button>
+          ))}
+        </div>
 
         {/* Browser mockup */}
         <Reveal>
-          <div className="bg-surface-container-lowest rounded-3xl p-4 sm:p-7 shadow-[0_25px_60px_-15px_rgba(110,79,50,0.14)] border border-[#bba591]/30">
+          <div
+            className="bg-surface-container-lowest rounded-3xl p-4 sm:p-7 shadow-[0_25px_60px_-15px_rgba(110,79,50,0.14)] border border-[#bba591]/30"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
             {/* Window bar */}
             <div className="flex items-center justify-between pb-5 border-b border-[#bba591]/20">
               <div className="flex items-center gap-2">

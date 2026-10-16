@@ -27,6 +27,10 @@
   --color-primary-fixed-dim: #e9bf9a;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   --background: #fef9f2;
   --foreground: #1d1b18;

@@ -1,6 +1,7 @@
 "use client";
 
-import { Reveal, StaggerList } from "@/components/motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { Reveal } from "@/components/motion";
 
 const steps = [
   {
@@ -8,6 +9,7 @@ const steps = [
     icon: "🎛️",
     title: "Tell us",
     caption: "Tell us",
+    popDelay: 0.2,
     content: (
       <div className="space-y-2.5 bg-[#f8f3ed] p-3.5 rounded-xl">
         <div className="flex items-center gap-2 bg-surface px-3 py-2 rounded-lg shadow-sm">
@@ -32,6 +34,7 @@ const steps = [
     icon: "✨",
     title: "Get your plan",
     caption: "Get your plan",
+    popDelay: 0.7,
     content: (
       <div className="relative bg-[#f8f3ed] p-3.5 rounded-xl h-36 flex flex-col justify-center items-center overflow-hidden">
         <div className="absolute -top-3 w-4/5 h-10 bg-surface rounded-xl shadow-sm opacity-60" />
@@ -55,6 +58,7 @@ const steps = [
     icon: "✏️",
     title: "Make it yours",
     caption: "Make it yours",
+    popDelay: 1.2,
     content: (
       <div className="bg-[#f8f3ed] p-3.5 rounded-xl space-y-2">
         <div className="relative bg-[#fffae0] p-2.5 rounded-lg shadow-sm -rotate-2">
@@ -69,13 +73,15 @@ const steps = [
         </div>
       </div>
     ),
-    arrow: null,
+    arrow: "✓",
   },
 ];
 
 export default function HowItWorks() {
+  const prefersReduced = useReducedMotion();
+
   return (
-    <section className="py-16 lg:py-24 px-4 bg-[#f2ede7]/60 rounded-3xl my-6">
+    <section className="py-16 lg:py-24 px-4 bg-[#f2ede7]/60 rounded-3xl my-6 overflow-hidden">
       <div className="max-w-5xl mx-auto">
         <Reveal>
           <div className="text-center mb-14">
@@ -89,20 +95,63 @@ export default function HowItWorks() {
           </div>
         </Reveal>
 
-        {/* Connected path */}
-        <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          <div className="hidden md:block absolute top-1/2 left-10 right-10 -translate-y-16 -z-0 pointer-events-none">
-            <svg className="w-full h-12" fill="none" viewBox="0 0 800 48">
-              <path d="M 20 24 Q 200 -8 400 24 T 780 24" stroke="#bba591" strokeDasharray="6 6" strokeWidth="2" />
+        {/* Connected path container */}
+        <div className="relative">
+          {/* Animated paper plane along dotted flight line (desktop) */}
+          <div className="hidden md:block absolute top-1/2 left-8 right-8 -translate-y-24 z-0 pointer-events-none">
+            <svg className="w-full h-16" fill="none" viewBox="0 0 800 64" preserveAspectRatio="none">
+              <motion.path
+                d="M 20 32 Q 220 0 400 32 T 780 32"
+                stroke="#bba591"
+                strokeDasharray="6 6"
+                strokeWidth="2.5"
+                initial={prefersReduced ? { pathLength: 1 } : { pathLength: 0 }}
+                whileInView={{ pathLength: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+              />
             </svg>
-            <span className="absolute right-4 top-1 text-primary text-xl rotate-45">✈</span>
+
+            {/* Airplane tracker traversing across path */}
+            {!prefersReduced && (
+              <motion.div
+                initial={{ left: "0%", top: "32px", opacity: 0, scale: 0.8 }}
+                whileInView={{
+                  left: ["2%", "18%", "50%", "85%", "98%"],
+                  top: ["32px", "14px", "32px", "18px", "32px"],
+                  rotate: [35, 15, 30, 15, 25],
+                  opacity: [0, 1, 1, 1, 1],
+                  scale: [0.8, 1.15, 1, 1.15, 1],
+                }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 1.6, ease: [0.25, 0.1, 0.25, 1] }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-9 h-9 rounded-full bg-surface shadow-md border border-[#bba591]/30 text-primary"
+              >
+                <span className="text-[17px] -rotate-45 block">✈️</span>
+              </motion.div>
+            )}
           </div>
 
-          <StaggerList className="contents">
+          {/* Step panels with coordinated pop-in */}
+          <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 z-10">
             {steps.map((step) => (
-              <div
+              <motion.div
                 key={step.number}
-                className="bg-surface-container-lowest rounded-2xl p-6 shadow-[0_10px_25px_-8px_rgba(110,79,50,0.08)] flex flex-col justify-between relative z-10 transition-all duration-300 hover:-translate-y-1"
+                initial={
+                  prefersReduced
+                    ? { opacity: 1, scale: 1, y: 0 }
+                    : { opacity: 0, scale: 0.84, y: 35 }
+                }
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 18,
+                  delay: prefersReduced ? 0 : step.popDelay,
+                }}
+                whileHover={prefersReduced ? undefined : { y: -6, scale: 1.015 }}
+                className="bg-surface-container-lowest rounded-2xl p-6 shadow-[0_10px_25px_-8px_rgba(110,79,50,0.08)] flex flex-col justify-between relative transition-shadow duration-300 hover:shadow-[0_16px_32px_-10px_rgba(110,79,50,0.14)]"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -115,11 +164,11 @@ export default function HowItWorks() {
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#bba591]/20 flex items-center justify-between">
                   <span className="text-lg font-semibold text-primary">{step.caption}</span>
-                  <span className="text-secondary">{step.arrow ?? "✓"}</span>
+                  <span className="text-secondary font-medium">{step.arrow}</span>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </StaggerList>
+          </div>
         </div>
       </div>
     </section>

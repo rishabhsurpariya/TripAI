@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Compass, Sparkles } from "lucide-react";
 
@@ -8,8 +9,25 @@ interface PublicNavbarProps {
 }
 
 export function PublicNavbar({ activePath }: PublicNavbarProps) {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 bg-[#fef9f2]/90 backdrop-blur-md border-b border-[#d3c4b9]/50 shadow-[0_10px_30px_-10px_rgba(110,79,50,0.06)]">
+    <header
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled
+          ? "bg-[#fef9f2]/95 backdrop-blur-md border-b border-[#bba591]/40 shadow-[0_12px_32px_-8px_rgba(110,79,50,0.12)]"
+          : "bg-[#fef9f2]/80 backdrop-blur-xs border-b border-[#d3c4b9]/30 shadow-none"
+      }`}
+    >
       <div className="h-16 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">

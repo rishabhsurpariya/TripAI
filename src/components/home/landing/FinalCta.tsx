@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/motion";
 
 export default function FinalCta() {
   const router = useRouter();
+  const prefersReduced = useReducedMotion();
   const [query, setQuery] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
@@ -26,6 +28,30 @@ export default function FinalCta() {
   return (
     <section className="py-16 lg:py-24 px-4 mb-12">
       <div className="max-w-5xl mx-auto bg-[#d9c9ba]/40 rounded-[2.5rem] p-6 sm:p-12 lg:p-16 text-center relative overflow-hidden shadow-[0_20px_45px_-12px_rgba(110,79,50,0.14)] border border-[#bba591]/30">
+        {/* Paper plane drifting gently across the background */}
+        {!prefersReduced && (
+          <motion.div
+            initial={{ left: "-10%", top: "25%", opacity: 0 }}
+            animate={{
+              left: ["-8%", "112%"],
+              top: ["25%", "15%", "28%", "18%", "25%"],
+              rotate: [8, 14, 6, 12, 10],
+              opacity: [0, 0.45, 0.55, 0.45, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="absolute pointer-events-none z-0"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl opacity-60">✈️</span>
+              <div className="w-24 h-0.5 border-b-2 border-dashed border-[#8c6e52]/40" />
+            </div>
+          </motion.div>
+        )}
+
         {/* Background decorative SVG */}
         <div className="absolute -right-10 -bottom-10 opacity-20 pointer-events-none">
           <svg fill="none" height="280" viewBox="0 0 200 200" width="280">
@@ -79,7 +105,7 @@ export default function FinalCta() {
               </div>
               <button
                 type="submit"
-                className="w-full sm:w-auto px-7 py-3 rounded-xl sm:rounded-full bg-primary-container text-white hover:bg-secondary font-medium transition-all duration-200 shadow-sm shrink-0 flex items-center justify-center gap-1.5 text-sm cursor-pointer"
+                className="w-full sm:w-auto px-7 py-3 rounded-xl sm:rounded-full bg-primary-container text-white hover:bg-secondary font-medium transition-all duration-200 shadow-sm shrink-0 flex items-center justify-center gap-1.5 text-sm cursor-pointer active:scale-95"
               >
                 <span>Plan my trip</span>
                 <span>→</span>
@@ -101,7 +127,7 @@ export default function FinalCta() {
                   key={pill}
                   type="button"
                   onClick={() => handlePillClick(pill)}
-                  className="px-3 py-1 rounded-full bg-surface/70 hover:bg-surface text-primary border border-[#bba591]/25 cursor-pointer transition-colors"
+                  className="px-3 py-1 rounded-full bg-surface/70 hover:bg-surface text-primary border border-[#bba591]/25 cursor-pointer transition-colors active:scale-95"
                 >
                   {pill}
                 </button>
@@ -193,7 +219,7 @@ export default function FinalCta() {
             </div>
           </Reveal>
 
-          {/* Trust bullet points */}
+          {/* Trust points */}
           <Reveal>
             <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-10 pt-8 border-t border-[#bba591]/30 w-full max-w-3xl text-secondary text-xs sm:text-sm">
               <div className="flex items-center gap-1.5">

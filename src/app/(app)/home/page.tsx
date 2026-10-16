@@ -1,34 +1,27 @@
-import Link from "next/link";
+import { Navbar } from "@/components/layout/Navbar";
+import { TripPlannerForm } from "@/components/home/TripPlannerForm";
+import { CuratedTripsSection } from "@/components/home/CuratedTripsSection";
+import { ExploreByInterestSection } from "@/components/home/ExploreByInterestSection";
+import { ExploreBySeasonSection } from "@/components/home/ExploreBySeasonSection";
+
+export const metadata = {
+  title: "TripAi — Home Dashboard & Trip Planner",
+  description: "Plan bespoke AI travel itineraries tailored to your cadence and curiosities.",
+};
 
 export default function HomePage() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[#fef9f2] text-[#1d1b18]">
-      <div className="max-w-xl w-full bg-white border border-[#d3c4b9]/50 rounded-2xl p-8 shadow-sm space-y-6 text-center">
-        <div className="inline-block px-3 py-1 rounded-full bg-[#ffd9b7] text-[#54381d] text-xs font-semibold">
-          Protected Route: /home
-        </div>
-        <h1 className="text-3xl font-serif font-bold text-[#54381d]">
-          Home Dashboard
-        </h1>
-        <p className="text-sm text-[#4f453c]">
-          Foundation placeholder for TripAi Home: planner form, curated trips, explore by interest & season.
-        </p>
+    <div className="min-h-screen flex flex-col bg-[#f7f2ec] text-on-surface antialiased">
+      {/* Logged-in Navbar */}
+      <Navbar />
 
-        <div className="pt-4 border-t border-[#d3c4b9]/40 flex flex-wrap gap-2 justify-center text-xs">
-          <Link href="/explore" className="px-3 py-1.5 rounded-full bg-[#f2ede7] text-[#54381d] hover:bg-[#ece7e1]">
-            Explore Results
-          </Link>
-          <Link href="/generating" className="px-3 py-1.5 rounded-full bg-[#f2ede7] text-[#54381d] hover:bg-[#ece7e1]">
-            Generating Screen
-          </Link>
-          <Link href="/trips" className="px-3 py-1.5 rounded-full bg-[#f2ede7] text-[#54381d] hover:bg-[#ece7e1]">
-            My Trips
-          </Link>
-          <Link href="/trip/trip-kyoto-5day" className="px-3 py-1.5 rounded-full bg-[#6e4f32] text-white hover:bg-[#54381d]">
-            View Sample Trip (/trip/trip-kyoto-5day)
-          </Link>
-        </div>
-      </div>
+      {/* Main Container without footer */}
+      <main className="w-full flex-1 max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+        <TripPlannerForm />
+        <CuratedTripsSection />
+        <ExploreByInterestSection />
+        <ExploreBySeasonSection />
+      </main>
     </div>
   );
 }

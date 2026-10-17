@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import {
   motion,
+  AnimatePresence,
   useReducedMotion,
   useMotionValue,
   useSpring,
@@ -21,28 +22,35 @@ import {
 import { Trip } from "@/types/trip";
 import { easing } from "@/lib/motion";
 
-// Smoothly counts up to a number when it first scrolls into view
+// Smoothly counts up/down whenever the numeric value changes
 function AnimatedValue({ value, prefix = "$" }: { value: number; prefix?: string }) {
   const shouldReduceMotion = useReducedMotion();
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-30px" });
-  const motionVal = useMotionValue(0);
-  const springVal = useSpring(motionVal, { stiffness: 55, damping: 16 });
+  const motionVal = useMotionValue(value);
+  const springVal = useSpring(motionVal, { stiffness: 90, damping: 18 });
 
   useEffect(() => {
-    if (!isInView || shouldReduceMotion) {
+    if (shouldReduceMotion) {
       if (ref.current) ref.current.textContent = `${prefix}${value.toLocaleString()}`;
       return;
     }
-    const ctrl = animate(motionVal, value, { duration: 1.0, ease: [0.25, 0.1, 0.25, 1] });
+
     const unsub = springVal.on("change", (v) => {
       if (ref.current) ref.current.textContent = `${prefix}${Math.round(v).toLocaleString()}`;
     });
-    return () => { ctrl.stop?.(); unsub(); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInView, value]);
 
-  return <span ref={ref}>{prefix}0</span>;
+    const ctrl = animate(motionVal, value, {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1],
+    });
+
+    return () => {
+      ctrl.stop?.();
+      unsub();
+    };
+  }, [value, prefix, shouldReduceMotion, motionVal, springVal]);
+
+  return <span ref={ref}>{prefix}{value.toLocaleString()}</span>;
 }
 
 interface BudgetSidePanelProps {
@@ -54,6 +62,7 @@ export function BudgetSidePanel({
   trip,
   onOpenBudgetTab,
 }: BudgetSidePanelProps) {
+  const shouldReduceMotion = useReducedMotion();
   const [selectedDay, setSelectedDay] = useState(1);
 
   const budget = trip.budget || {
@@ -82,6 +91,8 @@ export function BudgetSidePanel({
   const foodPct = totalSpent ? (budget.food / totalSpent) * 100 : 20;
 
   const daysCount = trip.days?.length || 5;
+  const isOverBudget = totalSpent > maxBudget;
+  const overAmount = isOverBudget ? totalSpent - maxBudget : 0;
 
   return (
     <aside className="lg:col-span-4 flex flex-col space-y-6 lg:sticky lg:top-36">
@@ -100,6 +111,43 @@ export function BudgetSidePanel({
             <PieChart className="w-4 h-4" />
           </span>
         </div>
+
+        {/* Over-budget advisory banner */}
+        <AnimatePresence>
+          {isOverBudget && (
+            <motion.div
+              initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0, y: -10 }}
+              animate={{ opacity: 1, height: "auto", y: 0 }}
+              exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, height: 0, y: -10 }}
+              transition={{ duration: 0.35, ease: easing }}
+              className="p-3.5 rounded-xl bg-[#f5ede4] border border-[#d3c4b9]/70 flex flex-col space-y-1 mb-4 transition-all shadow-2xs overflow-hidden"
+              id="budget-advisory-box"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-primary flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[16px] text-secondary">warning</span>
+                  You&apos;re <AnimatedValue value={overAmount} /> over budget
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-primary-container text-on-primary text-[10px] font-bold">
+                  Live Draft
+                </span>
+              </div>
+              <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                Total planned spend is ${totalSpent.toLocaleString()} against your ${maxBudget.toLocaleString()} cap. Consider swapping high-cost activities.
+              </p>
+              <div className="pt-1 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={onOpenBudgetTab}
+                  className="text-xs font-semibold text-primary underline underline-offset-2 hover:text-secondary flex items-center gap-0.5 cursor-pointer"
+                >
+                  <span>See ways to save</span>
+                  <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Total Ring / Bar Indicator */}
         <div className="space-y-2 mb-4 p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/20">
@@ -145,12 +193,16 @@ export function BudgetSidePanel({
           </div>
 
           <div className="flex items-center justify-between text-[11px] text-secondary pt-0.5">
-            <span>{percentAllocated}% allocated ({daysCount} Days)</span>
-            {bufferLeft > 0 && (
+            <span className="font-semibold">{percentAllocated}% allocated ({daysCount} Days)</span>
+            {isOverBudget ? (
+              <span className="text-primary font-bold bg-[#dec1a9]/50 px-2 py-0.5 rounded-full">
+                + ${overAmount.toLocaleString()} overage
+              </span>
+            ) : bufferLeft > 0 ? (
               <span className="text-primary font-semibold text-emerald-800 bg-secondary-container/50 px-2 py-0.5 rounded-full">
                 +<AnimatedValue value={bufferLeft} /> buffer left
               </span>
-            )}
+            ) : null}
           </div>
         </div>
 
@@ -164,7 +216,7 @@ export function BudgetSidePanel({
               </span>
             </div>
             <span className="font-bold text-on-surface">
-              ${budget.stay.toLocaleString()}
+              <AnimatedValue value={budget.stay} />
             </span>
           </div>
 
@@ -176,7 +228,7 @@ export function BudgetSidePanel({
               </span>
             </div>
             <span className="font-bold text-on-surface">
-              ${budget.transport.toLocaleString()}
+              <AnimatedValue value={budget.transport} />
             </span>
           </div>
 
@@ -188,7 +240,7 @@ export function BudgetSidePanel({
               </span>
             </div>
             <span className="font-bold text-on-surface">
-              ${budget.activities.toLocaleString()}
+              <AnimatedValue value={budget.activities} />
             </span>
           </div>
 
@@ -200,7 +252,7 @@ export function BudgetSidePanel({
               </span>
             </div>
             <span className="font-bold text-on-surface">
-              ${budget.food.toLocaleString()}
+              <AnimatedValue value={budget.food} />
             </span>
           </div>
         </div>

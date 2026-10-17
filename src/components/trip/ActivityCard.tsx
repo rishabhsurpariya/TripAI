@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import {
   Sun,
@@ -10,38 +11,104 @@ import {
   Sparkles,
   Receipt,
   Plus,
+  GripVertical,
+  MoreVertical,
+  Trash2,
+  Copy,
+  Calendar,
+  ChevronDown,
 } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Activity } from "@/types/trip";
 import { easing } from "@/lib/motion";
+import { StickyNote } from "./StickyNote";
 
 export interface ActivityCardProps {
   activity: Activity;
   index?: number;
+  dayNumber?: number;
+  allDayNumbers?: number[];
   className?: string;
   isEditMode?: boolean;
+  isDragging?: boolean;
+  dragHandleProps?: Record<string, unknown>;
   onDelete?: (id: string) => void;
-  onReplace?: (id: string) => void;
+  onDuplicate?: (id: string) => void;
+  onMoveToDay?: (id: string, targetDayNumber: number) => void;
   onUpdateDuration?: (id: string, mins: number) => void;
   onUpdateCost?: (id: string, cost: number) => void;
-  onUpdateNote?: (id: string, note: string) => void;
+  onUpdateTimeSlot?: (id: string, slot: string) => void;
+  onUpdateNote?: (id: string, note: string, color?: string) => void;
+  onReplace?: (id: string) => void;
 }
 
 function getTimeSlotIcon(slot: string) {
   const s = slot.toLowerCase();
-  if (s.includes("morning")) return <Sunrise className="w-4 h-4 text-amber-600" />;
-  if (s.includes("afternoon") || s.includes("midday")) return <Sun className="w-4 h-4 text-amber-600" />;
-  if (s.includes("golden") || s.includes("sunset") || s.includes("evening")) return <Sunset className="w-4 h-4 text-amber-700" />;
-  return <Moon className="w-4 h-4 text-indigo-600" />;
+  if (s.includes("morning")) return <Sunrise className="w-4 h-4 text-amber-600 shrink-0" />;
+  if (s.includes("afternoon") || s.includes("midday")) return <Sun className="w-4 h-4 text-amber-600 shrink-0" />;
+  if (s.includes("golden") || s.includes("sunset") || s.includes("evening")) return <Sunset className="w-4 h-4 text-amber-700 shrink-0" />;
+  return <Moon className="w-4 h-4 text-indigo-600 shrink-0" />;
 }
+
+const TIME_SLOT_OPTIONS = [
+  "Morning · 09:30 AM",
+  "Morning · 10:30 AM",
+  "Afternoon · 01:30 PM",
+  "Late Afternoon · 04:00 PM",
+  "Golden Hour · 05:00 PM",
+  "Evening · 06:30 PM",
+  "Night · 08:30 PM",
+];
 
 export function ActivityCard({
   activity,
   index = 1,
+  dayNumber = 1,
+  allDayNumbers = [1, 2, 3, 4, 5],
   className = "",
+  isEditMode = false,
+  isDragging = false,
+  dragHandleProps,
+  onDelete,
+  onDuplicate,
+  onMoveToDay,
+  onUpdateDuration,
+  onUpdateCost,
+  onUpdateTimeSlot,
+  onUpdateNote,
 }: ActivityCardProps) {
   const durationHours = (activity.durationMinutes / 60).toFixed(1);
   const shouldReduceMotion = useReducedMotion();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isEditingNote, setIsEditingNote] = useState(false);
+  const [costInput, setCostInput] = useState(String(activity.estimatedCost || 0));
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCostInput(String(activity.estimatedCost || 0));
+  }, [activity.estimatedCost]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleAdjustDuration = (deltaHours: number) => {
+    const currentMins = activity.durationMinutes || 60;
+    const nextMins = Math.max(30, currentMins + Math.round(deltaHours * 60));
+    onUpdateDuration?.(activity.id, nextMins);
+  };
+
+  const handleCostBlur = () => {
+    const parsed = parseInt(costInput.replace(/[^0-9]/g, ""), 10) || 0;
+    onUpdateCost?.(activity.id, parsed);
+  };
 
   return (
     <motion.div
@@ -49,16 +116,6 @@ export function ActivityCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.42, ease: easing }}
-      whileHover={
-        shouldReduceMotion
-          ? undefined
-          : {
-              y: -3,
-              boxShadow:
-                "0 10px 28px -4px rgba(0,0,0,0.13), 0 4px 10px -2px rgba(0,0,0,0.07)",
-              transition: { duration: 0.2, ease: easing },
-            }
-      }
       className={`relative flex flex-col group my-5 ${className}`}
     >
       {/* Timeline Circle Number Step */}
@@ -77,28 +134,244 @@ export function ActivityCard({
       </motion.div>
 
       {/* Main Card Body */}
-      <div className="bg-surface-container-lowest rounded-2xl p-4 sm:p-6 shadow-sm relative border border-outline-variant/30 transition-shadow">
-        {/* Top Header Row */}
-        <div className="flex items-start justify-between gap-3 mb-4">
+      <div
+        className={`bg-surface-container-lowest rounded-2xl p-4 sm:p-6 shadow-sm relative border transition-all duration-200 ${
+          isDragging
+            ? "scale-[1.02] rotate-[1.5deg] shadow-[0_20px_35px_-8px_rgba(110,79,50,0.18)] border-[#6e4f32] z-30"
+            : isEditMode
+            ? "border-dashed border-outline-variant/70 hover:border-primary-container"
+            : "border-outline-variant/30"
+        }`}
+      >
+        {/* Top Header Row with Time Slot, Duration & Controls */}
+        <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
           <div className="flex items-center gap-2 text-xs text-secondary flex-wrap">
-            {getTimeSlotIcon(activity.timeSlot)}
-            <span className="font-semibold capitalize text-primary">
-              {activity.timeSlot}
-            </span>
+            {/* Drag Handle in Edit Mode (fades in) */}
+            <AnimatePresence>
+              {isEditMode && (
+                <motion.div
+                  initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.8, width: 0 }}
+                  animate={{ opacity: 1, scale: 1, width: "auto" }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.8, width: 0 }}
+                  transition={{ duration: 0.2 }}
+                  {...dragHandleProps}
+                  className="cursor-grab active:cursor-grabbing p-1 -ml-1 text-[#81756b] hover:text-[#54381d] rounded hover:bg-[#f2ede7] transition-colors overflow-hidden"
+                  title="Drag to reorder activity or move between days"
+                >
+                  <GripVertical className="w-4 h-4" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Time Slot Display / Dropdown */}
+            <AnimatePresence mode="wait">
+              {isEditMode ? (
+                <motion.div
+                  key="edit-timeslot"
+                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.18 }}
+                  className="relative inline-block"
+                >
+                  <select
+                    value={activity.timeSlot}
+                    onChange={(e) => onUpdateTimeSlot?.(activity.id, e.target.value)}
+                    className="appearance-none bg-[#f8f3ed] hover:bg-[#f2ede7] pl-2.5 pr-6 py-1 rounded-full text-xs font-semibold text-[#54381d] border border-[#d3c4b9]/60 focus:outline-none focus:ring-1 focus:ring-[#6e4f32] cursor-pointer"
+                  >
+                    {TIME_SLOT_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                    {!TIME_SLOT_OPTIONS.includes(activity.timeSlot) && (
+                      <option value={activity.timeSlot}>{activity.timeSlot}</option>
+                    )}
+                  </select>
+                  <ChevronDown className="w-3 h-3 text-[#81756b] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="view-timeslot"
+                  initial={shouldReduceMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  className="flex items-center gap-1.5"
+                >
+                  {getTimeSlotIcon(activity.timeSlot)}
+                  <span className="font-semibold capitalize text-primary">
+                    {activity.timeSlot}
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <span className="text-outline-variant">&bull;</span>
-            <span className="flex items-center gap-1 text-on-surface-variant">
-              <Clock className="w-3.5 h-3.5 text-outline" /> {durationHours} Hours
-            </span>
+
+            {/* Duration Display / Stepper */}
+            <AnimatePresence mode="wait">
+              {isEditMode ? (
+                <motion.div
+                  key="edit-duration"
+                  initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.18 }}
+                  className="inline-flex items-center rounded-full bg-[#f8f3ed] border border-[#d3c4b9]/60 px-1 py-0.5 text-[#54381d]"
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleAdjustDuration(-0.5)}
+                    className="w-5 h-5 rounded-full hover:bg-white flex items-center justify-center text-xs font-bold cursor-pointer"
+                    title="Decrease duration by 30 mins"
+                  >
+                    &minus;
+                  </button>
+                  <span className="px-1.5 text-xs font-semibold">
+                    {durationHours}h
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleAdjustDuration(0.5)}
+                    className="w-5 h-5 rounded-full hover:bg-white flex items-center justify-center text-xs font-bold cursor-pointer"
+                    title="Increase duration by 30 mins"
+                  >
+                    +
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.span
+                  key="view-duration"
+                  initial={shouldReduceMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  className="flex items-center gap-1 text-on-surface-variant"
+                >
+                  <Clock className="w-3.5 h-3.5 text-outline" /> {durationHours} Hours
+                </motion.span>
+              )}
+            </AnimatePresence>
           </div>
 
-          <span className="px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-medium">
-            {activity.category || "Sightseeing"}
-          </span>
+          {/* Right Action Icons in Header */}
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-medium">
+              {activity.category || "Sightseeing"}
+            </span>
+
+            {/* Context Actions & Delete Button in Edit Mode (fades in) */}
+            <AnimatePresence>
+              {isEditMode && (
+                <motion.div
+                  initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex items-center gap-1"
+                >
+                  <div className="relative" ref={menuRef}>
+                    <button
+                      type="button"
+                      onClick={() => setMenuOpen(!menuOpen)}
+                      className="p-1.5 text-[#75593e] hover:text-[#54381d] rounded-full hover:bg-[#f8f3ed] transition-colors cursor-pointer"
+                      title="Stop actions"
+                    >
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
+
+                    <AnimatePresence>
+                      {menuOpen && (
+                        <motion.div
+                          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: -4 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: -4 }}
+                          transition={{ duration: 0.16 }}
+                          className="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl shadow-lg border border-[#d3c4b9]/60 p-1.5 z-30 text-xs origin-top-right"
+                        >
+                          {/* Duplicate Stop */}
+                          {onDuplicate && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                onDuplicate(activity.id);
+                                setMenuOpen(false);
+                              }}
+                              className="w-full text-left px-3 py-1.5 rounded-lg hover:bg-[#f8f3ed] flex items-center gap-2 text-[#54381d] cursor-pointer"
+                            >
+                              <Copy className="w-3.5 h-3.5 text-[#81756b]" />
+                              <span>Duplicate stop</span>
+                            </button>
+                          )}
+
+                          {/* Move to another Day */}
+                          {onMoveToDay && allDayNumbers.length > 1 && (
+                            <div className="py-1 border-t border-[#d3c4b9]/30 my-1">
+                              <p className="px-3 text-[10px] uppercase font-bold text-[#81756b] mb-1">
+                                Move to Day:
+                              </p>
+                              <div className="flex items-center gap-1 px-3 flex-wrap">
+                                {allDayNumbers
+                                  .filter((d) => d !== dayNumber)
+                                  .map((d) => (
+                                    <button
+                                      key={d}
+                                      type="button"
+                                      onClick={() => {
+                                        onMoveToDay(activity.id, d);
+                                        setMenuOpen(false);
+                                      }}
+                                      className="px-2 py-0.5 rounded-md bg-[#f8f3ed] hover:bg-[#6e4f32] hover:text-white text-[11px] font-semibold text-[#54381d] transition-colors cursor-pointer"
+                                    >
+                                      Day {d}
+                                    </button>
+                                  ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Remove Stop */}
+                          {onDelete && (
+                            <div className="pt-1 border-t border-[#d3c4b9]/30">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  onDelete(activity.id);
+                                  setMenuOpen(false);
+                                }}
+                                className="w-full text-left px-3 py-1.5 rounded-lg hover:bg-[#ffdad6]/40 flex items-center gap-2 text-[#ba1a1a] cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                                <span>Remove stop</span>
+                              </button>
+                            </div>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Direct Delete Button in Edit Mode */}
+                  {onDelete && (
+                    <button
+                      type="button"
+                      onClick={() => onDelete(activity.id)}
+                      className="p-1.5 text-[#ba1a1a]/80 hover:text-[#ba1a1a] rounded-full hover:bg-[#ffdad6]/40 transition-colors cursor-pointer"
+                      title="Remove stop"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Card Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-          {/* Photo — image zooms slightly on card hover via CSS on the group */}
+          {/* Photo */}
           <div className="md:col-span-5 h-44 sm:h-48 rounded-xl overflow-hidden shadow-xs relative bg-surface-container-highest">
             <Image
               src={
@@ -128,52 +401,78 @@ export function ActivityCard({
               </p>
             </div>
 
-            {/* Bottom Meta & Action */}
-            <div className="mt-4 pt-3 flex items-center justify-between border-t border-outline-variant/30 text-xs text-on-surface-variant">
+            {/* Bottom Meta: Cost & Note Button */}
+            <div className="mt-4 pt-3 flex flex-wrap items-center justify-between gap-2 border-t border-outline-variant/30 text-xs text-on-surface-variant">
+              {/* Cost estimate (inline editable in edit mode) */}
               <div className="flex items-center gap-2">
-                <span className="flex items-center gap-1 text-primary-container font-semibold">
-                  <Receipt className="w-3.5 h-3.5 text-secondary" />
-                  {activity.estimatedCost > 0
-                    ? `~$${activity.estimatedCost.toLocaleString()} est.`
-                    : "Free entry"}
-                </span>
+                <Receipt className="w-3.5 h-3.5 text-secondary" />
+                <span className="text-[#54381d] font-semibold text-xs">Cost est:</span>
+                <AnimatePresence mode="wait">
+                  {isEditMode ? (
+                    <motion.div
+                      key="edit-cost"
+                      initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.18 }}
+                      className="flex items-center gap-1"
+                    >
+                      <span className="text-xs font-semibold text-[#54381d]">$</span>
+                      <input
+                        type="number"
+                        value={costInput}
+                        onChange={(e) => setCostInput(e.target.value)}
+                        onBlur={handleCostBlur}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleCostBlur();
+                        }}
+                        className="w-20 px-2 py-0.5 bg-[#f8f3ed] rounded-lg border border-[#d3c4b9]/50 font-semibold text-[#54381d] text-xs focus:outline-none focus:ring-1 focus:ring-[#6e4f32]"
+                        placeholder="0"
+                      />
+                    </motion.div>
+                  ) : (
+                    <motion.span
+                      key="view-cost"
+                      initial={shouldReduceMotion ? false : { opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+                      transition={{ duration: 0.18 }}
+                      className="text-primary-container font-semibold"
+                    >
+                      {activity.estimatedCost > 0
+                        ? `~$${activity.estimatedCost.toLocaleString()} est.`
+                        : "Free entry"}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </div>
 
-              {/* Visual Add Note button */}
+              {/* Add / Edit Note Button */}
               <button
                 type="button"
+                onClick={() => setIsEditingNote(!isEditingNote)}
                 className="text-secondary hover:text-primary text-xs flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <Plus className="w-3 h-3" />
-                <span>Add Note</span>
+                <span>{activity.note ? "Edit Note" : "Add Note"}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Scrapbook Floating Sticky Note — slight rotation that straightens on hover */}
-        {activity.note && (
-          <motion.div
-            initial={{ rotate: -1.5 }}
-            whileHover={
-              shouldReduceMotion
-                ? undefined
-                : { rotate: -0.3, scale: 1.03, transition: { duration: 0.22, ease: easing } }
-            }
-            className="mt-4 sm:mt-0 sm:absolute -right-3 -bottom-5 w-full sm:w-64 bg-[#fdfbf7] p-3 rounded-md shadow-md border border-[#bba591]/35 z-20 cursor-pointer"
-          >
-            {/* Washi tape strip */}
-            <div className="absolute -top-2 left-6 w-12 h-3.5 bg-secondary-fixed-dim/70 rounded-xs rotate-[-3deg] backdrop-blur-[1px]" />
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] uppercase font-bold text-tertiary flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-[#e9bf9a]" /> AI Discovery
-              </span>
-              <span className="w-2 h-2 rounded-full bg-primary-fixed-dim" />
-            </div>
-            <p className="font-handwriting text-base leading-snug text-tertiary">
-              &ldquo;{activity.note}&rdquo;
-            </p>
-          </motion.div>
+        {/* Scrapbook Floating Sticky Note */}
+        {(activity.note || isEditingNote) && (
+          <div className="mt-4 sm:mt-0 sm:absolute -right-3 -bottom-5 w-full sm:w-64 z-20">
+            <StickyNote
+              note={activity.note || ""}
+              title="AI Discovery"
+              defaultColor={activity.noteColor || "#fdfbf7"}
+              isAiNote={true}
+              isEditable={isEditMode || isEditingNote}
+              onUpdateNote={(newText) => onUpdateNote?.(activity.id, newText, activity.noteColor)}
+              onUpdateColor={(newColor) => onUpdateNote?.(activity.id, activity.note || "", newColor)}
+            />
+          </div>
         )}
       </div>
     </motion.div>

@@ -7,9 +7,10 @@ import { Stay } from "@/types/trip";
 interface StayCardProps {
   stay: Stay;
   dayNumber?: number;
+  onChangeHotel?: () => void;
 }
 
-export function StayCard({ stay, dayNumber }: StayCardProps) {
+export function StayCard({ stay, dayNumber, onChangeHotel }: StayCardProps) {
   return (
     <div className="bg-surface-container rounded-2xl p-4 sm:p-5 shadow-sm border border-outline-variant/50">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

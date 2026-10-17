@@ -66,4 +66,6 @@ export interface Trip {
   seasons: string[];
   shareId?: string;
   isShared?: boolean;
+  startDate?: string;
+  endDate?: string;
 }

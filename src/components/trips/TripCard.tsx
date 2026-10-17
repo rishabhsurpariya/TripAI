@@ -11,30 +11,48 @@ import {
   ArrowRight,
   Copy,
   Trash2,
-  ExternalLink,
+  Edit2,
+  Check,
+  X,
   Link as LinkIcon,
+  ExternalLink,
 } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Trip } from "@/types/trip";
 
 export interface TripCardProps {
   trip: Trip;
   variant?: "grid" | "list";
   status?: "upcoming" | "past" | "draft";
+  isEditing?: boolean;
   onShare?: (trip: Trip) => void;
   onDuplicate?: (trip: Trip) => void;
   onDelete?: (trip: Trip) => void;
+  onRename?: (trip: Trip) => void;
+  onSaveRename?: (id: string, newTitle: string) => void;
+  onCancelRename?: () => void;
 }
 
 export function TripCard({
   trip,
   variant = "grid",
   status = "upcoming",
+  isEditing = false,
   onShare,
   onDuplicate,
   onDelete,
+  onRename,
+  onSaveRename,
+  onCancelRename,
 }: TripCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [editTitleInput, setEditTitleInput] = useState(trip.destination);
   const menuRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    setEditTitleInput(trip.destination);
+  }, [trip.destination]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -81,19 +99,63 @@ export function TripCard({
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-serif text-lg font-bold text-[#54381d] truncate">
-                {trip.destination}, {trip.country}
-              </h3>
-              <span className="px-2.5 py-0.5 rounded-full bg-[#6e4f32] text-white text-[10px] font-semibold uppercase tracking-wider">
-                {status}
-              </span>
-              {trip.isShared && (
-                <span className="px-2 py-0.5 rounded-full bg-[#f2ede7] text-[#54381d] text-[10px] font-medium flex items-center gap-1">
-                  <LinkIcon className="w-2.5 h-2.5" /> Shared
+            {isEditing ? (
+              <div
+                className="flex items-center gap-1.5 my-1"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="text"
+                  value={editTitleInput}
+                  onChange={(e) => setEditTitleInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && editTitleInput.trim()) {
+                      onSaveRename?.(trip.id, editTitleInput.trim());
+                    }
+                    if (e.key === "Escape") {
+                      onCancelRename?.();
+                    }
+                  }}
+                  autoFocus
+                  className="w-full px-2.5 py-1 text-sm font-serif font-bold text-[#54381d] bg-[#f8f3ed] rounded-lg border border-[#6e4f32] focus:outline-none focus:ring-1 focus:ring-[#6e4f32]"
+                  placeholder="Trip destination..."
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (editTitleInput.trim()) {
+                      onSaveRename?.(trip.id, editTitleInput.trim());
+                    }
+                  }}
+                  className="p-1.5 rounded-md bg-[#6e4f32] text-white hover:bg-[#54381d] cursor-pointer"
+                  title="Save"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onCancelRename?.()}
+                  className="p-1.5 rounded-md bg-[#f2ede7] text-[#4f453c] hover:bg-[#e6e2dc] cursor-pointer"
+                  title="Cancel"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-serif text-lg font-bold text-[#54381d] truncate">
+                  {trip.destination}, {trip.country}
+                </h3>
+                <span className="px-2.5 py-0.5 rounded-full bg-[#6e4f32] text-white text-[10px] font-semibold uppercase tracking-wider">
+                  {status}
                 </span>
-              )}
-            </div>
+                {trip.isShared && (
+                  <span className="px-2 py-0.5 rounded-full bg-[#f2ede7] text-[#54381d] text-[10px] font-medium flex items-center gap-1">
+                    <LinkIcon className="w-2.5 h-2.5" /> Shared
+                  </span>
+                )}
+              </div>
+            )}
             <p className="text-xs text-[#81756b] mt-1 flex items-center gap-2 flex-wrap">
               <span>{dayCount} Days</span>
               <span>&bull;</span>
@@ -119,6 +181,89 @@ export function TripCard({
                 <Share2 className="w-4 h-4" />
               </button>
             )}
+            <div className="relative" ref={menuRef}>
+              <button
+                type="button"
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="p-2 rounded-full text-[#75593e] hover:bg-[#f8f3ed] hover:text-[#54381d] transition-colors"
+                title="More actions"
+              >
+                <MoreVertical className="w-4 h-4" />
+              </button>
+              <AnimatePresence>
+                {menuOpen && (
+                  <motion.div
+                    initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: 6 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: 6 }}
+                    transition={{ duration: shouldReduceMotion ? 0.05 : 0.18, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute right-0 bottom-full md:bottom-auto md:top-full mb-1.5 md:mb-0 md:mt-1.5 w-48 py-1.5 bg-white rounded-2xl border border-[#d3c4b9]/60 shadow-[0_10px_30px_-10px_rgba(110,79,50,0.12)] z-30 text-xs origin-top-right"
+                  >
+                    <Link
+                      href={`/trip/${trip.id}`}
+                      className="flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed]"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 text-[#81756b]" />
+                      <span>View itinerary</span>
+                    </Link>
+                    {onShare && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onShare(trip);
+                          setMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed] text-left"
+                      >
+                        <Share2 className="w-3.5 h-3.5 text-[#81756b]" />
+                        <span>Share link</span>
+                      </button>
+                    )}
+                    {onDuplicate && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onDuplicate(trip);
+                          setMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed] text-left"
+                      >
+                        <Copy className="w-3.5 h-3.5 text-[#81756b]" />
+                        <span>Duplicate trip</span>
+                      </button>
+                    )}
+                    {onRename && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onRename(trip);
+                          setMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed] text-left"
+                      >
+                        <Edit2 className="w-3.5 h-3.5 text-[#81756b]" />
+                        <span>Rename title</span>
+                      </button>
+                    )}
+                    <div className="my-1 border-t border-[#d3c4b9]/30"></div>
+                    {onDelete && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onDelete(trip);
+                          setMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-[#ba1a1a] hover:bg-[#ffdad6]/30 text-left"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete trip</span>
+                      </button>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <Link
               href={`/trip/${trip.id}`}
               className="px-4 py-2 rounded-full bg-[#f8f3ed] hover:bg-[#6e4f32] text-[#54381d] hover:text-white text-xs font-semibold transition-all duration-200 flex items-center gap-1.5"
@@ -170,65 +315,142 @@ export function TripCard({
               <MoreVertical className="w-4 h-4" />
             </button>
 
-            {menuOpen && (
-              <div className="absolute right-0 top-full mt-1.5 w-48 py-1.5 bg-white rounded-2xl border border-[#d3c4b9]/60 shadow-[0_10px_30px_-10px_rgba(110,79,50,0.12)] z-30 text-xs">
-                <Link
-                  href={`/trip/${trip.id}`}
-                  className="flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed]"
-                  onClick={() => setMenuOpen(false)}
+            <AnimatePresence>
+              {menuOpen && (
+                <motion.div
+                  initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: -4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.92, y: -4 }}
+                  transition={{ duration: shouldReduceMotion ? 0.05 : 0.18, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute right-0 top-full mt-1.5 w-48 py-1.5 bg-white rounded-2xl border border-[#d3c4b9]/60 shadow-[0_10px_30px_-10px_rgba(110,79,50,0.12)] z-30 text-xs origin-top-right"
                 >
-                  <ExternalLink className="w-3.5 h-3.5 text-[#81756b]" />
-                  <span>View itinerary</span>
-                </Link>
-                {onShare && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onShare(trip);
-                      setMenuOpen(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed] text-left"
+                  <Link
+                    href={`/trip/${trip.id}`}
+                    className="flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed]"
+                    onClick={() => setMenuOpen(false)}
                   >
-                    <Share2 className="w-3.5 h-3.5 text-[#81756b]" />
-                    <span>Share link</span>
-                  </button>
-                )}
-                {onDuplicate && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onDuplicate(trip);
-                      setMenuOpen(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed] text-left"
-                  >
-                    <Copy className="w-3.5 h-3.5 text-[#81756b]" />
-                    <span>Duplicate trip</span>
-                  </button>
-                )}
-                <div className="my-1 border-t border-[#d3c4b9]/30"></div>
-                {onDelete && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onDelete(trip);
-                      setMenuOpen(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-[#ba1a1a] hover:bg-[#ffdad6]/30 text-left"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    <span>Delete trip</span>
-                  </button>
-                )}
-              </div>
-            )}
+                    <ExternalLink className="w-3.5 h-3.5 text-[#81756b]" />
+                    <span>View itinerary</span>
+                  </Link>
+                  {onShare && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onShare(trip);
+                        setMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed] text-left"
+                    >
+                      <Share2 className="w-3.5 h-3.5 text-[#81756b]" />
+                      <span>Share link</span>
+                    </button>
+                  )}
+                  {onDuplicate && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onDuplicate(trip);
+                        setMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed] text-left"
+                    >
+                      <Copy className="w-3.5 h-3.5 text-[#81756b]" />
+                      <span>Duplicate trip</span>
+                    </button>
+                  )}
+                  {onRename && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onRename(trip);
+                        setMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-[#54381d] hover:bg-[#f8f3ed] text-left"
+                    >
+                      <Edit2 className="w-3.5 h-3.5 text-[#81756b]" />
+                      <span>Rename title</span>
+                    </button>
+                  )}
+                  <div className="my-1 border-t border-[#d3c4b9]/30"></div>
+                  {onDelete && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onDelete(trip);
+                        setMenuOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-[#ba1a1a] hover:bg-[#ffdad6]/30 text-left"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete trip</span>
+                    </button>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
-        {/* Title & Duration */}
-        <h2 className="font-serif text-xl font-bold text-[#54381d] tracking-tight">
-          {trip.destination} &bull; {trip.country}
-        </h2>
+        {/* Title & Duration (supports inline rename) */}
+        {isEditing ? (
+          <div
+            className="flex items-center gap-1.5 my-1"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <input
+              type="text"
+              value={editTitleInput}
+              onChange={(e) => setEditTitleInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && editTitleInput.trim()) {
+                  onSaveRename?.(trip.id, editTitleInput.trim());
+                }
+                if (e.key === "Escape") {
+                  onCancelRename?.();
+                }
+              }}
+              autoFocus
+              className="w-full px-2.5 py-1 text-sm font-serif font-bold text-[#54381d] bg-[#f8f3ed] rounded-lg border border-[#6e4f32] focus:outline-none focus:ring-1 focus:ring-[#6e4f32]"
+              placeholder="Trip destination..."
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (editTitleInput.trim()) {
+                  onSaveRename?.(trip.id, editTitleInput.trim());
+                }
+              }}
+              className="p-1.5 rounded-md bg-[#6e4f32] text-white hover:bg-[#54381d] cursor-pointer"
+              title="Save"
+            >
+              <Check className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onCancelRename?.()}
+              className="p-1.5 rounded-md bg-[#f2ede7] text-[#4f453c] hover:bg-[#e6e2dc] cursor-pointer"
+              title="Cancel"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          <h2 className="font-serif text-xl font-bold text-[#54381d] tracking-tight flex items-center justify-between group/title">
+            <span>
+              {trip.destination} &bull; {trip.country}
+            </span>
+            {onRename && (
+              <button
+                type="button"
+                onClick={() => onRename(trip)}
+                className="opacity-0 group-hover/title:opacity-100 p-1 rounded hover:bg-[#f2ede7] text-[#81756b] hover:text-[#54381d] transition-opacity cursor-pointer"
+                title="Rename trip"
+              >
+                <Edit2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </h2>
+        )}
         <p className="text-xs text-[#81756b] mt-1 flex items-center gap-1.5">
           <Calendar className="w-3.5 h-3.5 text-[#81756b]" />
           <span>{dayCount} Days Itinerary</span>

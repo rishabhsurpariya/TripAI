@@ -207,15 +207,15 @@ export default function DevComponentsPage() {
                 activity={sampleActivityWithNote}
                 index={2}
                 isEditMode={true}
-                onDelete={(id) => toast.error(`Removed activity: ${id}`)}
-                onReplace={(id) => toast.info(`Replace dialog triggered for: ${id}`)}
-                onUpdateDuration={(id, mins) =>
+                onDelete={(id: string) => toast.error(`Removed activity: ${id}`)}
+                onReplace={(id: string) => toast.info(`Replace dialog triggered for: ${id}`)}
+                onUpdateDuration={(id: string, mins: number) =>
                   toast.success(`Duration updated to ${mins / 60}h`)
                 }
-                onUpdateCost={(id, cost) =>
+                onUpdateCost={(id: string, cost: number) =>
                   toast.success(`Cost estimate updated to $${cost}`)
                 }
-                onUpdateNote={(id, note) =>
+                onUpdateNote={(id: string, note: string) =>
                   toast.success(`Note updated: "${note.slice(0, 20)}..."`)
                 }
               />

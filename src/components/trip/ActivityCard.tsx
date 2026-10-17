@@ -1,223 +1,181 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 import {
-  GripVertical,
+  Sun,
+  Sunrise,
+  Sunset,
+  Moon,
   Clock,
-  DollarSign,
-  Trash2,
-  RefreshCw,
+  Sparkles,
+  Receipt,
   Plus,
-  Minus,
-  MessageSquarePlus,
-  MapPin,
 } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Activity } from "@/types/trip";
-import { StickyNote } from "./StickyNote";
+import { easing } from "@/lib/motion";
 
 export interface ActivityCardProps {
   activity: Activity;
   index?: number;
+  className?: string;
   isEditMode?: boolean;
   onDelete?: (id: string) => void;
   onReplace?: (id: string) => void;
-  onUpdateDuration?: (id: string, newMinutes: number) => void;
-  onUpdateCost?: (id: string, newCost: number) => void;
-  onUpdateNote?: (id: string, newNote: string) => void;
+  onUpdateDuration?: (id: string, mins: number) => void;
+  onUpdateCost?: (id: string, cost: number) => void;
+  onUpdateNote?: (id: string, note: string) => void;
+}
+
+function getTimeSlotIcon(slot: string) {
+  const s = slot.toLowerCase();
+  if (s.includes("morning")) return <Sunrise className="w-4 h-4 text-amber-600" />;
+  if (s.includes("afternoon") || s.includes("midday")) return <Sun className="w-4 h-4 text-amber-600" />;
+  if (s.includes("golden") || s.includes("sunset") || s.includes("evening")) return <Sunset className="w-4 h-4 text-amber-700" />;
+  return <Moon className="w-4 h-4 text-indigo-600" />;
 }
 
 export function ActivityCard({
   activity,
   index = 1,
-  isEditMode = false,
-  onDelete,
-  onReplace,
-  onUpdateDuration,
-  onUpdateCost,
-  onUpdateNote,
+  className = "",
 }: ActivityCardProps) {
-  const [showAddNote, setShowAddNote] = useState(false);
-  const [costValue, setCostValue] = useState(activity.estimatedCost);
-
   const durationHours = (activity.durationMinutes / 60).toFixed(1);
-
-  const handleDurationDelta = (deltaHours: number) => {
-    const newMinutes = Math.max(30, activity.durationMinutes + deltaHours * 60);
-    if (onUpdateDuration) onUpdateDuration(activity.id, newMinutes);
-  };
-
-  const handleCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const num = Number(e.target.value.replace(/[^0-9]/g, "")) || 0;
-    setCostValue(num);
-    if (onUpdateCost) onUpdateCost(activity.id, num);
-  };
+  const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className="relative flex flex-col group/card my-4">
-      {/* Timeline Circle Number */}
-      <div className="absolute -left-4 sm:-left-6 top-6 w-8 h-8 rounded-full bg-[#fef9f2] border-2 border-[#6e4f32] flex items-center justify-center font-serif text-xs font-bold text-[#6e4f32] shadow-xs z-10">
+    <motion.div
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.42, ease: easing }}
+      whileHover={
+        shouldReduceMotion
+          ? undefined
+          : {
+              y: -3,
+              boxShadow:
+                "0 10px 28px -4px rgba(0,0,0,0.13), 0 4px 10px -2px rgba(0,0,0,0.07)",
+              transition: { duration: 0.2, ease: easing },
+            }
+      }
+      className={`relative flex flex-col group my-5 ${className}`}
+    >
+      {/* Timeline Circle Number Step */}
+      <motion.div
+        initial={shouldReduceMotion ? false : { scale: 0 }}
+        whileInView={{ scale: 1 }}
+        viewport={{ once: true }}
+        transition={
+          shouldReduceMotion
+            ? { duration: 0 }
+            : { type: "spring", stiffness: 500, damping: 22, delay: 0.1 }
+        }
+        className="absolute -left-6 md:-left-10 top-5 w-6 md:w-8 h-6 md:h-8 rounded-full bg-surface border-2 border-primary-container flex items-center justify-center text-xs font-bold text-primary-container shadow-xs z-10"
+      >
         {index}
-      </div>
+      </motion.div>
 
-      {/* Card Container */}
-      <div className="ml-6 sm:ml-8 bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-[#d3c4b9]/50 hover:border-[#6e4f32]/60 transition-all relative">
+      {/* Main Card Body */}
+      <div className="bg-surface-container-lowest rounded-2xl p-4 sm:p-6 shadow-sm relative border border-outline-variant/30 transition-shadow">
         {/* Top Header Row */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#d3c4b9]/30">
-          <div className="flex items-center gap-2 flex-wrap text-xs text-[#75593e]">
-            {isEditMode && (
-              <div
-                className="cursor-grab active:cursor-grabbing p-1 -ml-1 text-[#81756b] hover:text-[#1d1b18] rounded hover:bg-[#f2ede7] flex items-center"
-                title="Drag to reorder stop"
-              >
-                <GripVertical className="w-4 h-4" />
-              </div>
-            )}
-
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f8f3ed] font-medium text-[#54381d]">
-              <Clock className="w-3.5 h-3.5 text-[#81756b]" />
-              <span className="capitalize">{activity.timeSlot}</span>
-            </div>
-
-            <span className="text-[#d3c4b9]">&bull;</span>
-
-            {/* Duration Display or Stepper */}
-            {isEditMode ? (
-              <div className="inline-flex items-center rounded-full bg-[#f8f3ed] border border-[#d3c4b9]/50 px-2 py-0.5 text-xs text-[#54381d]">
-                <button
-                  type="button"
-                  onClick={() => handleDurationDelta(-0.5)}
-                  className="w-4 h-4 rounded-full hover:bg-white flex items-center justify-center text-[#75593e]"
-                  title="Decrease duration"
-                >
-                  <Minus className="w-3 h-3" />
-                </button>
-                <span className="px-2 font-semibold">{durationHours}h</span>
-                <button
-                  type="button"
-                  onClick={() => handleDurationDelta(0.5)}
-                  className="w-4 h-4 rounded-full hover:bg-white flex items-center justify-center text-[#75593e]"
-                  title="Increase duration"
-                >
-                  <Plus className="w-3 h-3" />
-                </button>
-              </div>
-            ) : (
-              <span className="font-medium text-[#75593e]">{durationHours} Hours</span>
-            )}
-          </div>
-
-          {/* Category Pill & Edit Actions */}
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-0.5 rounded-full bg-[#f2ede7] text-[#54381d] text-xs font-medium">
-              {activity.category}
+        <div className="flex items-start justify-between gap-3 mb-4">
+          <div className="flex items-center gap-2 text-xs text-secondary flex-wrap">
+            {getTimeSlotIcon(activity.timeSlot)}
+            <span className="font-semibold capitalize text-primary">
+              {activity.timeSlot}
             </span>
-
-            {isEditMode && (
-              <div className="flex items-center gap-1 border-l border-[#d3c4b9]/40 pl-2">
-                {onReplace && (
-                  <button
-                    type="button"
-                    onClick={() => onReplace(activity.id)}
-                    className="p-1.5 text-[#75593e] hover:text-[#54381d] rounded-full hover:bg-[#f8f3ed]"
-                    title="Replace with alternative stop"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                  </button>
-                )}
-                {onDelete && (
-                  <button
-                    type="button"
-                    onClick={() => onDelete(activity.id)}
-                    className="p-1.5 text-[#75593e] hover:text-[#ba1a1a] rounded-full hover:bg-[#ffdad6]/40"
-                    title="Remove stop"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                )}
-              </div>
-            )}
+            <span className="text-outline-variant">&bull;</span>
+            <span className="flex items-center gap-1 text-on-surface-variant">
+              <Clock className="w-3.5 h-3.5 text-outline" /> {durationHours} Hours
+            </span>
           </div>
+
+          <span className="px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-medium">
+            {activity.category || "Sightseeing"}
+          </span>
         </div>
 
-        {/* Content: Photo + Details */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-          <div className="md:col-span-5 h-44 sm:h-48 rounded-xl overflow-hidden relative bg-[#f2ede7]">
+        {/* Card Content Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+          {/* Photo — image zooms slightly on card hover via CSS on the group */}
+          <div className="md:col-span-5 h-44 sm:h-48 rounded-xl overflow-hidden shadow-xs relative bg-surface-container-highest">
             <Image
-              src={activity.imageUrl || "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80"}
+              src={
+                activity.imageUrl ||
+                "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80"
+              }
               alt={activity.name}
               fill
-              className="object-cover group-hover/card:scale-105 transition-transform duration-500"
-              unoptimized
+              sizes="(max-width: 768px) 100vw, 320px"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
-            <div className="absolute bottom-2.5 left-2.5 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-medium text-[#54381d] flex items-center gap-1 shadow-xs">
-              <MapPin className="w-3 h-3 text-[#6e4f32]" />
-              <span>{activity.category}</span>
-            </div>
+            {activity.category && (
+              <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-surface/90 backdrop-blur-sm text-[10px] font-semibold text-on-surface shadow-xs">
+                {activity.category}
+              </div>
+            )}
           </div>
 
-          <div className="md:col-span-7 flex flex-col justify-between space-y-3">
+          {/* Details */}
+          <div className="md:col-span-7 flex flex-col justify-between">
             <div>
-              <h3 className="font-serif text-xl font-bold text-[#54381d] tracking-tight">
+              <h3 className="font-serif text-lg sm:text-xl text-primary font-medium">
                 {activity.name}
               </h3>
-              <p className="text-sm text-[#4f453c] mt-2 leading-relaxed">
+              <p className="text-xs sm:text-sm text-on-surface-variant mt-2 leading-relaxed font-light">
                 {activity.description}
               </p>
             </div>
 
-            {/* Bottom Meta & Sticky Note Button */}
-            <div className="pt-3 border-t border-[#d3c4b9]/30 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-1.5 font-medium text-[#54381d]">
-                <DollarSign className="w-3.5 h-3.5 text-[#6e4f32]" />
-                <span className="text-[#81756b]">Est. Cost:</span>
-                {isEditMode ? (
-                  <input
-                    type="number"
-                    value={costValue}
-                    onChange={handleCostChange}
-                    className="w-20 px-2 py-0.5 bg-[#f8f3ed] rounded-lg border border-[#d3c4b9] font-semibold text-[#54381d] focus:outline-none focus:ring-1 focus:ring-[#6e4f32]"
-                  />
-                ) : (
-                  <span className="font-semibold">
-                    {activity.estimatedCost > 0 ? `$${activity.estimatedCost}` : "Free Entry"}
-                  </span>
-                )}
+            {/* Bottom Meta & Action */}
+            <div className="mt-4 pt-3 flex items-center justify-between border-t border-outline-variant/30 text-xs text-on-surface-variant">
+              <div className="flex items-center gap-2">
+                <span className="flex items-center gap-1 text-primary-container font-semibold">
+                  <Receipt className="w-3.5 h-3.5 text-secondary" />
+                  {activity.estimatedCost > 0
+                    ? `~$${activity.estimatedCost.toLocaleString()} est.`
+                    : "Free entry"}
+                </span>
               </div>
 
-              {!activity.note && !showAddNote && isEditMode && (
-                <button
-                  type="button"
-                  onClick={() => setShowAddNote(true)}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-[#75593e] hover:text-[#54381d]"
-                >
-                  <MessageSquarePlus className="w-3.5 h-3.5" />
-                  <span>Attach memo</span>
-                </button>
-              )}
+              {/* Visual Add Note button */}
+              <button
+                type="button"
+                className="text-secondary hover:text-primary text-xs flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <Plus className="w-3 h-3" />
+                <span>Add Note</span>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Attached Sticky Note */}
-        {(activity.note || showAddNote) && (
-          <div className="mt-5 pt-3">
-            <StickyNote
-              note={activity.note || "Add special reminder or timing tip here..."}
-              title="Activity Note"
-              defaultColor={activity.noteColor || "#fdfbf7"}
-              isEditable={isEditMode}
-              onUpdateNote={(newNote) => {
-                if (onUpdateNote) onUpdateNote(activity.id, newNote);
-              }}
-              onDelete={() => {
-                setShowAddNote(false);
-                if (onUpdateNote) onUpdateNote(activity.id, "");
-              }}
-            />
-          </div>
+        {/* Scrapbook Floating Sticky Note — slight rotation that straightens on hover */}
+        {activity.note && (
+          <motion.div
+            initial={{ rotate: -1.5 }}
+            whileHover={
+              shouldReduceMotion
+                ? undefined
+                : { rotate: -0.3, scale: 1.03, transition: { duration: 0.22, ease: easing } }
+            }
+            className="mt-4 sm:mt-0 sm:absolute -right-3 -bottom-5 w-full sm:w-64 bg-[#fdfbf7] p-3 rounded-md shadow-md border border-[#bba591]/35 z-20 cursor-pointer"
+          >
+            {/* Washi tape strip */}
+            <div className="absolute -top-2 left-6 w-12 h-3.5 bg-secondary-fixed-dim/70 rounded-xs rotate-[-3deg] backdrop-blur-[1px]" />
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] uppercase font-bold text-tertiary flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-[#e9bf9a]" /> AI Discovery
+              </span>
+              <span className="w-2 h-2 rounded-full bg-primary-fixed-dim" />
+            </div>
+            <p className="font-handwriting text-base leading-snug text-tertiary">
+              &ldquo;{activity.note}&rdquo;
+            </p>
+          </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

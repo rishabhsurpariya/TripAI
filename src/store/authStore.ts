@@ -9,7 +9,7 @@ export interface User {
 interface AuthState {
   isLoggedIn: boolean;
   user: User | null;
-  login: () => void;
+  login: (userData?: Partial<User>) => void;
   logout: () => void;
   toggleAuth: () => void;
 }
@@ -23,13 +23,14 @@ export const useAuthStore = create<AuthState>((set) => ({
     avatarUrl:
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
   },
-  login: () =>
+  login: (userData?: Partial<User>) =>
     set({
       isLoggedIn: true,
       user: {
-        name: "Elena Rostova",
-        email: "elena@tripai.travel",
+        name: userData?.name || "Elena Rostova",
+        email: userData?.email || "elena@tripai.travel",
         avatarUrl:
+          userData?.avatarUrl ||
           "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
       },
     }),

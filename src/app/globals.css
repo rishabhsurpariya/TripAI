@@ -21,6 +21,15 @@
   --color-on-tertiary-container: #e2c5ad;
   --color-outline: #81756b;
   --color-outline-variant: #d3c4b9;
+  --color-secondary-fixed: #ffdcbe;
+  --color-secondary-fixed-dim: #e4c09f;
+  --color-on-secondary-fixed: #2a1703;
+  --color-on-secondary-fixed-variant: #5b4229;
+  --color-tertiary: #4d3a28;
+  --color-tertiary-container: #66513e;
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-surface-bright: #fef9f2;
   --color-inverse-on-surface: #f5f0ea;
   --color-tertiary-fixed: #fbddc4;
   --color-tertiary-fixed-dim: #dec1a9;

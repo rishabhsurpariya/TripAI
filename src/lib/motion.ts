@@ -79,6 +79,18 @@ export const scaleIn: Variants = {
   },
 };
 
+/**
+ * shakeError — gentle horizontal shake with fade in for validation error feedback.
+ */
+export const shakeError: Variants = {
+  hidden: { opacity: 0, x: -4 },
+  visible: {
+    opacity: 1,
+    x: [0, -6, 6, -4, 4, -2, 0],
+    transition: { duration: 0.42, ease: easing },
+  },
+};
+
 // ─── Container / orchestration variants ───────────────────────────────────────
 
 /**

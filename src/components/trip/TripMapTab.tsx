@@ -2,17 +2,8 @@
 
 import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
-import {
-  MapPin,
-  Calendar,
-  Clock,
-  Compass,
-  ArrowRight,
-  Info,
-  Layers,
-  Sparkles,
-} from "lucide-react";
-import { Trip, Activity } from "@/types/trip";
+import { Compass, Info } from "lucide-react";
+import { Trip } from "@/types/trip";
 
 // Dynamic import with SSR disabled so Leaflet never touches server execution
 const LeafletMap = dynamic(() => import("./LeafletMap"), {
@@ -40,7 +31,7 @@ export function TripMapTab({ trip }: TripMapTabProps) {
   const [selectedDayNumber, setSelectedDayNumber] = useState<number | "all">(1);
   const [selectedActivityId, setSelectedActivityId] = useState<string | null>(null);
 
-  const days = trip.days || [];
+  const days = useMemo(() => trip.days || [], [trip.days]);
 
   // Filter activities based on day filter
   const displayedActivities = useMemo(() => {
@@ -238,7 +229,7 @@ export function TripMapTab({ trip }: TripMapTabProps) {
                   Local Trail Note:
                 </span>
                 <p className="text-xs text-on-surface-variant mt-1 italic font-light">
-                  "{activeDayObj.notes}"
+                  &ldquo;{activeDayObj.notes}&rdquo;
                 </p>
               </div>
             )}

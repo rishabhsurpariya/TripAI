@@ -3,14 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import {
-  Building2,
   Star,
   Check,
   PlusCircle,
   MapPin,
   Calendar,
   Sparkles,
-  ExternalLink,
   Bed,
 } from "lucide-react";
 import { Trip } from "@/types/trip";
@@ -247,7 +245,7 @@ export function HotelsTab({ trip }: HotelsTabProps) {
         </div>
 
         <div className="divide-y divide-outline-variant/20">
-          {trip.days?.map((day, idx) => (
+          {trip.days?.map((day) => (
             <div
               key={day.id}
               className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-surface-container-low/30 px-2 rounded-lg transition-colors"

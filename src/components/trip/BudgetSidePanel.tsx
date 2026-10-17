@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   PieChart,
-  MapPin,
   PenTool,
   Clock,
   Compass,
@@ -17,7 +16,6 @@ import {
   useMotionValue,
   useSpring,
   animate,
-  useInView,
 } from "framer-motion";
 import { Trip } from "@/types/trip";
 import { easing } from "@/lib/motion";

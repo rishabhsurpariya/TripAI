@@ -32,9 +32,7 @@ import { TripCard } from "@/components/trips/TripCard";
 import {
   useSavedTripsStore,
   computeTripStatus,
-  FilterCategory,
-  SortOption,
-  ViewMode,
+  type SortOption,
 } from "@/store/savedTripsStore";
 
 export default function MyTripsPage() {

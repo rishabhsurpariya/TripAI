@@ -24,6 +24,7 @@ export interface SavedTripsState {
   duplicateTrip: (id: string) => Trip | null;
   deleteTrip: (id: string) => void;
   toggleShare: (id: string, isShared?: boolean) => void;
+  addTrip: (trip: Trip) => Trip;
   clearAllTrips: () => void;
   resetTrips: () => void;
 }
@@ -153,6 +154,22 @@ export const useSavedTripsStore = create<SavedTripsState>((set, get) => ({
         };
       }),
     }));
+  },
+
+  addTrip: (trip) => {
+    const newTrip: Trip = {
+      ...trip,
+      id: `saved-trip-${Date.now()}`,
+      destination: trip.destination.includes("(Copy)")
+        ? trip.destination
+        : `${trip.destination} (Saved)`,
+      shareId: undefined,
+      isShared: false,
+    };
+    set((state) => ({
+      trips: [newTrip, ...state.trips],
+    }));
+    return newTrip;
   },
 
   clearAllTrips: () => set({ trips: [] }),

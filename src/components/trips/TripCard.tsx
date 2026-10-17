@@ -46,13 +46,14 @@ export function TripCard({
   onCancelRename,
 }: TripCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [prevDestination, setPrevDestination] = useState(trip.destination);
   const [editTitleInput, setEditTitleInput] = useState(trip.destination);
+  if (trip.destination !== prevDestination) {
+    setPrevDestination(trip.destination);
+    setEditTitleInput(trip.destination);
+  }
   const menuRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    setEditTitleInput(trip.destination);
-  }, [trip.destination]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

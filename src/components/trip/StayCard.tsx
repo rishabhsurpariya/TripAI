@@ -8,9 +8,15 @@ interface StayCardProps {
   stay: Stay;
   dayNumber?: number;
   onChangeHotel?: () => void;
+  readOnly?: boolean;
 }
 
-export function StayCard({ stay, dayNumber, onChangeHotel }: StayCardProps) {
+export function StayCard({
+  stay,
+  dayNumber,
+  onChangeHotel,
+  readOnly = false,
+}: StayCardProps) {
   return (
     <div className="bg-surface-container rounded-2xl p-4 sm:p-5 shadow-sm border border-outline-variant/50">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -44,23 +50,38 @@ export function StayCard({ stay, dayNumber, onChangeHotel }: StayCardProps) {
           </div>
         </div>
 
-        {/* Visual-only action buttons */}
-        <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-          <button
-            type="button"
-            className="px-4 py-2 rounded-full border border-secondary text-primary hover:bg-surface-container-high text-xs font-semibold transition-colors cursor-pointer"
-          >
-            Change Hotel
-          </button>
-          <button
-            type="button"
-            className="w-9 h-9 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center hover:bg-surface transition-colors shadow-xs cursor-pointer border border-outline-variant/30"
-            title="Directions"
-            aria-label="Get directions to hotel"
-          >
-            <Navigation className="w-4 h-4" />
-          </button>
-        </div>
+        {/* Action button / Status badge */}
+        {readOnly ? (
+          <div className="text-right shrink-0">
+            <div className="text-xs font-semibold text-[#6e4f32]">
+              ₹{stay.pricePerNight?.toLocaleString() || "6,800"}{" "}
+              <span className="text-[11px] font-normal text-[#a28973]">/ night</span>
+            </div>
+            <div className="text-[10px] text-[#8c6e52] font-medium bg-white/70 px-2 py-0.5 rounded border border-[#bba591]/30 mt-1 inline-block">
+              Confirmed Stay
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+            {onChangeHotel && (
+              <button
+                type="button"
+                onClick={onChangeHotel}
+                className="px-4 py-2 rounded-full border border-secondary text-primary hover:bg-surface-container-high text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Change Hotel
+              </button>
+            )}
+            <button
+              type="button"
+              className="w-9 h-9 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center hover:bg-surface transition-colors shadow-xs cursor-pointer border border-outline-variant/30"
+              title="Directions"
+              aria-label="Get directions to hotel"
+            >
+              <Navigation className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

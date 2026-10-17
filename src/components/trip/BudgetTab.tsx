@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import {
   Download,
   Building2,
@@ -64,14 +64,12 @@ function AnimatedNumber({ value, prefix = "$" }: { value: number; prefix?: strin
   return <span ref={ref}>{prefix}0</span>;
 }
 
+const emptySubscribe = () => () => {};
+
 export function BudgetTab({ trip }: BudgetTabProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [downloading, setDownloading] = useState(false);
   const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const budget = trip.budget || {
     stay: 35000,

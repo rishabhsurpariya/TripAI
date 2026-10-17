@@ -6,7 +6,6 @@ import {
   X,
   Building2,
   Star,
-  MapPin,
   Check,
   RefreshCw,
 } from "lucide-react";

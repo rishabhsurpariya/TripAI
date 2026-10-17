@@ -9,7 +9,6 @@ import {
   Shield,
   RotateCw,
   Sparkles,
-  Check,
   Bookmark,
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -108,16 +107,11 @@ function GeneratingContent() {
 
   // State variant: 'progress' | 'slow' | 'error'
   const queryState = searchParams.get("state");
-  const [activeState, setActiveState] = useState<"progress" | "slow" | "error">(
-    queryState === "slow" ? "slow" : queryState === "error" ? "error" : "progress"
-  );
-
-  // Sync state if queryParam changes
-  useEffect(() => {
-    if (queryState === "slow") setActiveState("slow");
-    else if (queryState === "error") setActiveState("error");
-    else if (queryState === "progress") setActiveState("progress");
-  }, [queryState]);
+  const [internalState, setInternalState] = useState<"progress" | "slow" | "error" | null>(null);
+  const activeState: "progress" | "slow" | "error" =
+    internalState ??
+    (queryState === "slow" ? "slow" : queryState === "error" ? "error" : "progress");
+  const setActiveState = setInternalState;
 
   // Simulation state
   const [currentStepIndex, setCurrentStepIndex] = useState(0); // 0 to 4
@@ -182,20 +176,23 @@ function GeneratingContent() {
   };
 
   useEffect(() => {
-    if (activeState === "progress") {
-      startSimulation();
-    } else if (activeState === "slow") {
-      clearTimers();
-      // Simulate slow delay at step 3 with 62% progress and warning notice
-      setCurrentStepIndex(2);
-      setProgressPercent(62);
-      setIsDone(false);
-    } else if (activeState === "error") {
-      clearTimers();
-      setIsDone(false);
-    }
+    const timer = setTimeout(() => {
+      if (activeState === "progress") {
+        startSimulation();
+      } else if (activeState === "slow") {
+        clearTimers();
+        // Simulate slow delay at step 3 with 62% progress and warning notice
+        setCurrentStepIndex(2);
+        setProgressPercent(62);
+        setIsDone(false);
+      } else if (activeState === "error") {
+        clearTimers();
+        setIsDone(false);
+      }
+    }, 0);
 
     return () => {
+      clearTimeout(timer);
       clearTimers();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

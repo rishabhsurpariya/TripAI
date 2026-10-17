@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Trip, Activity, Day, Stay } from "@/types/trip";
+import { Trip, Activity, Stay } from "@/types/trip";
 import sampleItinerary from "@/data/sample-itinerary.json";
 
 export function recalculateBudget(trip: Trip): Trip {

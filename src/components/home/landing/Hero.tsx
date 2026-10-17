@@ -10,7 +10,6 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { Reveal } from "@/components/motion";
 
 const HEADLINE_WORDS = [
   { text: "Your", italic: false },

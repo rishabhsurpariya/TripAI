@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Sparkles, Pin } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { easing } from "@/lib/motion";
@@ -36,17 +36,21 @@ export function StickyNote({
   className = "",
   initialRotate = -1.5,
 }: StickyNoteProps) {
+  const [prevDefaultColor, setPrevDefaultColor] = useState(defaultColor);
   const [currentColor, setCurrentColor] = useState(defaultColor);
-  const [text, setText] = useState(note);
-  const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
+  if (defaultColor !== prevDefaultColor) {
+    setPrevDefaultColor(defaultColor);
     setCurrentColor(defaultColor);
-  }, [defaultColor]);
+  }
 
-  useEffect(() => {
+  const [prevNote, setPrevNote] = useState(note);
+  const [text, setText] = useState(note);
+  if (note !== prevNote) {
+    setPrevNote(note);
     setText(note);
-  }, [note]);
+  }
+
+  const shouldReduceMotion = useReducedMotion();
 
   const handleColorChange = (c: string) => {
     setCurrentColor(c);

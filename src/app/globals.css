@@ -52,9 +52,53 @@ body {
 }
 
 /* ─── Landing page utilities ─────────────────────────────────────── */
-.font-handwriting {
+.font-handwriting,
+.font-script {
   font-family: var(--font-handwriting);
 }
+
+/* ─── Error Suite Animations & Styling ───────────────────────────── */
+@keyframes gentleDrift {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+@keyframes needleWobble {
+  0%, 100% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  60% { transform: rotate(-4deg); }
+  80% { transform: rotate(8deg); }
+}
+@keyframes balloonSway {
+  0%, 100% { transform: rotate(-2deg) translateY(0); }
+  50% { transform: rotate(3deg) translateY(-5px); }
+}
+@keyframes floatCloud {
+  0%, 100% { transform: translateX(0px); }
+  50% { transform: translateX(6px); }
+}
+@keyframes subtlePulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.anim-drift { animation: gentleDrift 5s ease-in-out infinite; }
+.anim-wobble { animation: needleWobble 4s ease-in-out infinite; transform-origin: 50% 50%; }
+.anim-balloon { animation: balloonSway 6s ease-in-out infinite; transform-origin: 50% 90%; }
+.anim-cloud { animation: floatCloud 7s ease-in-out infinite; }
+.anim-pulse { animation: subtlePulse 3s ease-in-out infinite; }
+
+.screen-viewport {
+  background: #f7f2ec;
+  box-shadow: 0 16px 40px -10px rgba(110, 79, 50, 0.12), 0 2px 8px -2px rgba(110, 79, 50, 0.05);
+  border: 1px solid rgba(187, 165, 145, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-drift, .anim-wobble, .anim-balloon, .anim-cloud, .anim-pulse {
+    animation: none !important;
+  }
+}
+
 
 .washi-tape {
   background: rgba(230, 218, 204, 0.85);

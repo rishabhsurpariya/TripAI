@@ -8,14 +8,12 @@ import {
   Sunset,
   Moon,
   Clock,
-  Sparkles,
   Receipt,
   Plus,
   GripVertical,
   MoreVertical,
   Trash2,
   Copy,
-  Calendar,
   ChevronDown,
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -40,6 +38,7 @@ export interface ActivityCardProps {
   onUpdateTimeSlot?: (id: string, slot: string) => void;
   onUpdateNote?: (id: string, note: string, color?: string) => void;
   onReplace?: (id: string) => void;
+  readOnly?: boolean;
 }
 
 function getTimeSlotIcon(slot: string) {
@@ -76,18 +75,20 @@ export function ActivityCard({
   onUpdateCost,
   onUpdateTimeSlot,
   onUpdateNote,
+  readOnly = false,
 }: ActivityCardProps) {
   const durationHours = (activity.durationMinutes / 60).toFixed(1);
   const shouldReduceMotion = useReducedMotion();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [isEditingNote, setIsEditingNote] = useState(false);
+  const [prevCost, setPrevCost] = useState(activity.estimatedCost);
   const [costInput, setCostInput] = useState(String(activity.estimatedCost || 0));
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
+  if (activity.estimatedCost !== prevCost) {
+    setPrevCost(activity.estimatedCost);
     setCostInput(String(activity.estimatedCost || 0));
-  }, [activity.estimatedCost]);
+  }
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -447,28 +448,30 @@ export function ActivityCard({
                 </AnimatePresence>
               </div>
 
-              {/* Add / Edit Note Button */}
-              <button
-                type="button"
-                onClick={() => setIsEditingNote(!isEditingNote)}
-                className="text-secondary hover:text-primary text-xs flex items-center gap-1 cursor-pointer transition-colors"
-              >
-                <Plus className="w-3 h-3" />
-                <span>{activity.note ? "Edit Note" : "Add Note"}</span>
-              </button>
+              {/* Add / Edit Note Button (hidden in readOnly mode) */}
+              {!readOnly && (
+                <button
+                  type="button"
+                  onClick={() => setIsEditingNote(!isEditingNote)}
+                  className="text-secondary hover:text-primary text-xs flex items-center gap-1 cursor-pointer transition-colors"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>{activity.note ? "Edit Note" : "Add Note"}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
 
         {/* Scrapbook Floating Sticky Note */}
-        {(activity.note || isEditingNote) && (
+        {(activity.note || (!readOnly && isEditingNote)) && (
           <div className="mt-4 sm:mt-0 sm:absolute -right-3 -bottom-5 w-full sm:w-64 z-20">
             <StickyNote
               note={activity.note || ""}
               title="AI Discovery"
               defaultColor={activity.noteColor || "#fdfbf7"}
               isAiNote={true}
-              isEditable={isEditMode || isEditingNote}
+              isEditable={!readOnly && (isEditMode || isEditingNote)}
               onUpdateNote={(newText) => onUpdateNote?.(activity.id, newText, activity.noteColor)}
               onUpdateColor={(newColor) => onUpdateNote?.(activity.id, activity.note || "", newColor)}
             />

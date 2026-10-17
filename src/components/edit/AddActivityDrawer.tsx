@@ -7,9 +7,6 @@ import {
   Search,
   Plus,
   Save,
-  MapPin,
-  Clock,
-  Sparkles,
   Compass,
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -21,6 +18,10 @@ export interface AddActivityDrawerProps {
   destination: string;
   onClose: () => void;
   onAddActivity: (activity: Activity) => void;
+}
+
+function generateActivityId(): string {
+  return `act-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
 // Curated suggestion catalog for adding stops
@@ -140,7 +141,7 @@ export function AddActivityDrawer({
   const handleAddCurated = (item: Omit<Activity, "id">) => {
     const newActivity: Activity = {
       ...item,
-      id: `act-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      id: generateActivityId(),
     };
     onAddActivity(newActivity);
   };
@@ -153,7 +154,7 @@ export function AddActivityDrawer({
     const parsedCost = parseInt(customCost.replace(/[^0-9]/g, ""), 10) || 0;
 
     const newActivity: Activity = {
-      id: `act-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      id: generateActivityId(),
       name: customName.trim(),
       description:
         customDescription.trim() ||

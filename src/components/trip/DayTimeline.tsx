@@ -39,6 +39,7 @@ interface DayTimelineProps {
   onOpenAddDrawer?: (dayNumber: number) => void;
   onOpenHotelDrawer?: (dayNumber: number) => void;
   onToast?: (message: string, action?: { label: string; onClick: () => void }) => void;
+  readOnly?: boolean;
 }
 
 // Traveler's memo sticky note with color choice in edit mode
@@ -126,6 +127,7 @@ function SortableActivityItem({
   onUpdateCost,
   onUpdateTimeSlot,
   onUpdateNote,
+  readOnly = false,
 }: {
   activity: Activity;
   index: number;
@@ -139,6 +141,7 @@ function SortableActivityItem({
   onUpdateCost: (id: string, cost: number) => void;
   onUpdateTimeSlot: (id: string, slot: string) => void;
   onUpdateNote: (id: string, note: string, color?: string) => void;
+  readOnly?: boolean;
 }) {
   const {
     attributes,
@@ -147,7 +150,7 @@ function SortableActivityItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: activity.id });
+  } = useSortable({ id: activity.id, disabled: readOnly });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -162,8 +165,9 @@ function SortableActivityItem({
         index={index}
         dayNumber={dayNumber}
         allDayNumbers={allDayNumbers}
-        isEditMode={isEditMode}
+        isEditMode={isEditMode && !readOnly}
         isDragging={isDragging}
+        readOnly={readOnly}
         dragHandleProps={{ ...attributes, ...listeners }}
         onDelete={onDelete}
         onDuplicate={onDuplicate}
@@ -197,6 +201,7 @@ function DaySection({
   onUpdateTimeSlot,
   onUpdateNote,
   onSaveDayNotes,
+  readOnly = false,
 }: {
   day: Day;
   dayIndex: number;
@@ -216,6 +221,7 @@ function DaySection({
   onUpdateTimeSlot: (dayNum: number, actId: string, slot: string) => void;
   onUpdateNote: (dayNum: number, actId: string, note: string, color?: string) => void;
   onSaveDayNotes: (dayNum: number, note: string) => void;
+  readOnly?: boolean;
 }) {
   const shouldReduceMotion = useReducedMotion();
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -289,15 +295,17 @@ function DaySection({
               {day.title}
             </h2>
 
-            {/* Regenerate this day button */}
-            <button
-              type="button"
-              onClick={() => onToast?.("Coming soon: AI Day Regenerator ✨")}
-              className="px-3 py-1 rounded-full border border-secondary/40 text-primary hover:bg-surface-container-high text-xs font-semibold transition-all flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95"
-            >
-              <span className="material-symbols-outlined text-[15px] text-primary">auto_fix_high</span>
-              <span>Regenerate this day ✨</span>
-            </button>
+            {/* Regenerate this day button (hidden in readOnly) */}
+            {!readOnly && (
+              <button
+                type="button"
+                onClick={() => onToast?.("Coming soon: AI Day Regenerator ✨")}
+                className="px-3 py-1 rounded-full border border-secondary/40 text-primary hover:bg-surface-container-high text-xs font-semibold transition-all flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95"
+              >
+                <span className="material-symbols-outlined text-[15px] text-primary">auto_fix_high</span>
+                <span>Regenerate this day ✨</span>
+              </button>
+            )}
           </div>
 
           {day.localTransport && day.localTransport.length > 0 && (
@@ -429,6 +437,7 @@ function DaySection({
                         dayNumber={day.dayNumber}
                         allDayNumbers={allDayNumbers}
                         isEditMode={isEditMode}
+                        readOnly={readOnly}
                         onDelete={() => onDeleteActivity(activity, day.dayNumber, actIdx)}
                         onDuplicate={() => onDuplicateActivity(day.dayNumber, activity.id)}
                         onMoveToDay={(_id, targetDay) =>
@@ -453,7 +462,7 @@ function DaySection({
               </SortableContext>
 
               {/* Drop Target Slot when dragging is active */}
-              {isEditMode && isDraggingActive && (
+              {isEditMode && isDraggingActive && !readOnly && (
                 <div
                   className="p-4 rounded-2xl border-2 border-dashed border-[#bba591] bg-surface-container-low/60 text-center text-secondary text-xs font-semibold flex items-center justify-center gap-2 shadow-inner"
                   id={`drop-target-slot-day-${day.dayNumber}`}
@@ -471,20 +480,23 @@ function DaySection({
                   <StayCard
                     stay={day.stay}
                     dayNumber={day.dayNumber}
-                    onChangeHotel={() => onOpenHotelDrawer?.(day.dayNumber)}
+                    readOnly={readOnly}
+                    onChangeHotel={readOnly ? undefined : () => onOpenHotelDrawer?.(day.dayNumber)}
                   />
                 </div>
               )}
 
-              {/* Add Activity Button */}
-              <button
-                type="button"
-                onClick={() => onOpenAddDrawer?.(day.dayNumber)}
-                className="w-full py-3.5 rounded-2xl border-2 border-dashed border-outline-variant/80 hover:border-primary text-secondary hover:text-primary bg-surface/40 hover:bg-surface-container-low transition-all flex items-center justify-center gap-2 text-xs font-semibold cursor-pointer group"
-              >
-                <PlusCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span>Add Custom Stop or Note to Day {day.dayNumber}</span>
-              </button>
+              {/* Add Activity Button (hidden in readOnly) */}
+              {!readOnly && (
+                <button
+                  type="button"
+                  onClick={() => onOpenAddDrawer?.(day.dayNumber)}
+                  className="w-full py-3.5 rounded-2xl border-2 border-dashed border-outline-variant/80 hover:border-primary text-secondary hover:text-primary bg-surface/40 hover:bg-surface-container-low transition-all flex items-center justify-center gap-2 text-xs font-semibold cursor-pointer group"
+                >
+                  <PlusCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span>Add Custom Stop or Note to Day {day.dayNumber}</span>
+                </button>
+              )}
             </div>
           </motion.div>
         )}
@@ -498,11 +510,14 @@ export function DayTimeline({
   onOpenAddDrawer,
   onOpenHotelDrawer,
   onToast,
+  readOnly = false,
 }: DayTimelineProps) {
   const [collapsedDays, setCollapsedDays] = useState<Record<number, boolean>>({});
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
+  const shouldReduceMotion = useReducedMotion();
 
-  const isEditMode = useTripStore((state) => state.isEditMode);
+  const storeEditMode = useTripStore((state) => state.isEditMode);
+  const isEditMode = !readOnly && storeEditMode;
   const reorderActivities = useTripStore((state) => state.reorderActivities);
   const moveActivityBetweenDays = useTripStore((state) => state.moveActivityBetweenDays);
   const removeActivity = useTripStore((state) => state.removeActivity);
@@ -643,8 +658,6 @@ export function DayTimeline({
     );
   }
 
-  const shouldReduceMotion = useReducedMotion();
-
   return (
     <DndContext
       sensors={sensors}
@@ -674,6 +687,7 @@ export function DayTimeline({
             onUpdateTimeSlot={handleUpdateTimeSlot}
             onUpdateNote={handleUpdateNote}
             onSaveDayNotes={(dayNum, note) => updateDayNotes(dayNum, note)}
+            readOnly={readOnly}
           />
         ))}
       </div>

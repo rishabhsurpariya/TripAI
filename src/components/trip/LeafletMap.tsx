@@ -13,7 +13,7 @@ import {
 } from "react-leaflet";
 import { Activity } from "@/types/trip";
 import Image from "next/image";
-import { Clock, DollarSign, MapPin } from "lucide-react";
+import { Clock } from "lucide-react";
 
 interface LeafletMapProps {
   activities: (Activity & { dayNumber?: number; stopIndex: number })[];

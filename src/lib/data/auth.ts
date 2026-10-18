@@ -34,20 +34,11 @@ function mapSupabaseUser(user: SupabaseUser | null): User | null {
 export async function getCurrentUser(): Promise<User | null> {
   if (isSupabaseConfigured()) {
     try {
-      if (typeof window === "undefined") {
-        const { createClient } = await import("@/lib/supabase/server");
-        const supabase = await createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        return mapSupabaseUser(user);
-      } else {
-        const supabase = createBrowserClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        return mapSupabaseUser(user);
-      }
+      const supabase = createBrowserClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      return mapSupabaseUser(user);
     } catch {
       return null;
     }

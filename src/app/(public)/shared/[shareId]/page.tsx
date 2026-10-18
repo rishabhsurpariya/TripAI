@@ -4,8 +4,6 @@ import { getSharedTrip } from "@/lib/data/sharing";
 import { SharedTripView } from "@/components/trip/SharedTripView";
 import { SharedTripSkeleton } from "@/components/trip/SharedTripSkeleton";
 
-export const dynamic = "force-dynamic";
-
 export async function generateMetadata({
   params,
 }: {

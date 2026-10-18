@@ -12,6 +12,7 @@ DROP FUNCTION IF EXISTS public.get_shared_trip(TEXT);
 -- exposes ONLY public trip data when is_shared is TRUE.
 -- It NEVER exposes user_id, email, or any owner information.
 -- search_path is set explicitly to prevent search_path hijacking vulnerabilities.
+
 CREATE OR REPLACE FUNCTION public.get_shared_trip(p_share_id TEXT)
 RETURNS TABLE (
     destination TEXT,
@@ -20,10 +21,12 @@ RETURNS TABLE (
     num_days INTEGER,
     plan JSONB
 )
-LANGUAGE sql
+LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public, pg_temp
 AS $$
+BEGIN
+    RETURN QUERY
     SELECT
         t.destination,
         t.country,
@@ -34,6 +37,7 @@ AS $$
     WHERE t.share_id = p_share_id
       AND t.is_shared = true
     LIMIT 1;
+END;
 $$;
 
 -- 2. Grant execute permission to anon and authenticated roles

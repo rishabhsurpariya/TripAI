@@ -35,8 +35,8 @@ import {
 
 import { Trip } from "@/types/trip";
 import { easing } from "@/lib/motion";
-import { useAuthStore } from "@/store/authStore";
-import { useSavedTripsStore } from "@/store/savedTripsStore";
+import { useCurrentUser } from "@/lib/data/auth";
+import { createTrip } from "@/lib/data/trips";
 import { PublicNavbar } from "@/components/layout/PublicNavbar";
 import { Navbar } from "@/components/layout/Navbar";
 import { DayTimeline } from "@/components/trip/DayTimeline";
@@ -75,11 +75,9 @@ export function SharedTripView({
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
 
-  // Auth store: determines if user is logged in
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-
-  // Saved trips store: addTrip action
-  const addTrip = useSavedTripsStore((state) => state.addTrip);
+  // Auth state from data access layer
+  const currentUser = useCurrentUser();
+  const isLoggedIn = Boolean(currentUser);
 
   // Active tab state
   const [activeTab, setActiveTab] = useState<TabKey>("itinerary");
@@ -156,10 +154,10 @@ export function SharedTripView({
     }
 
     if (trip) {
-      addTrip(trip);
+      createTrip(trip);
       showToast("Saved a copy of this itinerary to My Trips!");
     }
-  }, [isLoggedIn, trip, addTrip, router, showToast]);
+  }, [isLoggedIn, trip, router, showToast]);
 
   // Render proper navbar based on auth state
   const renderedNavbar = isLoggedIn ? <Navbar /> : <PublicNavbar />;

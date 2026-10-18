@@ -4,11 +4,10 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { TripCard } from "@/components/trips/TripCard";
-import rawTrips from "@/data/trips.json";
+import { getCuratedTrips } from "@/lib/data/curated";
 import { easing } from "@/lib/motion";
-import type { Trip } from "@/types/trip";
 
-const curatedTrips = (rawTrips as Trip[]).slice(0, 4);
+const curatedTrips = getCuratedTrips().slice(0, 4);
 
 export function CuratedTripsSection() {
   const prefersReduced = useReducedMotion();

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { getSharedTrip } from "@/lib/sharedTripData";
+import { getSharedTrip } from "@/lib/data/sharing";
 import { SharedTripView } from "@/components/trip/SharedTripView";
 import { SharedTripSkeleton } from "@/components/trip/SharedTripSkeleton";
 
@@ -19,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ shareId: string }>;
 }): Promise<Metadata> {
   const { shareId } = await params;
-  const { trip, isShared } = getSharedTrip(shareId);
+  const { trip, isShared } = await getSharedTrip(shareId);
 
   const destinationTitle = trip
     ? `${trip.destination}, ${trip.country}`
@@ -47,7 +47,7 @@ async function SharedTripContent({
   params: Promise<{ shareId: string }>;
 }) {
   const { shareId } = await params;
-  const result = getSharedTrip(shareId);
+  const result = await getSharedTrip(shareId);
 
   return (
     <SharedTripView

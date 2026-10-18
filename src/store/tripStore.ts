@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { Trip, Activity, Stay } from "@/types/trip";
-import sampleItinerary from "@/data/sample-itinerary.json";
+import { getSampleTrip } from "@/lib/data/trips";
 
 export function recalculateBudget(trip: Trip): Trip {
   const days = trip.days || [];
@@ -80,7 +80,7 @@ interface TripStoreState {
   ) => void;
 }
 
-const defaultTrip = recalculateBudget(sampleItinerary as unknown as Trip);
+const defaultTrip = recalculateBudget(getSampleTrip());
 
 export const useTripStore = create<TripStoreState>((set, get) => ({
   currentTrip: defaultTrip,

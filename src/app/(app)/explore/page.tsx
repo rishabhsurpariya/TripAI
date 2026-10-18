@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { easing } from "@/lib/motion";
-import tripsData from "@/data/trips.json";
+import { getCuratedTrips } from "@/lib/data/curated";
 import { Trip } from "@/types/trip";
 import { Navbar } from "@/components/layout/Navbar";
 import { TripCard } from "@/components/trips/TripCard";
@@ -252,7 +252,7 @@ function ExploreContent() {
 
   // 4. Filter & sort trips
   const filteredTrips = useMemo(() => {
-    const allTrips = tripsData as unknown as Trip[];
+    const allTrips = getCuratedTrips();
 
     return allTrips
       .filter((trip) => {

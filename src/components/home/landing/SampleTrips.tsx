@@ -4,10 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/motion";
-import rawTrips from "@/data/trips.json";
-import type { Trip } from "@/types/trip";
+import { getCuratedTrips } from "@/lib/data/curated";
 
-const sampleTrips = (rawTrips as Trip[]).slice(0, 4);
+const sampleTrips = getCuratedTrips().slice(0, 4);
 
 export default function SampleTrips() {
   const prefersReduced = useReducedMotion();

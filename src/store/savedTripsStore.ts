@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { Trip } from "@/types/trip";
-import initialTripsData from "@/data/trips.json";
+import { getCuratedTrips } from "@/lib/data/curated";
 
 export type FilterCategory = "all" | "upcoming" | "past" | "shared";
 export type SortOption = "recent" | "date" | "budget" | "title";
@@ -35,8 +35,9 @@ function createInitialTrips(): Trip[] {
   const DAY_MS = 24 * 60 * 60 * 1000;
 
   const formatDate = (date: Date) => date.toISOString().split("T")[0];
+  const initialTripsData = getCuratedTrips();
 
-  return (initialTripsData as Trip[]).map((trip, idx) => {
+  return initialTripsData.map((trip, idx) => {
     let startDate: string;
     let endDate: string;
     let isShared = trip.isShared ?? false;

@@ -2,14 +2,16 @@
 
 import { useEffect, useSyncExternalStore, Suspense } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuthStore } from "@/store/authStore";
+import { useCurrentUser, toggleMockAuth } from "@/lib/data/auth";
 
 const emptySubscribe = () => () => {};
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isLoggedIn, toggleAuth } = useAuthStore();
+  const currentUser = useCurrentUser();
+  const isLoggedIn = Boolean(currentUser);
+  const toggleAuth = toggleMockAuth;
   const hasMounted = useSyncExternalStore(
     emptySubscribe,
     () => true,

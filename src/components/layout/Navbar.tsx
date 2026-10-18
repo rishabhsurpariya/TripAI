@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { Compass, ChevronDown, User, Bookmark, Settings, LogOut } from "lucide-react";
-import { useAuthStore } from "@/store/authStore";
+import { useCurrentUser, logoutUser } from "@/lib/data/auth";
 
 interface NavbarProps {
   user?: {
@@ -18,8 +18,8 @@ interface NavbarProps {
 
 export function Navbar({ user: propUser, onLogout }: NavbarProps) {
   const pathname = usePathname();
-  const { user: storeUser, logout } = useAuthStore();
-  const user = propUser || storeUser || {
+  const currentUser = useCurrentUser();
+  const user = propUser || currentUser || {
     name: "Elena Rostova",
     email: "elena@tripai.travel",
     avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
@@ -40,7 +40,7 @@ export function Navbar({ user: propUser, onLogout }: NavbarProps) {
 
   const handleLogout = () => {
     if (onLogout) onLogout();
-    else logout();
+    else logoutUser();
     setIsDropdownOpen(false);
   };
 

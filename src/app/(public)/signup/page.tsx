@@ -22,8 +22,8 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import { useAuthStore } from "@/store/authStore";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
+import { loginUser } from "@/lib/data/auth";
 import { PasswordStrengthIndicator } from "@/components/auth/PasswordStrengthIndicator";
 import { fadeUp, staggerContainer, shakeError, hoverLift, tapPress } from "@/lib/motion";
 
@@ -47,7 +47,7 @@ type SignupFormData = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const router = useRouter();
-  const { login } = useAuthStore();
+  const login = loginUser;
   const prefersReduced = useReducedMotion();
 
   const [showPassword, setShowPassword] = useState(false);

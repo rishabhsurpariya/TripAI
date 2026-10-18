@@ -24,8 +24,8 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import { useAuthStore } from "@/store/authStore";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
+import { loginUser } from "@/lib/data/auth";
 import { fadeUp, staggerContainer, shakeError, hoverLift, tapPress } from "@/lib/motion";
 
 // Form validation schema with Zod
@@ -47,7 +47,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/home";
-  const { login } = useAuthStore();
+  const login = loginUser;
   const prefersReduced = useReducedMotion();
 
   const [showPassword, setShowPassword] = useState(false);

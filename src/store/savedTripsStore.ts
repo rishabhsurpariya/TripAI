@@ -9,6 +9,7 @@ import {
   createTrip as createTripInDb,
   USE_MOCK_DATA,
 } from "@/lib/data/trips";
+import { setShared } from "@/lib/data/sharing";
 
 export type FilterCategory = "all" | "upcoming" | "past" | "shared";
 export type SortOption = "recent" | "date" | "budget" | "title";
@@ -33,7 +34,7 @@ export interface SavedTripsState {
   renameTrip: (id: string, newTitle: string) => Promise<void>;
   duplicateTrip: (id: string) => Promise<Trip | null>;
   deleteTrip: (id: string) => Promise<void>;
-  toggleShare: (id: string, isShared?: boolean) => void;
+  toggleShare: (id: string, isShared?: boolean, revoke?: boolean) => Promise<void>;
   addTrip: (trip: Trip) => Promise<Trip>;
   clearAllTrips: () => void;
   resetTrips: () => void;
@@ -208,19 +209,37 @@ export const useSavedTripsStore = create<SavedTripsState>((set, get) => ({
     }
   },
 
-  toggleShare: (id, isShared) => {
-    set((state) => ({
-      trips: state.trips.map((t) => {
-        if (t.id !== id) return t;
-        const newSharedState =
-          isShared !== undefined ? isShared : !t.isShared;
-        return {
-          ...t,
-          isShared: newSharedState,
-          shareId: newSharedState ? t.shareId || `share-${t.id}` : undefined,
-        };
-      }),
-    }));
+  toggleShare: async (id, isShared, revoke) => {
+    if (USE_MOCK_DATA) {
+      set((state) => ({
+        trips: state.trips.map((t) => {
+          if (t.id !== id) return t;
+          const newSharedState =
+            isShared !== undefined ? isShared : !t.isShared;
+          return {
+            ...t,
+            isShared: newSharedState,
+            shareId: newSharedState ? t.shareId || `share-${t.id}` : undefined,
+          };
+        }),
+      }));
+      return;
+    }
+
+    try {
+      const res = await setShared(id, isShared, revoke);
+      if (res) {
+        set((state) => ({
+          trips: state.trips.map((t) =>
+            t.id === id
+              ? { ...t, isShared: res.isShared, shareId: res.shareId }
+              : t
+          ),
+        }));
+      }
+    } catch (err) {
+      console.error("[useSavedTripsStore.toggleShare] Error:", err);
+    }
   },
 
   addTrip: async (trip) => {

@@ -17,9 +17,10 @@ import { easing } from "@/lib/motion";
 
 interface TripHeaderProps {
   trip: Trip;
+  onShare?: () => void;
 }
 
-export function TripHeader({ trip }: TripHeaderProps) {
+export function TripHeader({ trip, onShare }: TripHeaderProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
 
@@ -172,6 +173,7 @@ export function TripHeader({ trip }: TripHeaderProps) {
           <div className="flex items-center flex-wrap gap-2">
             <button
               type="button"
+              onClick={onShare}
               className="px-3.5 py-2 rounded-full bg-surface/15 hover:bg-surface/25 backdrop-blur-sm text-on-primary text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border border-white/10 active:scale-95"
               title="Share Trip Plan"
             >

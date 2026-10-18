@@ -53,63 +53,113 @@ export default function SignupPage() {
   const [alreadyRegisteredError, setAlreadyRegisteredError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      fullname: "Maya Chen",
-      email: "maya.chen@voyagejournal.com",
-      password: "Kyoto2025!Travel",
-      terms: true,
+      fullname: "",
+      email: "",
+      password: "",
+      terms: false,
     },
   });
 
   const passwordValue = watch("password") || "";
 
+  const syncAutofillValues = () => {
+    if (typeof document === "undefined") return;
+    const fullnameInput = document.getElementById("fullname") as HTMLInputElement | null;
+    const emailInput = document.getElementById("email") as HTMLInputElement | null;
+    const passwordInput = document.getElementById("password") as HTMLInputElement | null;
+    if (fullnameInput?.value) {
+      setValue("fullname", fullnameInput.value.trim(), { shouldValidate: true });
+    }
+    if (emailInput?.value) {
+      setValue("email", emailInput.value.trim(), { shouldValidate: true });
+    }
+    if (passwordInput?.value) {
+      setValue("password", passwordInput.value, { shouldValidate: true });
+    }
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    syncAutofillValues();
+    handleSubmit(onSubmit)(e);
+  };
+
   const onSubmit = async (data: SignupFormData) => {
     setAlreadyRegisteredError(false);
+    setIsLoading(true);
 
-    const { error } = await signUpWithEmail(
-      data.email,
-      data.password,
-      data.fullname
-    );
+    try {
+      syncAutofillValues();
+      const fullnameInput =
+        typeof document !== "undefined"
+          ? (document.getElementById("fullname") as HTMLInputElement | null)
+          : null;
+      const emailInput =
+        typeof document !== "undefined"
+          ? (document.getElementById("email") as HTMLInputElement | null)
+          : null;
+      const passwordInput =
+        typeof document !== "undefined"
+          ? (document.getElementById("password") as HTMLInputElement | null)
+          : null;
 
-    if (error) {
-      const msg = error.message?.toLowerCase() || "";
-      if (
-        msg.includes("already registered") ||
-        msg.includes("already exists") ||
-        msg.includes("user already") ||
-        ("code" in error && error.code === "user_already_exists")
-      ) {
+      const fullname = fullnameInput?.value?.trim() || data.fullname?.trim() || "";
+      const email = emailInput?.value?.trim() || data.email?.trim() || "";
+      const password = passwordInput?.value || data.password || "";
+
+      const { error } = await signUpWithEmail(
+        email,
+        password,
+        fullname
+      );
+
+      if (error) {
         setAlreadyRegisteredError(true);
-      } else {
-        setAlreadyRegisteredError(true);
+        return;
       }
-      return;
+
+      setIsSuccess(true);
+
+      setTimeout(() => {
+        if (typeof window !== "undefined") {
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+          window.location.href = "/home";
+        } else {
+          router.push("/home");
+          router.refresh();
+        }
+      }, 900);
+    } catch {
+      setAlreadyRegisteredError(true);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsSuccess(true);
-
-    setTimeout(() => {
-      router.push("/home");
-      router.refresh();
-    }, 1100);
   };
 
   const handleGoogleSignup = async () => {
     setAlreadyRegisteredError(false);
     setIsGoogleLoading(true);
 
-    const { error } = await signInWithGoogle("/home");
+    try {
+      const { error } = await signInWithGoogle("/home");
 
-    if (error) {
+      if (error) {
+        // Handled silently or displays fallback
+      }
+    } catch {
+      // ignore
+    } finally {
       setIsGoogleLoading(false);
     }
   };
@@ -407,7 +457,7 @@ export default function SignupPage() {
               {/* Form Start with staggered inputs */}
               <form
                 className="space-y-4"
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={handleFormSubmit}
                 noValidate
               >
                 {/* Full Name Field */}
@@ -606,11 +656,12 @@ export default function SignupPage() {
                   <motion.button
                     id="submit-btn"
                     type="submit"
+                    onClick={syncAutofillValues}
                     {...(prefersReduced ? {} : { ...hoverLift, ...tapPress })}
-                    disabled={isSubmitting || isSuccess}
+                    disabled={isLoading || isSubmitting}
                     className="w-full h-12 px-6 rounded-full bg-primary-container hover:bg-primary text-surface-container-lowest text-sm font-medium tracking-wide shadow-md hover:shadow-lg transition-colors duration-200 flex items-center justify-center gap-2 transform active:scale-[0.98] cursor-pointer disabled:opacity-75 disabled:pointer-events-none"
                   >
-                    {isSubmitting ? (
+                    {isLoading || isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin text-surface-container-lowest" />
                         <span>Setting up journal...</span>

@@ -40,14 +40,19 @@ export function Navbar({ user: propUser, onLogout }: NavbarProps) {
   }, []);
 
   const handleLogout = async () => {
+    setIsDropdownOpen(false);
     if (onLogout) {
       onLogout();
     } else {
       await logoutUser();
-      router.push("/login");
-      router.refresh();
+      if (typeof window !== "undefined") {
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = "/login";
+      } else {
+        router.refresh();
+        router.replace("/login");
+      }
     }
-    setIsDropdownOpen(false);
   };
 
   const navLinks = [

@@ -56,50 +56,102 @@ function LoginForm() {
   );
   const [isSuccess, setIsSuccess] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "alexandra.morris@voyage.co",
-      password: "password123",
-      rememberMe: true,
+      email: "",
+      password: "",
+      rememberMe: false,
     },
   });
 
+  const syncAutofillValues = () => {
+    if (typeof document === "undefined") return;
+    const emailInput = document.getElementById("email") as HTMLInputElement | null;
+    const passwordInput = document.getElementById("password") as HTMLInputElement | null;
+    if (emailInput?.value) {
+      setValue("email", emailInput.value.trim(), { shouldValidate: true });
+    }
+    if (passwordInput?.value) {
+      setValue("password", passwordInput.value, { shouldValidate: true });
+    }
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    syncAutofillValues();
+    handleSubmit(onSubmit)(e);
+  };
+
   const onSubmit = async (data: LoginFormData) => {
     setAuthError(null);
+    setIsLoading(true);
 
-    const { error } = await signInWithEmail(data.email, data.password);
+    try {
+      syncAutofillValues();
+      const emailInput =
+        typeof document !== "undefined"
+          ? (document.getElementById("email") as HTMLInputElement | null)
+          : null;
+      const passwordInput =
+        typeof document !== "undefined"
+          ? (document.getElementById("password") as HTMLInputElement | null)
+          : null;
+      const email = emailInput?.value?.trim() || data.email?.trim() || "";
+      const password = passwordInput?.value || data.password || "";
 
-    if (error) {
-      setAuthError(
-        "That email or password doesn't look right. Try again or reset your password."
-      );
-      return;
+      if (!email || !password) {
+        setAuthError("Please enter your email and password.");
+        return;
+      }
+
+      const { error } = await signInWithEmail(email, password);
+
+      if (error) {
+        setAuthError(
+          "That email or password doesn't look right. Try again or reset your password."
+        );
+        return;
+      }
+
+      setIsSuccess(true);
+
+      setTimeout(() => {
+        if (typeof window !== "undefined") {
+          window.location.href = redirectUrl || "/home";
+        } else {
+          router.push(redirectUrl || "/home");
+          router.refresh();
+        }
+      }, 900);
+    } catch {
+      setAuthError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsSuccess(true);
-
-    setTimeout(() => {
-      router.push(redirectUrl || "/home");
-      router.refresh();
-    }, 1100);
   };
 
   const handleGoogleLogin = async () => {
     setAuthError(null);
     setIsGoogleLoading(true);
 
-    const { error } = await signInWithGoogle(redirectUrl || "/home");
+    try {
+      const { error } = await signInWithGoogle(redirectUrl || "/home");
 
-    if (error) {
-      setAuthError(error.message || "Failed to sign in with Google. Please try again.");
+      if (error) {
+        setAuthError(error.message || "Failed to sign in with Google. Please try again.");
+      }
+    } catch {
+      setAuthError("Failed to sign in with Google. Please try again.");
+    } finally {
       setIsGoogleLoading(false);
-      return;
     }
   };
 
@@ -354,7 +406,7 @@ function LoginForm() {
               </motion.div>
 
               {/* Standard Login Form with staggered inputs */}
-              <form className="space-y-4" onSubmit={handleSubmit(onSubmit)} noValidate>
+              <form className="space-y-4" onSubmit={handleFormSubmit} noValidate>
                 {/* Email Input Field */}
                 <motion.div variants={fadeUp}>
                   <label
@@ -370,7 +422,7 @@ function LoginForm() {
                     <input
                       id="email"
                       type="email"
-                      autoComplete="email"
+                      autoComplete="username email"
                       placeholder="name@example.com"
                       className={`w-full h-12 pl-10 pr-4 bg-surface-container-lowest/80 text-primary text-sm placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-2 transition-all rounded-xl border ${
                         errors.email
@@ -507,11 +559,12 @@ function LoginForm() {
                   <motion.button
                     id="submit-btn"
                     type="submit"
+                    onClick={syncAutofillValues}
                     {...(prefersReduced ? {} : { ...hoverLift, ...tapPress })}
-                    disabled={isSubmitting || isSuccess}
+                    disabled={isLoading || isSubmitting}
                     className="w-full h-12 px-6 rounded-xl bg-primary text-on-primary text-sm font-medium tracking-wide shadow-md hover:bg-secondary active:scale-[0.98] transition-colors duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-75 disabled:pointer-events-none"
                   >
-                    {isSubmitting ? (
+                    {isLoading || isSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin text-on-primary" />
                         <span>Logging in...</span>

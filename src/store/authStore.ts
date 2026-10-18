@@ -16,14 +16,9 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  // Default to true for convenience during development, but can be toggled anytime
-  isLoggedIn: true,
-  user: {
-    name: "Elena Rostova",
-    email: "elena@tripai.travel",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-  },
+  // Default to false when not logged in
+  isLoggedIn: false,
+  user: null,
   login: (userData?: Partial<User>) =>
     set({
       isLoggedIn: true,

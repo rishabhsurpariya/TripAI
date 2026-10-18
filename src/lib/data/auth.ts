@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuthStore, type User } from "@/store/authStore";
+import { useSavedTripsStore } from "@/store/savedTripsStore";
 import { isSupabaseConfigured, getSiteUrl } from "@/lib/supabase/config";
 import { createClient as createBrowserClient } from "@/lib/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
@@ -124,7 +125,7 @@ export function useCurrentUser(): User | null {
     return mockIsLoggedIn ? mockUser : null;
   }
 
-  return supabaseUser ?? (mockIsLoggedIn ? mockUser : null);
+  return supabaseUser;
 }
 
 /**
@@ -262,9 +263,9 @@ export async function sendPasswordResetEmail(email: string) {
 }
 
 /**
- * Log out user from Supabase and clear local state
+ * Log out user from Supabase and clear all local client state (stores, cached trips, etc.)
  */
-export async function logoutUser(): Promise<void> {
+export async function logoutUser(redirectTo?: string): Promise<void> {
   if (isSupabaseConfigured()) {
     try {
       const supabase = createBrowserClient();
@@ -274,6 +275,15 @@ export async function logoutUser(): Promise<void> {
     }
   }
   useAuthStore.getState().logout();
+  try {
+    useSavedTripsStore.getState().resetTrips();
+  } catch {
+    // ignore
+  }
+
+  if (redirectTo && typeof window !== "undefined") {
+    window.location.href = redirectTo;
+  }
 }
 
 /**

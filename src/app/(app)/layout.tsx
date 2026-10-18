@@ -11,9 +11,16 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const currentUser = useCurrentUser();
   const isLoggedIn = Boolean(currentUser);
-  const toggleAuth = () => {
+  const toggleAuth = async () => {
     if (isSupabaseConfigured()) {
-      logoutUser();
+      await logoutUser();
+      if (typeof window !== "undefined") {
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = "/login";
+      } else {
+        router.refresh();
+        router.replace("/login");
+      }
     } else {
       toggleMockAuth();
     }
@@ -26,7 +33,12 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (hasMounted && !isLoggedIn) {
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      if (typeof window !== "undefined") {
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
+      } else {
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      }
     }
   }, [hasMounted, isLoggedIn, router, pathname]);
 

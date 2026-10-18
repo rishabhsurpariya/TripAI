@@ -38,29 +38,65 @@ export default function ForgotPasswordPage() {
   const [resendFeedback, setResendFeedback] = useState(false);
   const [errorBanner, setErrorBanner] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
-      email: "maya.chen@example.com",
+      email: "",
     },
   });
 
+  const syncAutofillValues = () => {
+    if (typeof document === "undefined") return;
+    const emailInput = document.getElementById("email-input") as HTMLInputElement | null;
+    if (emailInput?.value) {
+      setValue("email", emailInput.value.trim(), { shouldValidate: true });
+    }
+  };
+
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    syncAutofillValues();
+    handleSubmit(onSubmit)(e);
+  };
+
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setErrorBanner(false);
+    setIsLoading(true);
 
-    const { error } = await sendPasswordResetEmail(data.email);
+    try {
+      syncAutofillValues();
+      const emailInput =
+        typeof document !== "undefined"
+          ? (document.getElementById("email-input") as HTMLInputElement | null)
+          : null;
+      const email = emailInput?.value?.trim() || data.email?.trim() || "";
 
-    if (error) {
+      if (!email) {
+        setErrorBanner(true);
+        return;
+      }
+
+      const { error } = await sendPasswordResetEmail(email);
+
+      if (error) {
+        setErrorBanner(true);
+        return;
+      }
+
+      setSubmittedEmail(email);
+      setIsConfirmed(true);
+    } catch {
       setErrorBanner(true);
-      return;
+    } finally {
+      setIsLoading(false);
     }
-
-    setSubmittedEmail(data.email);
-    setIsConfirmed(true);
   };
 
   const handleResend = async () => {
@@ -232,7 +268,7 @@ export default function ForgotPasswordPage() {
                     {/* Form */}
                     <form
                       className="flex flex-col gap-5"
-                      onSubmit={handleSubmit(onSubmit)}
+                      onSubmit={handleFormSubmit}
                       noValidate
                     >
                       <motion.div variants={fadeUp} className="flex flex-col gap-1.5">
@@ -283,11 +319,12 @@ export default function ForgotPasswordPage() {
                         <motion.button
                           id="submit-btn"
                           type="submit"
+                          onClick={syncAutofillValues}
                           {...(prefersReduced ? {} : { ...hoverLift, ...tapPress })}
-                          disabled={isSubmitting}
+                          disabled={isLoading || isSubmitting}
                           className="w-full h-12 mt-2 rounded-full bg-primary text-on-primary text-sm font-medium flex items-center justify-center gap-2 hover:bg-secondary active:scale-[0.98] transition-colors duration-200 shadow-sm cursor-pointer disabled:opacity-75 disabled:pointer-events-none"
                         >
-                          {isSubmitting ? (
+                          {isLoading || isSubmitting ? (
                             <>
                               <Loader2 className="w-4 h-4 animate-spin text-on-primary" />
                               <span>Sending reset link...</span>

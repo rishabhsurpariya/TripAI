@@ -25,7 +25,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
-import { loginUser } from "@/lib/data/auth";
+import { signInWithEmail, signInWithGoogle } from "@/lib/data/auth";
 import { fadeUp, staggerContainer, shakeError, hoverLift, tapPress } from "@/lib/motion";
 
 // Form validation schema with Zod
@@ -47,11 +47,13 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect") || "/home";
-  const login = loginUser;
+  const urlError = searchParams.get("error");
   const prefersReduced = useReducedMotion();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(
+    urlError ? "Google sign-in could not be completed. Please try again." : null
+  );
   const [isSuccess, setIsSuccess] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
@@ -71,26 +73,20 @@ function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     setAuthError(null);
 
-    // Simulated network delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    const { error } = await signInWithEmail(data.email, data.password);
 
-    // Testing behavior: wrong@test.com acts as invalid credentials
-    if (data.email.toLowerCase() === "wrong@test.com") {
+    if (error) {
       setAuthError(
         "That email or password doesn't look right. Try again or reset your password."
       );
       return;
     }
 
-    // TODO: Connect real auth provider here (e.g. Supabase Auth / Firebase / NextAuth)
-    login({
-      email: data.email,
-      name: data.email.split("@")[0].replace(".", " "),
-    });
     setIsSuccess(true);
 
     setTimeout(() => {
-      router.push(redirectUrl);
+      router.push(redirectUrl || "/home");
+      router.refresh();
     }, 1100);
   };
 
@@ -98,19 +94,13 @@ function LoginForm() {
     setAuthError(null);
     setIsGoogleLoading(true);
 
-    // Simulated network delay
-    await new Promise((resolve) => setTimeout(resolve, 900));
+    const { error } = await signInWithGoogle(redirectUrl || "/home");
 
-    // TODO: Connect real OAuth provider here (e.g. Supabase OAuth / Google Provider)
-    login({
-      name: "Alexandra Morris",
-      email: "alexandra.morris@voyage.co",
-    });
-    setIsSuccess(true);
-
-    setTimeout(() => {
-      router.push(redirectUrl);
-    }, 1100);
+    if (error) {
+      setAuthError(error.message || "Failed to sign in with Google. Please try again.");
+      setIsGoogleLoading(false);
+      return;
+    }
   };
 
   return (

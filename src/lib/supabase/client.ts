@@ -1,0 +1,25 @@
+import { createBrowserClient } from "@supabase/ssr";
+import { isSupabaseConfigured } from "./config";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+let clientInstance: SupabaseClient | null = null;
+
+export function createClient(): SupabaseClient {
+  if (clientInstance) return clientInstance;
+
+  if (!isSupabaseConfigured()) {
+    // Fallback safe client for development before Supabase project credentials are set
+    clientInstance = createBrowserClient(
+      "https://placeholder-project.supabase.co",
+      "placeholder-anon-key"
+    );
+    return clientInstance;
+  }
+
+  clientInstance = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  return clientInstance;
+}

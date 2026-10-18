@@ -23,7 +23,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { GoogleAuthButton } from "@/components/auth/GoogleAuthButton";
-import { loginUser } from "@/lib/data/auth";
+import { signUpWithEmail, signInWithGoogle } from "@/lib/data/auth";
 import { PasswordStrengthIndicator } from "@/components/auth/PasswordStrengthIndicator";
 import { fadeUp, staggerContainer, shakeError, hoverLift, tapPress } from "@/lib/motion";
 
@@ -47,7 +47,6 @@ type SignupFormData = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const router = useRouter();
-  const login = loginUser;
   const prefersReduced = useReducedMotion();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -75,24 +74,32 @@ export default function SignupPage() {
   const onSubmit = async (data: SignupFormData) => {
     setAlreadyRegisteredError(false);
 
-    // Simulated network delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    const { error } = await signUpWithEmail(
+      data.email,
+      data.password,
+      data.fullname
+    );
 
-    // Testing behavior: taken@test.com acts as already registered
-    if (data.email.toLowerCase() === "taken@test.com") {
-      setAlreadyRegisteredError(true);
+    if (error) {
+      const msg = error.message?.toLowerCase() || "";
+      if (
+        msg.includes("already registered") ||
+        msg.includes("already exists") ||
+        msg.includes("user already") ||
+        ("code" in error && error.code === "user_already_exists")
+      ) {
+        setAlreadyRegisteredError(true);
+      } else {
+        setAlreadyRegisteredError(true);
+      }
       return;
     }
 
-    // TODO: Connect real auth provider registration here (e.g. Supabase Auth / Firebase / NextAuth)
-    login({
-      name: data.fullname,
-      email: data.email,
-    });
     setIsSuccess(true);
 
     setTimeout(() => {
       router.push("/home");
+      router.refresh();
     }, 1100);
   };
 
@@ -100,19 +107,11 @@ export default function SignupPage() {
     setAlreadyRegisteredError(false);
     setIsGoogleLoading(true);
 
-    // Simulated network delay
-    await new Promise((resolve) => setTimeout(resolve, 900));
+    const { error } = await signInWithGoogle("/home");
 
-    // TODO: Connect real OAuth signup here (e.g. Supabase OAuth / Google Provider)
-    login({
-      name: "Maya Chen",
-      email: "maya.chen@voyagejournal.com",
-    });
-    setIsSuccess(true);
-
-    setTimeout(() => {
-      router.push("/home");
-    }, 1100);
+    if (error) {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (

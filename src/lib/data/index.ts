@@ -21,11 +21,17 @@ export { getCuratedTrips, getCuratedTripsAsync } from "./curated";
 export {
   getCurrentUser,
   getCurrentUserAsync,
+  getCurrentUserSync,
   requireUser,
   useCurrentUser,
   isUserLoggedIn,
+  signInWithEmail,
+  signUpWithEmail,
+  signInWithGoogle,
+  sendPasswordResetEmail,
   loginUser,
   logoutUser,
   toggleMockAuth,
+  isSupabaseConfigured,
   type User,
 } from "./auth";

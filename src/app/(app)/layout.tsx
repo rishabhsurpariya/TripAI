@@ -2,7 +2,7 @@
 
 import { useEffect, useSyncExternalStore, Suspense } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useCurrentUser, toggleMockAuth } from "@/lib/data/auth";
+import { useCurrentUser, toggleMockAuth, logoutUser, isSupabaseConfigured } from "@/lib/data/auth";
 
 const emptySubscribe = () => () => {};
 
@@ -11,7 +11,13 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const currentUser = useCurrentUser();
   const isLoggedIn = Boolean(currentUser);
-  const toggleAuth = toggleMockAuth;
+  const toggleAuth = () => {
+    if (isSupabaseConfigured()) {
+      logoutUser();
+    } else {
+      toggleMockAuth();
+    }
+  };
   const hasMounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -44,19 +50,20 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex-1 flex flex-col">
-      {/* Dev mock auth state bar */}
+      {/* Dev auth state bar */}
       <div className="bg-[#f2ede7] border-b border-[#d3c4b9]/50 px-4 py-1.5 text-xs flex items-center justify-between text-[#54381d]">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>
-            Mock Auth: <strong>Logged In</strong> (Elena Rostova)
+            {isSupabaseConfigured() ? "Supabase Auth" : "Mock Auth"}: <strong>Logged In</strong> (
+            {currentUser?.name || currentUser?.email || "Elena Rostova"})
           </span>
         </div>
         <button
           onClick={toggleAuth}
           className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#6e4f32] text-white hover:bg-[#54381d] transition-colors"
         >
-          Toggle to Logged Out (Test Redirect)
+          {isSupabaseConfigured() ? "Sign Out" : "Toggle to Logged Out (Test Redirect)"}
         </button>
       </div>
       <div className="flex-1 flex flex-col">{children}</div>

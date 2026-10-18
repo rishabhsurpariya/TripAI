@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { Compass, ChevronDown, User, Bookmark, Settings, LogOut } from "lucide-react";
 import { useCurrentUser, logoutUser } from "@/lib/data/auth";
@@ -18,6 +18,7 @@ interface NavbarProps {
 
 export function Navbar({ user: propUser, onLogout }: NavbarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const currentUser = useCurrentUser();
   const user = propUser || currentUser || {
     name: "Elena Rostova",
@@ -38,9 +39,14 @@ export function Navbar({ user: propUser, onLogout }: NavbarProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    if (onLogout) onLogout();
-    else logoutUser();
+  const handleLogout = async () => {
+    if (onLogout) {
+      onLogout();
+    } else {
+      await logoutUser();
+      router.push("/login");
+      router.refresh();
+    }
     setIsDropdownOpen(false);
   };
 

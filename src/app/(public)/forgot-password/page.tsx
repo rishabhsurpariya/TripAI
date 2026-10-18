@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { fadeUp, staggerContainer, shakeError, hoverLift, tapPress } from "@/lib/motion";
+import { sendPasswordResetEmail } from "@/lib/data/auth";
 
 // Form validation schema with Zod
 const forgotPasswordSchema = z.object({
@@ -51,23 +52,22 @@ export default function ForgotPasswordPage() {
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setErrorBanner(false);
 
-    // Simulated network delay
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    const { error } = await sendPasswordResetEmail(data.email);
 
-    // Testing behavior: wrong@test.com shows error banner
-    if (data.email.toLowerCase() === "wrong@test.com") {
+    if (error) {
       setErrorBanner(true);
       return;
     }
 
-    // TODO: Connect real auth provider password reset here (e.g. Supabase Auth / Firebase / NextAuth)
     setSubmittedEmail(data.email);
     setIsConfirmed(true);
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setResendFeedback(true);
-    // TODO: Trigger password reset re-dispatch with real auth provider
+    if (submittedEmail) {
+      await sendPasswordResetEmail(submittedEmail);
+    }
     setTimeout(() => {
       setResendFeedback(false);
     }, 2200);

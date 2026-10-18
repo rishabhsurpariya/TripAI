@@ -1,6 +1,14 @@
 import { create } from "zustand";
 import { Trip } from "@/types/trip";
 import { getCuratedTrips } from "@/lib/data/curated";
+import {
+  listTrips,
+  updateTrip as updateTripInDb,
+  deleteTrip as deleteTripInDb,
+  duplicateTrip as duplicateTripInDb,
+  createTrip as createTripInDb,
+  USE_MOCK_DATA,
+} from "@/lib/data/trips";
 
 export type FilterCategory = "all" | "upcoming" | "past" | "shared";
 export type SortOption = "recent" | "date" | "budget" | "title";
@@ -8,6 +16,7 @@ export type ViewMode = "grid" | "list";
 
 export interface SavedTripsState {
   trips: Trip[];
+  isLoading: boolean;
   searchQuery: string;
   filter: FilterCategory;
   sortBy: SortOption;
@@ -15,16 +24,17 @@ export interface SavedTripsState {
   editingTripId: string | null;
 
   // Actions
+  fetchTrips: () => Promise<void>;
   setSearchQuery: (query: string) => void;
   setFilter: (filter: FilterCategory) => void;
   setSortBy: (sort: SortOption) => void;
   setViewMode: (mode: ViewMode) => void;
   setEditingTripId: (id: string | null) => void;
-  renameTrip: (id: string, newTitle: string) => void;
-  duplicateTrip: (id: string) => Trip | null;
-  deleteTrip: (id: string) => void;
+  renameTrip: (id: string, newTitle: string) => Promise<void>;
+  duplicateTrip: (id: string) => Promise<Trip | null>;
+  deleteTrip: (id: string) => Promise<void>;
   toggleShare: (id: string, isShared?: boolean) => void;
-  addTrip: (trip: Trip) => Trip;
+  addTrip: (trip: Trip) => Promise<Trip>;
   clearAllTrips: () => void;
   resetTrips: () => void;
 }
@@ -83,24 +93,47 @@ function createInitialTrips(): Trip[] {
   });
 }
 
+/**
+ * Computes whether a trip is 'upcoming' or 'past' based on start_date.
+ */
 export function computeTripStatus(trip: Trip): "upcoming" | "past" {
-  const now = new Date();
-  if (trip.endDate) {
-    return new Date(trip.endDate) < now ? "past" : "upcoming";
+  if (!trip.startDate) {
+    return "upcoming";
   }
-  if (trip.startDate) {
-    return new Date(trip.startDate) < now ? "past" : "upcoming";
-  }
-  return "upcoming";
+  const today = new Date().toISOString().split("T")[0];
+  const tripStartDate = trip.startDate.split("T")[0];
+  return tripStartDate < today ? "past" : "upcoming";
 }
 
 export const useSavedTripsStore = create<SavedTripsState>((set, get) => ({
-  trips: createInitialTrips(),
+  trips: USE_MOCK_DATA ? createInitialTrips() : [],
+  isLoading: !USE_MOCK_DATA,
   searchQuery: "",
   filter: "all",
   sortBy: "recent",
   viewMode: "grid",
   editingTripId: null,
+
+  fetchTrips: async () => {
+    if (USE_MOCK_DATA) {
+      const current = get().trips;
+      if (current.length === 0) {
+        set({ trips: createInitialTrips(), isLoading: false });
+      } else {
+        set({ isLoading: false });
+      }
+      return;
+    }
+
+    set({ isLoading: true });
+    try {
+      const liveTrips = await listTrips();
+      set({ trips: liveTrips, isLoading: false });
+    } catch (err) {
+      console.error("[useSavedTripsStore.fetchTrips] Error:", err);
+      set({ isLoading: false });
+    }
+  },
 
   setSearchQuery: (searchQuery) => set({ searchQuery }),
   setFilter: (filter) => set({ filter }),
@@ -108,46 +141,79 @@ export const useSavedTripsStore = create<SavedTripsState>((set, get) => ({
   setViewMode: (viewMode) => set({ viewMode }),
   setEditingTripId: (editingTripId) => set({ editingTripId }),
 
-  renameTrip: (id, newTitle) => {
+  renameTrip: async (id, newTitle) => {
+    // Optimistic UI update
     set((state) => ({
       trips: state.trips.map((t) =>
         t.id === id ? { ...t, destination: newTitle } : t
       ),
       editingTripId: null,
     }));
+
+    try {
+      await updateTripInDb(id, { destination: newTitle });
+    } catch (err) {
+      console.error("[useSavedTripsStore.renameTrip] Error:", err);
+    }
   },
 
-  duplicateTrip: (id) => {
-    const tripToDuplicate = get().trips.find((t) => t.id === id);
-    if (!tripToDuplicate) return null;
+  duplicateTrip: async (id) => {
+    if (USE_MOCK_DATA) {
+      const tripToDuplicate = get().trips.find((t) => t.id === id);
+      if (!tripToDuplicate) return null;
 
-    const duplicated: Trip = {
-      ...tripToDuplicate,
-      id: `trip-copy-${Date.now()}`,
-      destination: `${tripToDuplicate.destination} (Copy)`,
-      shareId: undefined,
-      isShared: false,
-    };
+      const duplicated: Trip = {
+        ...tripToDuplicate,
+        id: `trip-copy-${Date.now()}`,
+        destination: `${tripToDuplicate.destination} (Copy)`,
+        shareId: undefined,
+        isShared: false,
+      };
 
-    set((state) => ({
-      trips: [duplicated, ...state.trips],
-    }));
+      set((state) => ({
+        trips: [duplicated, ...state.trips],
+      }));
 
-    return duplicated;
+      return duplicated;
+    }
+
+    try {
+      const duplicated = await duplicateTripInDb(id);
+      if (duplicated) {
+        set((state) => ({
+          trips: [
+            duplicated,
+            ...state.trips.filter((t) => t.id !== duplicated.id),
+          ],
+        }));
+      }
+      return duplicated;
+    } catch (err) {
+      console.error("[useSavedTripsStore.duplicateTrip] Error:", err);
+      return null;
+    }
   },
 
-  deleteTrip: (id) => {
+  deleteTrip: async (id) => {
+    // Optimistic UI update
     set((state) => ({
       trips: state.trips.filter((t) => t.id !== id),
       editingTripId: state.editingTripId === id ? null : state.editingTripId,
     }));
+
+    try {
+      await deleteTripInDb(id);
+    } catch (err) {
+      console.error("[useSavedTripsStore.deleteTrip] Error:", err);
+    }
   },
 
   toggleShare: (id, isShared) => {
     set((state) => ({
       trips: state.trips.map((t) => {
         if (t.id !== id) return t;
-        const newSharedState = isShared !== undefined ? isShared : !t.isShared;
+        const newSharedState =
+          isShared !== undefined ? isShared : !t.isShared;
         return {
           ...t,
           isShared: newSharedState,
@@ -157,20 +223,33 @@ export const useSavedTripsStore = create<SavedTripsState>((set, get) => ({
     }));
   },
 
-  addTrip: (trip) => {
-    const newTrip: Trip = {
-      ...trip,
-      id: `saved-trip-${Date.now()}`,
-      destination: trip.destination.includes("(Copy)")
-        ? trip.destination
-        : `${trip.destination} (Saved)`,
-      shareId: undefined,
-      isShared: false,
-    };
-    set((state) => ({
-      trips: [newTrip, ...state.trips],
-    }));
-    return newTrip;
+  addTrip: async (trip) => {
+    if (USE_MOCK_DATA) {
+      const newTrip: Trip = {
+        ...trip,
+        id: `saved-trip-${Date.now()}`,
+        destination: trip.destination.includes("(Copy)")
+          ? trip.destination
+          : `${trip.destination} (Saved)`,
+        shareId: undefined,
+        isShared: false,
+      };
+      set((state) => ({
+        trips: [newTrip, ...state.trips],
+      }));
+      return newTrip;
+    }
+
+    try {
+      const saved = await createTripInDb(trip);
+      set((state) => ({
+        trips: [saved, ...state.trips.filter((t) => t.id !== saved.id)],
+      }));
+      return saved;
+    } catch (err) {
+      console.error("[useSavedTripsStore.addTrip] Error:", err);
+      throw err;
+    }
   },
 
   clearAllTrips: () => set({ trips: [] }),

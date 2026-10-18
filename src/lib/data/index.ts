@@ -9,6 +9,8 @@ export {
   updateTrip,
   deleteTrip,
   duplicateTrip,
+  isUuid,
+  mapRowToTrip,
 } from "./trips";
 export {
   GOA_SHARED_TRIP,

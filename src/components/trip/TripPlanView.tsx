@@ -26,6 +26,7 @@ import { BudgetTab } from "./BudgetTab";
 import { TripMapTab } from "./TripMapTab";
 import { AddActivityDrawer } from "@/components/edit/AddActivityDrawer";
 import { ChangeHotelDrawer } from "@/components/edit/ChangeHotelDrawer";
+import { updateTrip } from "@/lib/data/trips";
 
 interface TripPlanViewProps {
   trip: Trip;
@@ -93,6 +94,41 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
     },
     []
   );
+
+  // Auto-save debounced sync when in edit mode
+  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    if (!isEditMode) return;
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    autoSaveTimerRef.current = setTimeout(async () => {
+      if (activeTrip?.id) {
+        try {
+          await updateTrip(activeTrip.id, activeTrip);
+        } catch (err) {
+          console.error("[TripPlanView] Auto-save error:", err);
+        }
+      }
+    }, 1500);
+
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    };
+  }, [activeTrip, isEditMode]);
+
+  const handleDoneEditing = async () => {
+    commitChanges();
+    if (activeTrip?.id) {
+      try {
+        await updateTrip(activeTrip.id, activeTrip);
+        showToast("All edits finalized and saved!");
+      } catch (err) {
+        console.error("[TripPlanView] Failed to save trip:", err);
+        showToast("Could not save changes to cloud");
+      }
+    } else {
+      showToast("All edits finalized!");
+    }
+  };
 
   // Keyboard shortcuts for Undo and Redo
   useEffect(() => {
@@ -325,10 +361,7 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    commitChanges();
-                    showToast("All edits finalized and published!");
-                  }}
+                  onClick={handleDoneEditing}
                   className="px-4 py-1.5 rounded-full bg-primary-container text-on-primary hover:bg-primary text-xs font-semibold shadow-xs flex items-center gap-1.5 active:scale-95 transition-all cursor-pointer"
                 >
                   <Check className="w-3.5 h-3.5" />

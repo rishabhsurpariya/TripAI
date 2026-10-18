@@ -2,16 +2,28 @@
 
 import { useEffect, useSyncExternalStore, Suspense } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useCurrentUser, toggleMockAuth } from "@/lib/data/auth";
+import { useAuth, toggleMockAuth, logoutUser, isSupabaseConfigured } from "@/lib/data/auth";
 
 const emptySubscribe = () => () => {};
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const currentUser = useCurrentUser();
-  const isLoggedIn = Boolean(currentUser);
-  const toggleAuth = toggleMockAuth;
+  const { user: currentUser, isLoading, isLoggedIn } = useAuth();
+  const toggleAuth = async () => {
+    if (isSupabaseConfigured()) {
+      await logoutUser();
+      if (typeof window !== "undefined") {
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = "/login";
+      } else {
+        router.refresh();
+        router.replace("/login");
+      }
+    } else {
+      toggleMockAuth();
+    }
+  };
   const hasMounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -19,12 +31,18 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    if (hasMounted && !isLoggedIn) {
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+    // Only redirect if component has mounted, auth check has finished, and user is definitely not logged in
+    if (hasMounted && !isLoading && !isLoggedIn) {
+      if (typeof window !== "undefined") {
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
+      } else {
+        router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+      }
     }
-  }, [hasMounted, isLoggedIn, router, pathname]);
+  }, [hasMounted, isLoading, isLoggedIn, router, pathname]);
 
-  if (!hasMounted) {
+  if (!hasMounted || isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center p-8 text-neutral-500">
         Loading app...
@@ -44,19 +62,20 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex-1 flex flex-col">
-      {/* Dev mock auth state bar */}
+      {/* Dev auth state bar */}
       <div className="bg-[#f2ede7] border-b border-[#d3c4b9]/50 px-4 py-1.5 text-xs flex items-center justify-between text-[#54381d]">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
           <span>
-            Mock Auth: <strong>Logged In</strong> (Elena Rostova)
+            {isSupabaseConfigured() ? "Supabase Auth" : "Mock Auth"}: <strong>Logged In</strong> (
+            {currentUser?.name || currentUser?.email || "Elena Rostova"})
           </span>
         </div>
         <button
           onClick={toggleAuth}
           className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#6e4f32] text-white hover:bg-[#54381d] transition-colors"
         >
-          Toggle to Logged Out (Test Redirect)
+          {isSupabaseConfigured() ? "Sign Out" : "Toggle to Logged Out (Test Redirect)"}
         </button>
       </div>
       <div className="flex-1 flex flex-col">{children}</div>

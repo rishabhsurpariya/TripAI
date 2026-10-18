@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -43,6 +43,7 @@ export default function MyTripsPage() {
     sortBy,
     viewMode,
     editingTripId,
+    fetchTrips,
     setSearchQuery,
     setFilter,
     setSortBy,
@@ -56,6 +57,11 @@ export default function MyTripsPage() {
   } = useSavedTripsStore();
 
   const shouldReduceMotion = useReducedMotion();
+
+  // Load saved trips on mount
+  useEffect(() => {
+    fetchTrips();
+  }, [fetchTrips]);
 
   // Modals state
   const [shareTrip, setShareTrip] = useState<Trip | null>(null);
@@ -135,8 +141,8 @@ export default function MyTripsPage() {
   }, [trips, filter, searchQuery, sortBy]);
 
   // Handler for duplicating
-  const handleDuplicate = (trip: Trip) => {
-    const duplicated = duplicateTrip(trip.id);
+  const handleDuplicate = async (trip: Trip) => {
+    const duplicated = await duplicateTrip(trip.id);
     if (duplicated) {
       showToast(`✓ Trip "${trip.destination}" duplicated to drafts`);
     }
@@ -181,16 +187,16 @@ export default function MyTripsPage() {
     setDeleteTargetTrip(trip);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!deleteTargetTrip) return;
-    deleteTrip(deleteTargetTrip.id);
+    await deleteTrip(deleteTargetTrip.id);
     showToast(`Trip plan "${deleteTargetTrip.destination}" deleted`);
     setDeleteTargetTrip(null);
   };
 
   // Handler for rename
-  const handleSaveRename = (id: string, newTitle: string) => {
-    renameTrip(id, newTitle);
+  const handleSaveRename = async (id: string, newTitle: string) => {
+    await renameTrip(id, newTitle);
     showToast(`Renamed trip to "${newTitle}"`);
   };
 

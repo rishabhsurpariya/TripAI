@@ -9,6 +9,8 @@ export {
   updateTrip,
   deleteTrip,
   duplicateTrip,
+  isUuid,
+  mapRowToTrip,
 } from "./trips";
 export {
   GOA_SHARED_TRIP,
@@ -21,11 +23,18 @@ export { getCuratedTrips, getCuratedTripsAsync } from "./curated";
 export {
   getCurrentUser,
   getCurrentUserAsync,
+  getCurrentUserSync,
   requireUser,
   useCurrentUser,
+  useAuth,
   isUserLoggedIn,
+  signInWithEmail,
+  signUpWithEmail,
+  signInWithGoogle,
+  sendPasswordResetEmail,
   loginUser,
   logoutUser,
   toggleMockAuth,
+  isSupabaseConfigured,
   type User,
 } from "./auth";

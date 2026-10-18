@@ -77,13 +77,17 @@ export async function requireUser(): Promise<User> {
 }
 
 /**
- * React hook to reactively get the current authenticated user in client components.
- * Subscribes to Supabase onAuthStateChange and keeps useAuthStore synchronized.
+ * React hook to get auth session state in client components, including loading state.
  */
-export function useCurrentUser(): User | null {
+export function useAuth(): {
+  user: User | null;
+  isLoading: boolean;
+  isLoggedIn: boolean;
+} {
   const mockIsLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const mockUser = useAuthStore((state) => state.user);
   const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(isSupabaseConfigured());
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -93,15 +97,21 @@ export function useCurrentUser(): User | null {
     const supabase = createBrowserClient();
 
     // Fetch initial Supabase user
-    supabase.auth.getUser().then(({ data: { user: sbUser } }) => {
-      const mapped = mapSupabaseUser(sbUser);
-      setSupabaseUser(mapped);
-      if (mapped) {
-        useAuthStore.getState().login(mapped);
-      } else {
-        useAuthStore.getState().logout();
-      }
-    });
+    supabase.auth
+      .getUser()
+      .then(({ data: { user: sbUser } }) => {
+        const mapped = mapSupabaseUser(sbUser);
+        setSupabaseUser(mapped);
+        setIsLoading(false);
+        if (mapped) {
+          useAuthStore.getState().login(mapped);
+        } else {
+          useAuthStore.getState().logout();
+        }
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
 
     // Listen to live auth changes (e.g. login, logout, OAuth return)
     const {
@@ -109,6 +119,7 @@ export function useCurrentUser(): User | null {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       const mapped = mapSupabaseUser(session?.user ?? null);
       setSupabaseUser(mapped);
+      setIsLoading(false);
       if (mapped) {
         useAuthStore.getState().login(mapped);
       } else {
@@ -122,10 +133,26 @@ export function useCurrentUser(): User | null {
   }, []);
 
   if (!isSupabaseConfigured()) {
-    return mockIsLoggedIn ? mockUser : null;
+    return {
+      user: mockIsLoggedIn ? mockUser : null,
+      isLoading: false,
+      isLoggedIn: mockIsLoggedIn,
+    };
   }
 
-  return supabaseUser;
+  return {
+    user: supabaseUser,
+    isLoading,
+    isLoggedIn: Boolean(supabaseUser),
+  };
+}
+
+/**
+ * React hook to reactively get the current authenticated user in client components.
+ */
+export function useCurrentUser(): User | null {
+  const { user } = useAuth();
+  return user;
 }
 
 /**

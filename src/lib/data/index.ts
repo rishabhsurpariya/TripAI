@@ -24,6 +24,7 @@ export {
   getCurrentUserSync,
   requireUser,
   useCurrentUser,
+  useAuth,
   isUserLoggedIn,
   signInWithEmail,
   signUpWithEmail,

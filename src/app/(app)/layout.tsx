@@ -2,15 +2,14 @@
 
 import { useEffect, useSyncExternalStore, Suspense } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useCurrentUser, toggleMockAuth, logoutUser, isSupabaseConfigured } from "@/lib/data/auth";
+import { useAuth, toggleMockAuth, logoutUser, isSupabaseConfigured } from "@/lib/data/auth";
 
 const emptySubscribe = () => () => {};
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const currentUser = useCurrentUser();
-  const isLoggedIn = Boolean(currentUser);
+  const { user: currentUser, isLoading, isLoggedIn } = useAuth();
   const toggleAuth = async () => {
     if (isSupabaseConfigured()) {
       await logoutUser();
@@ -32,7 +31,8 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
   );
 
   useEffect(() => {
-    if (hasMounted && !isLoggedIn) {
+    // Only redirect if component has mounted, auth check has finished, and user is definitely not logged in
+    if (hasMounted && !isLoading && !isLoggedIn) {
       if (typeof window !== "undefined") {
         // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
@@ -40,9 +40,9 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
         router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       }
     }
-  }, [hasMounted, isLoggedIn, router, pathname]);
+  }, [hasMounted, isLoading, isLoggedIn, router, pathname]);
 
-  if (!hasMounted) {
+  if (!hasMounted || isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center p-8 text-neutral-500">
         Loading app...

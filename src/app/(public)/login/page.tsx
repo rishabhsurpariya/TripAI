@@ -46,7 +46,11 @@ type LoginFormData = z.infer<typeof loginSchema>;
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "/home";
+  const rawRedirect = searchParams.get("redirect");
+  const redirectUrl =
+    rawRedirect && !rawRedirect.startsWith("/login") && !rawRedirect.startsWith("/signup")
+      ? rawRedirect
+      : "/home";
   const urlError = searchParams.get("error");
   const prefersReduced = useReducedMotion();
 

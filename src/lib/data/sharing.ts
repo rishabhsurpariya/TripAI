@@ -434,14 +434,8 @@ export async function getSharedTrip(shareId: string): Promise<SharedTripResult> 
   }
 
   try {
-    let supabase: any;
-    if (typeof window === "undefined") {
-      const { createClient } = await import("@/lib/supabase/server");
-      supabase = await createClient();
-    } else {
-      const { createClient } = await import("@/lib/supabase/client");
-      supabase = createClient();
-    }
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
 
     const { data, error } = await supabase.rpc("get_shared_trip", {
       p_share_id: shareId,
@@ -522,73 +516,20 @@ export async function setShared(
     };
   }
 
-  if (typeof window !== "undefined") {
-    const res = await fetch(`/api/trips/${id}/share`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ isShared, revoke }),
-    });
+  const res = await fetch(`/api/trips/${id}/share`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isShared, revoke }),
+  });
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || "Failed to update trip sharing");
-    }
-
-    const data = await res.json();
-    return {
-      isShared: Boolean(data.isShared),
-      shareId: data.shareId,
-    };
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || "Failed to update trip sharing");
   }
 
-  // Server-side fallback if called within a server environment
-  const { createClient } = await import("@/lib/supabase/server");
-  const { nanoid } = await import("nanoid");
-  const supabase = await createClient();
-
-  const { data: trip, error: fetchError } = await supabase
-    .from("trips")
-    .select("id, is_shared, share_id, plan")
-    .eq("id", id)
-    .single();
-
-  if (fetchError || !trip) {
-    throw new Error("Trip not found");
-  }
-
-  const newShared = typeof isShared === "boolean" ? isShared : !trip.is_shared;
-  let newShareId = trip.share_id;
-  if (newShared && !newShareId) {
-    newShareId = nanoid(21);
-  } else if (!newShared && revoke) {
-    newShareId = null;
-  }
-
-  const updatePayload: Record<string, any> = {
-    is_shared: newShared,
-    share_id: newShareId,
-  };
-  if (trip.plan && typeof trip.plan === "object") {
-    updatePayload.plan = {
-      ...trip.plan,
-      isShared: newShared,
-      shareId: newShareId || undefined,
-    };
-  }
-
-  const { data: updated, error: updateError } = await supabase
-    .from("trips")
-    .update(updatePayload)
-    .eq("id", id)
-    .select("is_shared, share_id")
-    .single();
-
-  if (updateError || !updated) {
-    throw updateError || new Error("Failed to update trip share status");
-  }
-
+  const data = await res.json();
   return {
-    isShared: Boolean(updated.is_shared),
-    shareId: updated.share_id,
+    isShared: Boolean(data.isShared),
+    shareId: data.shareId,
   };
 }

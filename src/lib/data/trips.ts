@@ -402,6 +402,7 @@ export async function duplicateTrip(
 
     const copyData: Trip = {
       ...original,
+      id: "", // cleared — Postgres generates a fresh UUID via gen_random_uuid()
       destination: `${original.destination} (Copy)`,
       isShared: false,
       shareId: undefined,

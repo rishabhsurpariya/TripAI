@@ -46,7 +46,6 @@ import { HotelsTab } from "@/components/trip/HotelsTab";
 import { BudgetTab } from "@/components/trip/BudgetTab";
 import { TripMapTab } from "@/components/trip/TripMapTab";
 import {
-  NotFoundErrorContent,
   TripUnavailableError,
 } from "@/components/common/error-variants";
 
@@ -69,8 +68,9 @@ type TabKey =
 export function SharedTripView({
   trip,
   isShared,
-  sharedBy = "Aarav",
-  lastUpdated = "Nov 18, 2024",
+  sharedBy = "Traveler",
+  lastUpdated = "Recently",
+  shareId,
 }: SharedTripViewProps) {
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
@@ -146,29 +146,40 @@ export function SharedTripView({
   }, [trip, handleCopyLink]);
 
   // Action: Save a copy to my trips
-  const handleSaveCopy = useCallback(() => {
+  const handleSaveCopy = useCallback(async () => {
     if (!isLoggedIn) {
-      // Redirect to /login as per task instructions
-      router.push("/login");
+      // Redirect to /login first if logged out, and return afterward
+      const returnUrl = `/shared/${shareId}`;
+      router.push(`/login?redirect=${encodeURIComponent(returnUrl)}`);
       return;
     }
 
     if (trip) {
-      createTrip(trip);
-      showToast("Saved a copy of this itinerary to My Trips!");
+      try {
+        const copyPayload: Trip = {
+          ...trip,
+          id: "", // clear id so database generates fresh UUID
+          destination: trip.destination.includes("(Copy)")
+            ? trip.destination
+            : `${trip.destination} (Copy)`,
+          isShared: false,
+          shareId: undefined,
+        };
+        await createTrip(copyPayload);
+        showToast("Saved a copy of this itinerary to My Trips!");
+      } catch (err) {
+        console.error("[SharedTripView] Failed to save copy:", err);
+        showToast("Failed to save a copy. Please try again.");
+      }
     }
-  }, [isLoggedIn, trip, router, showToast]);
+  }, [isLoggedIn, trip, router, showToast, shareId]);
 
   // Render proper navbar based on auth state
   const renderedNavbar = isLoggedIn ? <Navbar /> : <PublicNavbar />;
 
-  // 1. STATE: Trip Not Found (404)
-  if (!trip) {
-    return <NotFoundErrorContent fullScreen={true} />;
-  }
-
-  // 2. STATE: Link Unavailable (trip exists but isShared is false)
-  if (!isShared) {
+  // Return the same "not available" state for a missing share_id and
+  // for sharing turned off, so the two cases can't be told apart.
+  if (!trip || !isShared) {
     return <TripUnavailableError fullScreen={true} />;
   }
 

@@ -424,10 +424,78 @@ export function getSharedTripSync(shareId: string): SharedTripResult {
 }
 
 /**
- * Async version of getSharedTrip conforming to section 4 of backend-tech-stack.md.
+ * Async version of getSharedTrip conforming to section 4 & 6 of backend-tech-stack.md.
+ * Reads public read-only trip data via the get_shared_trip Postgres security-definer function.
+ * Never exposes owner user_id or email.
  */
 export async function getSharedTrip(shareId: string): Promise<SharedTripResult> {
-  return getSharedTripSync(shareId);
+  if (USE_MOCK_DATA) {
+    return getSharedTripSync(shareId);
+  }
+
+  try {
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
+
+    const { data, error } = await supabase.rpc("get_shared_trip", {
+      p_share_id: shareId,
+    });
+
+    if (error) {
+      console.error("[getSharedTrip] Postgres RPC error:", error.message);
+      return {
+        trip: null,
+        isShared: false,
+        sharedBy: "",
+        lastUpdated: "",
+        source: "not-found",
+      };
+    }
+
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      return {
+        trip: null,
+        isShared: false,
+        sharedBy: "",
+        lastUpdated: "",
+        source: "not-found",
+      };
+    }
+
+    const row = data[0];
+    const plan = (row.plan || {}) as Record<string, any>;
+
+    // Strictly ensure no owner metadata is present in the plan object
+    delete plan.userId;
+    delete plan.user_id;
+    delete plan.email;
+
+    const trip: Trip = {
+      ...plan,
+      destination: row.destination || plan.destination || "",
+      country: row.country || plan.country || "",
+      coverImageUrl: row.cover_image_url || plan.coverImageUrl || "",
+      shareId,
+      isShared: true,
+    } as Trip;
+
+    return {
+      trip,
+      isShared: true,
+      sharedBy: "Traveler",
+      lastUpdated: "Recently",
+      source: "saved",
+    };
+  } catch (err) {
+    console.error("[getSharedTrip] Unexpected error:", err);
+    return {
+      trip: null,
+      isShared: false,
+      sharedBy: "",
+      lastUpdated: "",
+      source: "not-found",
+    };
+  }
 }
 
 /**
@@ -435,7 +503,8 @@ export async function getSharedTrip(shareId: string): Promise<SharedTripResult> 
  */
 export async function setShared(
   id: string,
-  isShared?: boolean
+  isShared?: boolean,
+  revoke?: boolean
 ): Promise<{ isShared: boolean; shareId?: string } | null> {
   if (USE_MOCK_DATA) {
     useSavedTripsStore.getState().toggleShare(id, isShared);
@@ -446,5 +515,21 @@ export async function setShared(
       shareId: updated.shareId,
     };
   }
-  throw new Error("Real database service not connected yet.");
+
+  const res = await fetch(`/api/trips/${id}/share`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isShared, revoke }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || "Failed to update trip sharing");
+  }
+
+  const data = await res.json();
+  return {
+    isShared: Boolean(data.isShared),
+    shareId: data.shareId,
+  };
 }

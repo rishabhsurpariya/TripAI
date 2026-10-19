@@ -27,6 +27,7 @@ import { TripMapTab } from "./TripMapTab";
 import { AddActivityDrawer } from "@/components/edit/AddActivityDrawer";
 import { ChangeHotelDrawer } from "@/components/edit/ChangeHotelDrawer";
 import { updateTrip } from "@/lib/data/trips";
+import { ShareTripModal } from "./ShareTripModal";
 
 interface TripPlanViewProps {
   trip: Trip;
@@ -79,6 +80,7 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
   const [isHotelDrawerOpen, setIsHotelDrawerOpen] = useState(false);
   const [targetDayForHotel, setTargetDayForHotel] = useState(1);
   const [isDiscardModalOpen, setIsDiscardModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   // Toast state
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -232,7 +234,7 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
   return (
     <div className="flex flex-col w-full max-w-[1240px] mx-auto px-3 sm:px-6 py-6 sm:py-8 space-y-8 text-on-surface">
       {/* 1. TRIP HEADER HERO */}
-      <TripHeader trip={activeTrip} />
+      <TripHeader trip={activeTrip} onShare={() => setIsShareModalOpen(true)} />
 
       {/* 2. STICKY EDITING NOTIFICATION BANNER (When Edit Mode is Active) */}
       <AnimatePresence>
@@ -561,6 +563,17 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* SHARE MODAL DIALOG */}
+      <ShareTripModal
+        trip={activeTrip}
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        onTripUpdate={(updated) => {
+          setTrip(updated);
+        }}
+        showToast={(msg) => showToast(msg)}
+      />
 
       {/* TOAST NOTIFICATION WITH UNDO SUPPORT (Slides in and out) */}
       <AnimatePresence mode="wait">

@@ -4,15 +4,6 @@ import { getSharedTrip } from "@/lib/data/sharing";
 import { SharedTripView } from "@/components/trip/SharedTripView";
 import { SharedTripSkeleton } from "@/components/trip/SharedTripSkeleton";
 
-export function generateStaticParams() {
-  return [
-    { shareId: "goa-coastal-odyssey" },
-    { shareId: "goa-sun-2026" },
-    { shareId: "kyoto-spring-2026" },
-    { shareId: "spiti-high-pass" },
-  ];
-}
-
 export async function generateMetadata({
   params,
 }: {
@@ -21,19 +12,20 @@ export async function generateMetadata({
   const { shareId } = await params;
   const { trip, isShared } = await getSharedTrip(shareId);
 
-  const destinationTitle = trip
-    ? `${trip.destination}, ${trip.country}`
-    : "Trip Plan";
+  const isAvailable = Boolean(trip && isShared);
+  const destinationTitle =
+    isAvailable && trip
+      ? `${trip.destination}${trip.country ? `, ${trip.country}` : ""}`
+      : "Trip Unavailable";
 
   return {
-    title: !trip
-      ? "Trip Not Found (404) — TripAi"
-      : !isShared
-      ? "Trip Sharing Ended — TripAi"
+    title: !isAvailable
+      ? "Trip Unavailable — TripAi"
       : `${destinationTitle} — Shared Trip Plan · TripAi`,
-    description: trip
-      ? `View the curated shared travel plan for ${destinationTitle}.`
-      : "Shared trip plan view.",
+    description:
+      isAvailable && trip
+        ? `View the curated shared travel plan for ${destinationTitle}.`
+        : "Shared trip plan view.",
     robots: {
       index: false,
       follow: false,

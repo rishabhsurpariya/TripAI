@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { easing } from "@/lib/motion";
+import { LimitReachedError } from "@/components/common/error-variants/LimitReachedError";
 
 interface StepConfig {
   id: number;
@@ -105,20 +106,28 @@ function GeneratingContent() {
   const numericBudget = parseInt(budgetParam.replace(/[^0-9]/g, ""), 10) || 2500;
   const formattedBudget = `$${numericBudget.toLocaleString()}`;
 
-  // State variant: 'progress' | 'slow' | 'error'
+  // State variant: 'progress' | 'slow' | 'error' | 'rate_limited'
   const queryState = searchParams.get("state");
-  const [internalState, setInternalState] = useState<"progress" | "slow" | "error" | null>(null);
-  const activeState: "progress" | "slow" | "error" =
+  const [internalState, setInternalState] = useState<
+    "progress" | "slow" | "error" | "rate_limited" | null
+  >(null);
+  const activeState: "progress" | "slow" | "error" | "rate_limited" =
     internalState ??
-    (queryState === "slow" ? "slow" : queryState === "error" ? "error" : "progress");
+    (queryState === "slow"
+      ? "slow"
+      : queryState === "error"
+      ? "error"
+      : "progress");
   const setActiveState = setInternalState;
 
-  // Simulation state
+  // Generation state
   const [currentStepIndex, setCurrentStepIndex] = useState(0); // 0 to 4
   const [progressPercent, setProgressPercent] = useState(18);
   const [isDone, setIsDone] = useState(false);
+  const [isSlowNotice, setIsSlowNotice] = useState(false);
   const [tipIndex, setTipIndex] = useState(0);
   const timerRef = useRef<NodeJS.Timeout[]>([]);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Rotate tips every 6 seconds
   useEffect(() => {
@@ -134,74 +143,135 @@ function GeneratingContent() {
     timerRef.current = [];
   };
 
-  // Start 8-second generation simulation
-  const startSimulation = () => {
+  // Start real generation pipeline call
+  const startGeneration = () => {
     clearTimers();
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setIsDone(false);
+    setIsSlowNotice(false);
     setCurrentStepIndex(0);
     setProgressPercent(18);
 
-    // TODO: Replace simulation timer with real AI generation call (e.g. streaming LLM endpoint or SSE generating transport, itinerary, hotels, budget in stages)
+    // Natural progress steps: advance through steps 1-4, then hold at step 5 (94%) until network finishes
     const t1 = setTimeout(() => {
       setCurrentStepIndex(1);
       setProgressPercent(38);
-    }, 1600);
+    }, 1800);
 
     const t2 = setTimeout(() => {
       setCurrentStepIndex(2);
       setProgressPercent(58);
-    }, 3200);
+    }, 3600);
 
     const t3 = setTimeout(() => {
       setCurrentStepIndex(3);
       setProgressPercent(78);
-    }, 4800);
+    }, 5400);
 
     const t4 = setTimeout(() => {
-      // Step 5 active: keep the last step active until the timer ends
+      // Step 5 active: hold here until server returns
       setCurrentStepIndex(4);
       setProgressPercent(94);
-    }, 6400);
+    }, 7200);
 
-    const tEnd = setTimeout(() => {
-      // Complete step 5, advance to 100%, and trigger finish transition
-      setProgressPercent(100);
-      setIsDone(true);
-      setTimeout(() => {
-        router.push("/trip/sample");
-      }, 700);
-    }, 8200);
+    // If server takes longer than 9.5s, display reassuring slow state notice
+    const tSlow = setTimeout(() => {
+      setIsSlowNotice(true);
+    }, 9500);
 
-    timerRef.current = [t1, t2, t3, t4, tEnd];
+    timerRef.current = [t1, t2, t3, t4, tSlow];
+
+    // Fire real API request to pipeline
+    fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        destination,
+        days: parseInt(days, 10) || 5,
+        budget: numericBudget,
+        style,
+        travelers: parseInt(travelers, 10) || 2,
+        startCity: startCity || undefined,
+      }),
+      signal: controller.signal,
+    })
+      .then(async (res) => {
+        if (res.status === 429) {
+          clearTimers();
+          setActiveState("rate_limited");
+          return;
+        }
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok || !data?.success) {
+          if (
+            data?.error?.code === "RATE_LIMIT" ||
+            data?.error?.message === "busy, try again soon"
+          ) {
+            clearTimers();
+            setActiveState("rate_limited");
+            return;
+          }
+          clearTimers();
+          setActiveState("error");
+          return;
+        }
+
+        // Successfully generated and saved!
+        clearTimers();
+        setProgressPercent(100);
+        setIsDone(true);
+        setTimeout(() => {
+          router.push(`/trip/${data.tripId}`);
+        }, 700);
+      })
+      .catch((err) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+        console.error("[GeneratingPage] Generation request failed:", err);
+        clearTimers();
+        setActiveState("error");
+      });
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (activeState === "progress") {
-        startSimulation();
-      } else if (activeState === "slow") {
-        clearTimers();
-        // Simulate slow delay at step 3 with 62% progress and warning notice
-        setCurrentStepIndex(2);
-        setProgressPercent(62);
-        setIsDone(false);
-      } else if (activeState === "error") {
-        clearTimers();
-        setIsDone(false);
-      }
-    }, 0);
+    if (queryState === "slow") {
+      clearTimers();
+      setCurrentStepIndex(2);
+      setProgressPercent(62);
+      setIsDone(false);
+      return;
+    }
+    if (queryState === "error") {
+      clearTimers();
+      setIsDone(false);
+      return;
+    }
+
+    startGeneration();
 
     return () => {
-      clearTimeout(timer);
       clearTimers();
+      if (abortRef.current) {
+        abortRef.current.abort();
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeState]);
+  }, [queryState]);
 
-  // "Try again" restarts the simulation
+  // "Try again" restarts generation
   const handleTryAgain = () => {
     setActiveState("progress");
-    startSimulation();
+    startGeneration();
   };
 
   // "Edit my details" returns to /home with values kept
@@ -216,6 +286,10 @@ function GeneratingContent() {
     });
     router.push(`/home?${params.toString()}`);
   };
+
+  if (activeState === "rate_limited") {
+    return <LimitReachedError onBack={() => router.push("/trips")} />;
+  }
 
   return (
     <div className="bg-[#f7f2ec] text-[#6e4f32] font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-[#d9c9ba] selection:text-[#6e4f32]">
@@ -558,6 +632,8 @@ function GeneratingContent() {
                   <span className="font-serif italic text-[#8c6e52] font-semibold text-sm">
                     {activeState === "slow"
                       ? "62% (calibrating)..."
+                      : isSlowNotice
+                      ? `${progressPercent}% (calibrating)...`
                       : `${progressPercent}% complete`}
                   </span>
                 </div>
@@ -725,8 +801,8 @@ function GeneratingContent() {
                 })}
               </ul>
 
-              {/* SLOW STATE NOTICE (Toggleable when activeState === 'slow') */}
-              {activeState === "slow" && (
+              {/* SLOW STATE NOTICE (Toggleable when activeState === 'slow' or isSlowNotice is true) */}
+              {(activeState === "slow" || isSlowNotice) && (
                 <motion.div
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}

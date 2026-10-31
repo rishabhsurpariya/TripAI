@@ -14,6 +14,7 @@ import {
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { Trip } from "@/types/trip";
 import { easing } from "@/lib/motion";
+import { formatCurrency } from "@/lib/currency";
 
 interface TripHeaderProps {
   trip: Trip;
@@ -146,9 +147,9 @@ export function TripHeader({ trip, onShare }: TripHeaderProps) {
                 <div className="flex items-center justify-between gap-3 text-xs">
                   <span className="text-on-primary-container text-[11px]">Budget</span>
                   <span className="text-on-primary font-bold">
-                    ${budgetSpent.toLocaleString()}{" "}
+                    {formatCurrency(budgetSpent, trip.currency || "INR")}{" "}
                     <span className="opacity-60 text-[11px] font-normal">
-                      / ${maxBudget.toLocaleString()}
+                      / {formatCurrency(maxBudget, trip.currency || "INR")}
                     </span>
                   </span>
                 </div>
@@ -163,7 +164,7 @@ export function TripHeader({ trip, onShare }: TripHeaderProps) {
               </div>
               {bufferAmount > 0 && (
                 <span className="text-[10px] text-secondary-container bg-primary/40 px-2 py-0.5 rounded-full font-medium">
-                  +${bufferAmount.toLocaleString()} buffer
+                  +{formatCurrency(bufferAmount, trip.currency || "INR")} buffer
                 </span>
               )}
             </div>

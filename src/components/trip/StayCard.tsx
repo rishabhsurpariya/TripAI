@@ -3,10 +3,12 @@
 import Image from "next/image";
 import { Bed, Star, Navigation } from "lucide-react";
 import { Stay } from "@/types/trip";
+import { formatCurrency } from "@/lib/currency";
 
 interface StayCardProps {
   stay: Stay;
   dayNumber?: number;
+  currency?: string;
   onChangeHotel?: () => void;
   readOnly?: boolean;
 }
@@ -14,6 +16,7 @@ interface StayCardProps {
 export function StayCard({
   stay,
   dayNumber,
+  currency = "INR",
   onChangeHotel,
   readOnly = false,
 }: StayCardProps) {
@@ -45,7 +48,7 @@ export function StayCard({
               {stay.name}
             </h4>
             <p className="text-xs text-on-surface-variant">
-              ${stay.pricePerNight} / night &bull; {stay.distanceFromStopsKm} km from today&apos;s stops
+              {formatCurrency(stay.pricePerNight, currency)} / night &bull; {stay.distanceFromStopsKm} km from today&apos;s stops
             </p>
           </div>
         </div>
@@ -54,7 +57,7 @@ export function StayCard({
         {readOnly ? (
           <div className="text-right shrink-0">
             <div className="text-xs font-semibold text-[#6e4f32]">
-              ₹{stay.pricePerNight?.toLocaleString() || "6,800"}{" "}
+              {formatCurrency(stay.pricePerNight || 0, currency)}{" "}
               <span className="text-[11px] font-normal text-[#a28973]">/ night</span>
             </div>
             <div className="text-[10px] text-[#8c6e52] font-medium bg-white/70 px-2 py-0.5 rounded border border-[#bba591]/30 mt-1 inline-block">

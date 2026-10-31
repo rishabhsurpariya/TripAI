@@ -1,4 +1,5 @@
 import { AIInvalidInputError, TripGenerationInput } from "../types";
+import { SUPPORTED_CURRENCY_CODES, DEFAULT_CURRENCY } from "@/lib/currency";
 
 /**
  * Strips control characters and normalizes whitespace.
@@ -107,10 +108,20 @@ export function validateAndSanitizeInput(
     }
   }
 
+  // 8. Currency (optional, defaults to INR)
+  let currency: string = DEFAULT_CURRENCY;
+  if (rawInput.currency) {
+    const rawCurrency = sanitizeString(String(rawInput.currency)).toUpperCase();
+    if ((SUPPORTED_CURRENCY_CODES as string[]).includes(rawCurrency)) {
+      currency = rawCurrency;
+    }
+  }
+
   return {
     destination,
     days: daysNum,
     budget: budgetNum,
+    currency,
     style,
     travelers: travelersNum,
     startCity,

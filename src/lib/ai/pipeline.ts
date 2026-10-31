@@ -66,6 +66,7 @@ export async function runGenerationPipeline(
     style: input.style,
     startCity: input.startCity,
     totalBudget: input.budget,
+    currency: input.currency,
     gettingThere: gettingThereResult.options,
     budget: budgetResult.budget,
     interests: itineraryResult.itinerary.interests || ["Exploration", "Sightseeing"],

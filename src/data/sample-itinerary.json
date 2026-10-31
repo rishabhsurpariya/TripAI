@@ -6,6 +6,7 @@
   "travelers": 2,
   "style": "comfort",
   "startCity": "Tokyo",
+  "currency": "JPY",
   "totalBudget": 95000,
   "budget": {
     "transport": 18000,

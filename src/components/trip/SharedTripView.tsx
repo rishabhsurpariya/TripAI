@@ -37,6 +37,7 @@ import { Trip } from "@/types/trip";
 import { easing } from "@/lib/motion";
 import { useCurrentUser } from "@/lib/data/auth";
 import { createTrip } from "@/lib/data/trips";
+import { formatCurrency } from "@/lib/currency";
 import { PublicNavbar } from "@/components/layout/PublicNavbar";
 import { Navbar } from "@/components/layout/Navbar";
 import { DayTimeline } from "@/components/trip/DayTimeline";
@@ -189,6 +190,7 @@ export function SharedTripView({
   const maxBudget = trip.totalBudget || 25000;
   const bufferAmount = Math.max(0, maxBudget - budgetSpent);
   const percentAllocated = Math.min(100, Math.round((budgetSpent / maxBudget) * 100));
+  const currencyCode = trip.currency || "INR";
 
   const tabs: {
     key: TabKey;
@@ -424,9 +426,9 @@ export function SharedTripView({
                       Est. Budget
                     </span>
                     <span className="text-sm font-semibold text-white">
-                      ₹{budgetSpent.toLocaleString()}{" "}
+                      {formatCurrency(budgetSpent, currencyCode)}{" "}
                       <span className="text-xs font-normal text-[#d9c9ba]">
-                        / ₹{Math.round(maxBudget / 1000)}k
+                        / {formatCurrency(Math.round(maxBudget / 1000) * 1000, currencyCode)}
                       </span>
                     </span>
                   </div>
@@ -542,6 +544,7 @@ export function SharedTripView({
                     {/* 5. ITINERARY TAB (Vertical timeline in read-only scrapbook style with DayTimeline animations) */}
                     <DayTimeline
                       days={trip.days || []}
+                      currency={currencyCode}
                       readOnly={true}
                       onToast={showToast}
                     />
@@ -656,10 +659,10 @@ export function SharedTripView({
               <div>
                 <div className="flex items-baseline justify-between mb-1.5">
                   <span className="font-serif text-2xl font-bold text-[#6e4f32]">
-                    ₹{budgetSpent.toLocaleString()}
+                    {formatCurrency(budgetSpent, currencyCode)}
                   </span>
                   <span className="text-xs text-[#a28973]">
-                    of ₹{maxBudget.toLocaleString()} target
+                    of {formatCurrency(maxBudget, currencyCode)} target
                   </span>
                 </div>
                 {/* Progress Bar with width animation */}
@@ -683,7 +686,7 @@ export function SharedTripView({
                 <div className="flex items-center justify-between text-[11px] text-[#a28973] mt-1.5">
                   <span>{percentAllocated}% allocated</span>
                   <span className="text-[#6e4f32] font-medium">
-                    +{`₹${bufferAmount.toLocaleString()}`} buffer left
+                    +{formatCurrency(bufferAmount, currencyCode)} buffer left
                   </span>
                 </div>
               </div>
@@ -696,7 +699,7 @@ export function SharedTripView({
                     <span>Boutique Stays ({daysCount - 1} nights)</span>
                   </div>
                   <span className="font-semibold text-[#6e4f32]">
-                    ₹{(trip.budget?.stay || 11200).toLocaleString()}
+                    {formatCurrency(trip.budget?.stay || 11200, currencyCode)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -705,7 +708,7 @@ export function SharedTripView({
                     <span>Transport &amp; Scooter</span>
                   </div>
                   <span className="font-semibold text-[#6e4f32]">
-                    ₹{(trip.budget?.transport || 5100).toLocaleString()}
+                    {formatCurrency(trip.budget?.transport || 5100, currencyCode)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -714,7 +717,7 @@ export function SharedTripView({
                     <span>Activities &amp; Farm Tours</span>
                   </div>
                   <span className="font-semibold text-[#6e4f32]">
-                    ₹{(trip.budget?.activities || 3800).toLocaleString()}
+                    {formatCurrency(trip.budget?.activities || 3800, currencyCode)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
@@ -723,7 +726,7 @@ export function SharedTripView({
                     <span>Food, Cafes &amp; Drinks</span>
                   </div>
                   <span className="font-semibold text-[#6e4f32]">
-                    ₹{(trip.budget?.food || 3300).toLocaleString()}
+                    {formatCurrency(trip.budget?.food || 3300, currencyCode)}
                   </span>
                 </div>
               </div>

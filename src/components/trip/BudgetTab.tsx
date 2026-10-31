@@ -27,13 +27,14 @@ import {
 } from "framer-motion";
 import { Trip } from "@/types/trip";
 import { easing } from "@/lib/motion";
+import { formatCurrency, getCurrencySymbol } from "@/lib/currency";
 
 interface BudgetTabProps {
   trip: Trip;
 }
 
 // Animated counting number — counts up smoothly from 0 to target
-function AnimatedNumber({ value, prefix = "$" }: { value: number; prefix?: string }) {
+function AnimatedNumber({ value, prefix = "" }: { value: number; prefix?: string }) {
   const shouldReduceMotion = useReducedMotion();
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-40px" });
@@ -70,6 +71,9 @@ export function BudgetTab({ trip }: BudgetTabProps) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const [downloading, setDownloading] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  const currencyCode = trip.currency || "INR";
+  const currencySymbol = getCurrencySymbol(currencyCode);
+  const daysCount = trip.days?.length || 5;
 
   const budget = trip.budget || {
     stay: 35000,
@@ -107,12 +111,12 @@ export function BudgetTab({ trip }: BudgetTabProps) {
     setTimeout(() => {
       // Build simple CSV string
       const csvRows = [
-        ["Category", "Item Description", "Estimated Cost ($)"],
-        ["Stays", "Noku Kyoto Boutique Hotel (5 Nights)", budget.stay],
-        ["Transport", "Shinkansen & Kyoto Transit Passes", budget.transport],
-        ["Dining", "Pontocho Kaiseki & Nishiki Food", budget.food],
-        ["Activities", "Matcha Ceremony & Temple Admissions", budget.activities],
-        ["Misc", "Emergency cushion & luggage storage", budget.misc || 5000],
+        ["Category", "Item Description", `Estimated Cost (${currencyCode})`],
+        ["Stays", `${trip.days?.[0]?.stay?.name || "Hotel"} (${daysCount} Nights)`, budget.stay],
+        ["Transport", "Transit Passes & Getting There", budget.transport],
+        ["Dining", "Restaurants, Food Arcades & Bakeries", budget.food],
+        ["Activities", "Entry Fees, Experiences & Tours", budget.activities],
+        ["Misc", "Emergency Cushion & Luggage Storage", budget.misc || 0],
         ["TOTAL COMMITTED", "", committedCost],
         ["BUDGET CAP", "", totalBudgetCap],
       ];
@@ -168,7 +172,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
                 Total Budget
               </p>
               <p className="font-serif text-2xl text-primary font-bold mt-0.5">
-                <AnimatedNumber value={totalBudgetCap} />
+                <AnimatedNumber value={totalBudgetCap} prefix={currencySymbol} />
               </p>
             </div>
             <div className="h-8 w-[1px] bg-outline-variant/60 hidden sm:block" />
@@ -177,7 +181,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
                 Committed Cost
               </p>
               <p className="font-serif text-2xl text-secondary font-bold mt-0.5">
-                <AnimatedNumber value={committedCost} />
+                <AnimatedNumber value={committedCost} prefix={currencySymbol} />
               </p>
             </div>
             <div className="h-8 w-[1px] bg-outline-variant/60 hidden sm:block" />
@@ -186,7 +190,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
                 Buffer Cushion
               </p>
               <p className="font-serif text-2xl text-emerald-800 font-bold mt-0.5">
-                <AnimatedNumber value={bufferLeft} />
+                <AnimatedNumber value={bufferLeft} prefix={currencySymbol} />
               </p>
             </div>
           </div>
@@ -236,7 +240,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
                     </Pie>
                     <Tooltip
                       formatter={(val) => [
-                        `$${Number(val).toLocaleString()}`,
+                        formatCurrency(Number(val), currencyCode),
                         "Budget",
                       ]}
                       contentStyle={{
@@ -255,7 +259,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
                     Total
                   </span>
                   <span className="font-serif text-xl sm:text-2xl font-bold text-primary">
-                    <AnimatedNumber value={committedCost} />
+                    <AnimatedNumber value={committedCost} prefix={currencySymbol} />
                   </span>
                   <span className="text-[10px] text-on-surface-variant">
                     {percentSpent}% allocated
@@ -301,7 +305,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
 
                     <div className="flex items-center gap-3">
                       <span className="font-serif text-sm font-bold text-primary">
-                        ${item.value.toLocaleString()}
+                        {formatCurrency(item.value, currencyCode)}
                       </span>
                       <span className="text-[11px] text-secondary font-medium w-12 text-right">
                         {pct}%
@@ -344,7 +348,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
               </div>
             </div>
             <span className="font-serif text-sm font-bold text-on-surface">
-              ${budget.stay.toLocaleString()}
+              {formatCurrency(budget.stay, currencyCode)}
             </span>
           </div>
 
@@ -364,7 +368,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
               </div>
             </div>
             <span className="font-serif text-sm font-bold text-on-surface">
-              ${budget.transport.toLocaleString()}
+              {formatCurrency(budget.transport, currencyCode)}
             </span>
           </div>
 
@@ -384,7 +388,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
               </div>
             </div>
             <span className="font-serif text-sm font-bold text-on-surface">
-              ${budget.activities.toLocaleString()}
+              {formatCurrency(budget.activities, currencyCode)}
             </span>
           </div>
 
@@ -404,7 +408,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
               </div>
             </div>
             <span className="font-serif text-sm font-bold text-on-surface">
-              ${budget.food.toLocaleString()}
+              {formatCurrency(budget.food, currencyCode)}
             </span>
           </div>
 
@@ -424,7 +428,7 @@ export function BudgetTab({ trip }: BudgetTabProps) {
               </div>
             </div>
             <span className="font-serif text-sm font-bold text-on-surface">
-              ${(budget.misc || 5000).toLocaleString()}
+              {formatCurrency(budget.misc || 0, currencyCode)}
             </span>
           </div>
         </div>

@@ -122,28 +122,29 @@ export async function assembleAndBalanceBudget(
   if (total > input.budget) {
     const overage = total - input.budget;
     console.log(
-      `[assembleAndBalanceBudget] Plan total ($${total}) exceeds budget ($${input.budget}) by $${overage}. Running optimization adjustment pass...`
+      `[assembleAndBalanceBudget] Plan total (${total} ${input.currency}) exceeds budget (${input.budget} ${input.currency}) by ${overage} ${input.currency}. Running optimization adjustment pass...`
     );
 
     try {
-      const adjustmentPrompt = `The estimated total of this trip is $${total}, which is $${overage} over the traveler's target budget of $${input.budget}.
+      const adjustmentPrompt = `The estimated total of this trip is ${total} ${input.currency}, which is ${overage} ${input.currency} over the traveler's target budget of ${input.budget} ${input.currency}.
 Please suggest realistic adjustments to bring it within budget:
 - Suggest lower-cost alternative accommodations where appropriate
 - Suggest swapping expensive paid activities for free/lower-cost scenic walks, viewpoints, or public sights
 - Suggest an adjusted daily food estimate
 
 Current Stays:
-${days.map((d) => `Day ${d.dayNumber}: "${d.stay.name}" ($${d.stay.pricePerNight}/night)`).join("\n")}
+${days.map((d) => `Day ${d.dayNumber}: "${d.stay.name}" (${d.stay.pricePerNight} ${input.currency}/night)`).join("\n")}
 
 Top Paid Activities:
 ${days
   .flatMap((d) => d.activities)
-  .filter((a) => a.estimatedCost > 20)
-  .map((a) => `- "${a.name}": $${a.estimatedCost}`)
+  .filter((a) => a.estimatedCost > input.budget * 0.05)
+  .map((a) => `- "${a.name}": ${a.estimatedCost} ${input.currency}`)
   .slice(0, 6)
   .join("\n")}
 
-Target Total: $${input.budget}`;
+Target Total: ${input.budget} ${input.currency}
+IMPORTANT: All replacement costs must be realistic local prices in ${input.currency}. Do NOT convert from USD.`;
 
       const adjustment = await provider.generateStructured({
         systemPrompt: SYSTEM_PROMPT,

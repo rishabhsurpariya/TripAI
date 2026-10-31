@@ -2,6 +2,7 @@
 
 import { Plane, Train, Bus, Clock, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 import { Trip, TransportOption } from "@/types/trip";
+import { formatCurrency } from "@/lib/currency";
 
 interface GettingThereTabProps {
   trip: Trip;
@@ -120,7 +121,7 @@ export function GettingThereTab({ trip }: GettingThereTabProps) {
                   </div>
                   <div className="text-right">
                     <span className="font-serif text-xl sm:text-2xl text-primary font-bold">
-                      ${option.estimatedCost.toLocaleString()}
+                      {formatCurrency(option.estimatedCost, trip.currency || "INR")}
                     </span>
                     <p className="text-[10px] text-secondary font-medium">per traveler</p>
                   </div>

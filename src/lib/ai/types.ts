@@ -5,6 +5,7 @@ export interface TripGenerationInput {
   destination: string;
   days: number;
   budget: number;
+  currency: string; // ISO 4217 code, e.g. "INR", "USD"
   style: TravelStyle;
   travelers: number;
   startCity?: string;

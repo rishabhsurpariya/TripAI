@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Trip } from "@/types/trip";
+import { formatCurrency } from "@/lib/currency";
 
 export interface TripCardProps {
   trip: Trip;
@@ -74,14 +75,8 @@ export function TripCard({
 
   const budgetRatio = trip.totalBudget > 0 ? Math.min(100, Math.round((totalSpent / trip.totalBudget) * 100)) : 100;
 
-  // Format currency
-  const formatCost = (amt: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 0,
-    }).format(amt);
-  };
+  // Format currency using the trip's own currency code
+  const formatCost = (amt: number) => formatCurrency(amt, trip.currency || "INR");
 
   const dayCount = trip.days?.length || 5;
 

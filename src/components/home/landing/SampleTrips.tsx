@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Reveal } from "@/components/motion";
 import { getCuratedTrips } from "@/lib/data/curated";
+import { formatCurrency } from "@/lib/currency";
 
 const sampleTrips = getCuratedTrips().slice(0, 4);
 
@@ -41,7 +42,7 @@ export default function SampleTrips() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {sampleTrips.map((trip, idx) => {
             const daysCount = trip.days && trip.days.length > 0 ? trip.days.length : 5;
-            const formattedBudget = `₹${trip.totalBudget.toLocaleString("en-IN")}`;
+            const formattedBudget = formatCurrency(trip.totalBudget, trip.currency || "INR");
             const targetUrl = trip.shareId ? `/shared/${trip.shareId}` : `/explore`;
 
             return (

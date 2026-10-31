@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { easing } from "@/lib/motion";
 import { LimitReachedError } from "@/components/common/error-variants/LimitReachedError";
+import { formatCurrency } from "@/lib/currency";
 
 interface StepConfig {
   id: number;
@@ -101,10 +102,11 @@ function GeneratingContent() {
   const style = searchParams.get("style") || "comfort";
   const travelers = searchParams.get("travelers") || "2";
   const startCity = searchParams.get("startCity") || "";
+  const currency = searchParams.get("currency") || "INR";
 
   // Format budget display
   const numericBudget = parseInt(budgetParam.replace(/[^0-9]/g, ""), 10) || 2500;
-  const formattedBudget = `$${numericBudget.toLocaleString()}`;
+  const formattedBudget = formatCurrency(numericBudget, currency);
 
   // State variant: 'progress' | 'slow' | 'error' | 'rate_limited'
   const queryState = searchParams.get("state");
@@ -196,6 +198,7 @@ function GeneratingContent() {
         destination,
         days: parseInt(days, 10) || 5,
         budget: numericBudget,
+        currency,
         style,
         travelers: parseInt(travelers, 10) || 2,
         startCity: startCity || undefined,

@@ -60,6 +60,7 @@ export interface Trip {
   style: TravelStyle;
   startCity?: string;
   totalBudget: number;
+  currency: string; // ISO 4217 code, e.g. "INR", "USD", "EUR"
   gettingThere: TransportOption[];
   budget: BudgetBreakdown;
   interests: string[];

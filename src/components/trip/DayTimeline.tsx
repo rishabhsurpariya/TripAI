@@ -36,6 +36,7 @@ import { StayCard } from "./StayCard";
 
 interface DayTimelineProps {
   days: Day[];
+  currency?: string;
   onOpenAddDrawer?: (dayNumber: number) => void;
   onOpenHotelDrawer?: (dayNumber: number) => void;
   onToast?: (message: string, action?: { label: string; onClick: () => void }) => void;
@@ -120,6 +121,7 @@ function SortableActivityItem({
   dayNumber,
   allDayNumbers,
   isEditMode,
+  currency = "INR",
   onDelete,
   onDuplicate,
   onMoveToDay,
@@ -134,6 +136,7 @@ function SortableActivityItem({
   dayNumber: number;
   allDayNumbers: number[];
   isEditMode: boolean;
+  currency?: string;
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
   onMoveToDay: (id: string, targetDayNumber: number) => void;
@@ -168,6 +171,7 @@ function SortableActivityItem({
         isEditMode={isEditMode && !readOnly}
         isDragging={isDragging}
         readOnly={readOnly}
+        currency={currency}
         dragHandleProps={{ ...attributes, ...listeners }}
         onDelete={onDelete}
         onDuplicate={onDuplicate}
@@ -202,6 +206,7 @@ function DaySection({
   onUpdateNote,
   onSaveDayNotes,
   readOnly = false,
+  currency,
 }: {
   day: Day;
   dayIndex: number;
@@ -209,6 +214,7 @@ function DaySection({
   isCollapsed: boolean;
   isEditMode: boolean;
   isDraggingActive: boolean;
+  currency?: string;
   onToggleCollapse: () => void;
   onOpenAddDrawer?: (dayNumber: number) => void;
   onOpenHotelDrawer?: (dayNumber: number) => void;
@@ -438,6 +444,7 @@ function DaySection({
                         allDayNumbers={allDayNumbers}
                         isEditMode={isEditMode}
                         readOnly={readOnly}
+                        currency={currency}
                         onDelete={() => onDeleteActivity(activity, day.dayNumber, actIdx)}
                         onDuplicate={() => onDuplicateActivity(day.dayNumber, activity.id)}
                         onMoveToDay={(_id, targetDay) =>
@@ -480,6 +487,7 @@ function DaySection({
                   <StayCard
                     stay={day.stay}
                     dayNumber={day.dayNumber}
+                    currency={currency}
                     readOnly={readOnly}
                     onChangeHotel={readOnly ? undefined : () => onOpenHotelDrawer?.(day.dayNumber)}
                   />
@@ -507,6 +515,7 @@ function DaySection({
 
 export function DayTimeline({
   days,
+  currency = "INR",
   onOpenAddDrawer,
   onOpenHotelDrawer,
   onToast,
@@ -675,6 +684,7 @@ export function DayTimeline({
             isCollapsed={!!collapsedDays[day.dayNumber]}
             isEditMode={isEditMode}
             isDraggingActive={Boolean(activeDragId)}
+            currency={currency}
             onToggleCollapse={() => toggleDay(day.dayNumber)}
             onOpenAddDrawer={onOpenAddDrawer}
             onOpenHotelDrawer={onOpenHotelDrawer}

@@ -20,6 +20,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Activity } from "@/types/trip";
 import { easing } from "@/lib/motion";
 import { StickyNote } from "./StickyNote";
+import { formatCurrency } from "@/lib/currency";
 
 export interface ActivityCardProps {
   activity: Activity;
@@ -39,6 +40,7 @@ export interface ActivityCardProps {
   onUpdateNote?: (id: string, note: string, color?: string) => void;
   onReplace?: (id: string) => void;
   readOnly?: boolean;
+  currency?: string;
 }
 
 function getTimeSlotIcon(slot: string) {
@@ -76,6 +78,7 @@ export function ActivityCard({
   onUpdateTimeSlot,
   onUpdateNote,
   readOnly = false,
+  currency = "INR",
 }: ActivityCardProps) {
   const durationHours = (activity.durationMinutes / 60).toFixed(1);
   const shouldReduceMotion = useReducedMotion();
@@ -441,7 +444,7 @@ export function ActivityCard({
                       className="text-primary-container font-semibold"
                     >
                       {activity.estimatedCost > 0
-                        ? `~$${activity.estimatedCost.toLocaleString()} est.`
+                        ? `~${formatCurrency(activity.estimatedCost, currency)} est.`
                         : "Free entry"}
                     </motion.span>
                   )}

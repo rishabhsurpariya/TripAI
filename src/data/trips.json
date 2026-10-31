@@ -8,6 +8,7 @@
     "style": "comfort",
     "startCity": "Tokyo",
     "totalBudget": 95000,
+    "currency": "JPY",
     "budget": {
       "transport": 18000,
       "stay": 35000,
@@ -39,6 +40,7 @@
     "style": "budget",
     "startCity": "Mumbai",
     "totalBudget": 42000,
+    "currency": "INR",
     "budget": {
       "transport": 8000,
       "stay": 16000,
@@ -70,6 +72,7 @@
     "style": "adventure",
     "startCity": "Delhi",
     "totalBudget": 55000,
+    "currency": "INR",
     "budget": {
       "transport": 14000,
       "stay": 18000,
@@ -101,6 +104,7 @@
     "style": "comfort",
     "startCity": "Rome",
     "totalBudget": 180000,
+    "currency": "EUR",
     "budget": {
       "transport": 32000,
       "stay": 80000,
@@ -130,6 +134,7 @@
     "style": "budget",
     "startCity": "Kolkata",
     "totalBudget": 28000,
+    "currency": "INR",
     "budget": {
       "transport": 6000,
       "stay": 10000,
@@ -159,6 +164,7 @@
     "style": "adventure",
     "startCity": "Calgary",
     "totalBudget": 160000,
+    "currency": "CAD",
     "budget": {
       "transport": 35000,
       "stay": 65000,
@@ -187,6 +193,7 @@
     "style": "comfort",
     "startCity": "Arusha",
     "totalBudget": 240000,
+    "currency": "USD",
     "budget": {
       "transport": 45000,
       "stay": 105000,
@@ -215,6 +222,7 @@
     "style": "comfort",
     "startCity": "Denpasar",
     "totalBudget": 88000,
+    "currency": "USD",
     "budget": {
       "transport": 16000,
       "stay": 36000,
@@ -243,6 +251,7 @@
     "style": "adventure",
     "startCity": "Keflavik",
     "totalBudget": 190000,
+    "currency": "EUR",
     "budget": {
       "transport": 40000,
       "stay": 75000,
@@ -271,6 +280,7 @@
     "style": "comfort",
     "startCity": "Delhi",
     "totalBudget": 62000,
+    "currency": "INR",
     "budget": {
       "transport": 12000,
       "stay": 25000,
@@ -300,6 +310,7 @@
     "style": "comfort",
     "startCity": "Zurich",
     "totalBudget": 220000,
+    "currency": "CHF",
     "budget": {
       "transport": 48000,
       "stay": 95000,
@@ -329,6 +340,7 @@
     "style": "adventure",
     "startCity": "Auckland",
     "totalBudget": 175000,
+    "currency": "NZD",
     "budget": {
       "transport": 35000,
       "stay": 70000,

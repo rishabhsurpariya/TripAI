@@ -19,9 +19,10 @@ import {
 } from "framer-motion";
 import { Trip } from "@/types/trip";
 import { easing } from "@/lib/motion";
+import { formatCurrency, getCurrencySymbol } from "@/lib/currency";
 
 // Smoothly counts up/down whenever the numeric value changes
-function AnimatedValue({ value, prefix = "$" }: { value: number; prefix?: string }) {
+function AnimatedValue({ value, prefix = "" }: { value: number; prefix?: string }) {
   const shouldReduceMotion = useReducedMotion();
   const ref = useRef<HTMLSpanElement>(null);
   const motionVal = useMotionValue(value);
@@ -81,6 +82,8 @@ export function BudgetSidePanel({
   const maxBudget = trip.totalBudget || 95000;
   const bufferLeft = Math.max(0, maxBudget - totalSpent);
   const percentAllocated = Math.min(100, Math.round((totalSpent / maxBudget) * 100));
+  const currencyCode = trip.currency || "INR";
+  const currencySymbol = getCurrencySymbol(currencyCode);
 
   // Compute percentages for the stacked bar
   const stayPct = totalSpent ? (budget.stay / totalSpent) * 100 : 40;
@@ -131,7 +134,7 @@ export function BudgetSidePanel({
                 </span>
               </div>
               <p className="text-[11px] text-on-surface-variant leading-relaxed">
-                Total planned spend is ${totalSpent.toLocaleString()} against your ${maxBudget.toLocaleString()} cap. Consider swapping high-cost activities.
+                Total planned spend is {formatCurrency(totalSpent, currencyCode)} against your {formatCurrency(maxBudget, currencyCode)} cap. Consider swapping high-cost activities.
               </p>
               <div className="pt-1 flex items-center justify-between">
                 <button
@@ -151,10 +154,10 @@ export function BudgetSidePanel({
         <div className="space-y-2 mb-4 p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/20">
           <div className="flex items-baseline justify-between">
             <span className="font-serif text-2xl text-primary font-bold">
-              <AnimatedValue value={totalSpent} />
+              <AnimatedValue value={totalSpent} prefix={currencySymbol} />
             </span>
             <span className="text-xs text-on-surface-variant font-medium">
-              of ${maxBudget.toLocaleString()} max
+              of {formatCurrency(maxBudget, currencyCode)} max
             </span>
           </div>
 
@@ -194,11 +197,11 @@ export function BudgetSidePanel({
             <span className="font-semibold">{percentAllocated}% allocated ({daysCount} Days)</span>
             {isOverBudget ? (
               <span className="text-primary font-bold bg-[#dec1a9]/50 px-2 py-0.5 rounded-full">
-                + ${overAmount.toLocaleString()} overage
+                + {formatCurrency(overAmount, currencyCode)} overage
               </span>
             ) : bufferLeft > 0 ? (
               <span className="text-primary font-semibold text-emerald-800 bg-secondary-container/50 px-2 py-0.5 rounded-full">
-                +<AnimatedValue value={bufferLeft} /> buffer left
+                +<AnimatedValue value={bufferLeft} prefix={currencySymbol} /> buffer left
               </span>
             ) : null}
           </div>
@@ -214,7 +217,7 @@ export function BudgetSidePanel({
               </span>
             </div>
             <span className="font-bold text-on-surface">
-              <AnimatedValue value={budget.stay} />
+              <AnimatedValue value={budget.stay} prefix={currencySymbol} />
             </span>
           </div>
 
@@ -226,7 +229,7 @@ export function BudgetSidePanel({
               </span>
             </div>
             <span className="font-bold text-on-surface">
-              <AnimatedValue value={budget.transport} />
+              <AnimatedValue value={budget.transport} prefix={currencySymbol} />
             </span>
           </div>
 
@@ -238,7 +241,7 @@ export function BudgetSidePanel({
               </span>
             </div>
             <span className="font-bold text-on-surface">
-              <AnimatedValue value={budget.activities} />
+              <AnimatedValue value={budget.activities} prefix={currencySymbol} />
             </span>
           </div>
 
@@ -250,7 +253,7 @@ export function BudgetSidePanel({
               </span>
             </div>
             <span className="font-bold text-on-surface">
-              <AnimatedValue value={budget.food} />
+              <AnimatedValue value={budget.food} prefix={currencySymbol} />
             </span>
           </div>
         </div>

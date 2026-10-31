@@ -28,6 +28,7 @@ import { AddActivityDrawer } from "@/components/edit/AddActivityDrawer";
 import { ChangeHotelDrawer } from "@/components/edit/ChangeHotelDrawer";
 import { updateTrip } from "@/lib/data/trips";
 import { ShareTripModal } from "./ShareTripModal";
+import { formatCurrency } from "@/lib/currency";
 
 interface TripPlanViewProps {
   trip: Trip;
@@ -221,7 +222,7 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
       key: "budget",
       label: "Budget",
       icon: <Wallet className="w-4 h-4" />,
-      badge: `$${totalBudgetSpent.toLocaleString()}`,
+      badge: formatCurrency(totalBudgetSpent, activeTrip.currency || "INR"),
     },
     {
       key: "map",
@@ -434,6 +435,7 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
                 <div className="lg:col-span-8 flex flex-col space-y-10">
                   <DayTimeline
                     days={activeTrip.days || []}
+                    currency={activeTrip.currency || "INR"}
                     onOpenAddDrawer={handleOpenAddDrawer}
                     onOpenHotelDrawer={handleOpenHotelDrawer}
                     onToast={showToast}
@@ -492,6 +494,7 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
         currentStay={
           activeTrip.days?.find((d) => d.dayNumber === targetDayForHotel)?.stay
         }
+        currency={activeTrip.currency || "INR"}
         onClose={() => setIsHotelDrawerOpen(false)}
         onSelectStay={handleSelectHotel}
       />

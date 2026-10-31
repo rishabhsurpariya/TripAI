@@ -22,6 +22,7 @@ import {
 import { TRAVEL_STYLES } from "@/lib/constants";
 import { fadeUp, staggerContainer, tapPress } from "@/lib/motion";
 import type { TravelStyle } from "@/types/trip";
+import { SUPPORTED_CURRENCIES, getCurrencySymbol, guessCurrencyFromLocale } from "@/lib/currency";
 
 const plannerSchema = z.object({
   destination: z
@@ -29,7 +30,7 @@ const plannerSchema = z.object({
     .min(2, "Please enter a destination (e.g. Kyoto, Japan)"),
   budget: z
     .number()
-    .min(100, "Minimum budget is $100"),
+    .min(1, "Budget must be a positive number"),
   days: z
     .number()
     .min(1, "Trip duration must be at least 1 day")
@@ -51,6 +52,7 @@ export function TripPlannerForm() {
   const router = useRouter();
   const prefersReduced = useReducedMotion();
   const [showMoreOptions, setShowMoreOptions] = useState(false);
+  const [currency, setCurrency] = useState<string>(() => guessCurrencyFromLocale());
 
   const {
     register,
@@ -77,6 +79,7 @@ export function TripPlannerForm() {
     const params = new URLSearchParams({
       destination: data.destination,
       budget: data.budget.toString(),
+      currency,
       days: data.days.toString(),
       style: data.travelStyle,
       travelers: data.groupSize.toString(),
@@ -93,6 +96,7 @@ export function TripPlannerForm() {
   };
 
   const containerVariants = staggerContainer(0.12, 0);
+  const currencySymbol = getCurrencySymbol(currency);
 
   return (
     <motion.section
@@ -124,7 +128,7 @@ export function TripPlannerForm() {
         className="bg-surface-container-lowest rounded-2xl p-6 md:p-8 mt-8 shadow-sm border border-[#d3c4b9]/40 transition-shadow duration-300 hover:shadow-md"
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Row 1: Primary Inputs (Destination, Budget, Days) */}
+          {/* Row 1: Primary Inputs (Destination, Budget+Currency, Days) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {/* Destination */}
             <div className="flex flex-col gap-1.5">
@@ -156,29 +160,50 @@ export function TripPlannerForm() {
               )}
             </div>
 
-            {/* Budget */}
+            {/* Budget + Currency selector */}
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="budget"
                 className="text-xs font-semibold text-on-surface-variant flex items-center justify-between"
               >
-                <span>Budget (USD) *</span>
+                <span>Budget ({currencySymbol}) *</span>
                 <span className="text-secondary text-[11px] font-normal">Total approx</span>
               </label>
-              <div className="relative flex items-center">
-                <Banknote className="absolute left-3.5 w-4 h-4 text-secondary pointer-events-none" />
-                <input
-                  id="budget"
-                  type="number"
-                  placeholder="e.g. 3000"
-                  step="50"
-                  {...register("budget", { valueAsNumber: true })}
-                  className={`w-full h-12 pl-10 pr-4 bg-surface-container-low rounded-xl text-primary text-sm placeholder:text-[#a28973]/70 focus:bg-white focus:outline-none focus:ring-2 focus:shadow-[0_0_16px_rgba(110,79,50,0.18)] transition-all duration-200 ${
-                    errors.budget
-                      ? "ring-2 ring-[#ba1a1a] bg-[#ffdad6]/20"
-                      : "focus:ring-[#6e4f32]/25 focus:border-[#6e4f32]"
-                  }`}
-                />
+              <div className="flex items-center gap-2">
+                {/* Currency selector */}
+                <div className="relative shrink-0">
+                  <select
+                    id="currency"
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="h-12 pl-3 pr-7 bg-surface-container-low rounded-xl text-primary text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#6e4f32]/25 transition-all duration-200 appearance-none cursor-pointer"
+                    aria-label="Currency"
+                  >
+                    {SUPPORTED_CURRENCIES.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.code}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-secondary pointer-events-none" />
+                </div>
+
+                {/* Budget amount */}
+                <div className="relative flex items-center flex-1">
+                  <Banknote className="absolute left-3.5 w-4 h-4 text-secondary pointer-events-none" />
+                  <input
+                    id="budget"
+                    type="number"
+                    placeholder="e.g. 3000"
+                    step="50"
+                    {...register("budget", { valueAsNumber: true })}
+                    className={`w-full h-12 pl-10 pr-4 bg-surface-container-low rounded-xl text-primary text-sm placeholder:text-[#a28973]/70 focus:bg-white focus:outline-none focus:ring-2 focus:shadow-[0_0_16px_rgba(110,79,50,0.18)] transition-all duration-200 ${
+                      errors.budget
+                        ? "ring-2 ring-[#ba1a1a] bg-[#ffdad6]/20"
+                        : "focus:ring-[#6e4f32]/25 focus:border-[#6e4f32]"
+                    }`}
+                  />
+                </div>
               </div>
               {errors.budget && (
                 <span className="text-[11px] text-[#ba1a1a] mt-0.5 font-medium">

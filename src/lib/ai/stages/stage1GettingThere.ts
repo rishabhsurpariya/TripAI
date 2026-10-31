@@ -23,15 +23,17 @@ Start City: "${input.startCity}"
 Destination: "${input.destination}"
 Travelers: ${input.travelers}
 Style: ${input.style}
+Currency: ${input.currency}
 </user_data>
 
 Output a JSON object with an "options" array. Each option must have:
 - "mode": "flight" | "train" | "bus"
 - "durationHours": estimated travel duration in hours (number)
-- "estimatedCost": estimated cost in USD for ${input.travelers} traveler(s) (number)
+- "estimatedCost": estimated cost in ${input.currency} for ${input.travelers} traveler(s) (number, plain number with NO currency symbols)
 - "tag": optional "fastest" | "best value"
 - "tip": a brief transit tip (max 1 sentence)
 
+All cost values must be realistic local prices directly in ${input.currency}. Do NOT convert from USD or any other currency.
 Keep the list concise (1 to 3 realistic options).`;
 
   const result = await provider.generateStructured({

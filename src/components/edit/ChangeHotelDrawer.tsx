@@ -11,11 +11,13 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Stay } from "@/types/trip";
+import { formatCurrency } from "@/lib/currency";
 
 export interface ChangeHotelDrawerProps {
   isOpen: boolean;
   dayNumber: number;
   currentStay?: Stay;
+  currency?: string;
   onClose: () => void;
   onSelectStay: (stay: Stay, applyToAllDays: boolean) => void;
 }
@@ -60,6 +62,7 @@ export function ChangeHotelDrawer({
   isOpen,
   dayNumber,
   currentStay,
+  currency = "INR",
   onClose,
   onSelectStay,
 }: ChangeHotelDrawerProps) {
@@ -208,8 +211,8 @@ export function ChangeHotelDrawer({
                             }`}
                           >
                             {priceDiff < 0
-                              ? `$${Math.abs(priceDiff)} cheaper`
-                              : `+$${priceDiff}/night`}
+                              ? `${formatCurrency(Math.abs(priceDiff), currency)} cheaper`
+                              : `+${formatCurrency(priceDiff, currency)}/night`}
                           </span>
                         )}
                       </div>
@@ -221,7 +224,7 @@ export function ChangeHotelDrawer({
 
                       <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-[#d3c4b9]/30">
                         <span className="font-serif text-lg text-[#54381d] font-bold">
-                          ${hotel.pricePerNight.toLocaleString()}{" "}
+                          {formatCurrency(hotel.pricePerNight, currency)}{" "}
                           <span className="text-xs font-normal text-[#81756b]">/ night</span>
                         </span>
 

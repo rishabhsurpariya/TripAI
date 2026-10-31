@@ -1,4 +1,8 @@
 import { PhotoAttribution, Trip } from "@/types/trip";
+import {
+  CURATED_FALLBACK_POOLS,
+  getCategoryFallbackKey,
+} from "./fallbackPhotos";
 
 export interface EnrichedImage {
   url: string;
@@ -83,7 +87,7 @@ async function saveDbCachedPool(
       image_url: JSON.stringify(photos),
       photographer_name: photos[0]?.attribution?.photographerName || null,
       photographer_url: photos[0]?.attribution?.photographerUrl || null,
-      unsplashUrl: photos[0]?.attribution?.unsplashUrl || null,
+      unsplash_url: photos[0]?.attribution?.unsplashUrl || null,
       download_location: photos[0]?.attribution?.downloadLocation || null,
     });
   } catch {
@@ -150,9 +154,9 @@ export async function searchUnsplashPool(
     });
 
     if (!res.ok) {
-      if (res.status === 429) {
+      if (res.status === 429 || res.status === 403) {
         console.warn(
-          "[Unsplash] Rate limit reached (HTTP 429). Falling back to destination pool / placeholders."
+          `[Unsplash] Rate limit hit (HTTP ${res.status}). Using diverse curated fallback pools.`
         );
       } else {
         console.warn(
@@ -225,17 +229,23 @@ function scorePhotoMatch(photo: UnsplashRawPhoto, name: string): number {
 }
 
 /**
- * Finds and marks the best unused photo from a primary pool, with fallback to destination pool,
- * and finally to any unused photo across all pools before resorting to default placeholder.
+ * Finds and marks the best unused photo from:
+ * 1. Primary live category pool
+ * 2. Fallback live destination pool
+ * 3. Any live pools
+ * 4. Matching curated fallback pool
+ * 5. General curated fallback pools
+ * Never repeats a photo while unused photos remain!
  */
 function pickUnusedPhoto(
   primaryPool: UnsplashRawPhoto[],
   fallbackPool: UnsplashRawPhoto[],
   allPools: UnsplashRawPhoto[][],
+  category: string,
   matchName: string,
   usedIds: Set<string>
 ): UnsplashRawPhoto | null {
-  // 1. Try primary pool
+  // 1. Try primary live pool
   let bestPhoto: UnsplashRawPhoto | null = null;
   let bestScore = -1;
 
@@ -253,7 +263,7 @@ function pickUnusedPhoto(
     return bestPhoto;
   }
 
-  // 2. Try fallback pool (destination pool)
+  // 2. Try fallback live pool (destination pool)
   bestScore = -1;
   bestPhoto = null;
 
@@ -271,7 +281,7 @@ function pickUnusedPhoto(
     return bestPhoto;
   }
 
-  // 3. Try any unused photo in any pool
+  // 3. Try any unused photo in any live pool
   for (const pool of allPools) {
     for (const photo of pool) {
       if (!usedIds.has(photo.id)) {
@@ -281,7 +291,26 @@ function pickUnusedPhoto(
     }
   }
 
-  // All pools exhausted
+  // 4. Try category curated fallback pool
+  const fallbackKey = getCategoryFallbackKey(category);
+  const curatedCatPool = CURATED_FALLBACK_POOLS[fallbackKey] || [];
+  for (const photo of curatedCatPool) {
+    if (!usedIds.has(photo.id)) {
+      usedIds.add(photo.id);
+      return photo;
+    }
+  }
+
+  // 5. Try all other curated fallback pools
+  for (const pool of Object.values(CURATED_FALLBACK_POOLS)) {
+    for (const photo of pool) {
+      if (!usedIds.has(photo.id)) {
+        usedIds.add(photo.id);
+        return photo;
+      }
+    }
+  }
+
   return null;
 }
 
@@ -294,7 +323,8 @@ function pickUnusedPhoto(
  * 2. Deduplicates photo IDs across all pools.
  * 3. Assigns photos so no photo ID is used more than once in the same trip.
  * 4. Only fires download tracking for photos actually assigned.
- * 5. Falls back gracefully and never fails generation.
+ * 5. Uses rich curated fallback pools if Unsplash hits hourly rate limit (403/429).
+ * 6. Falls back gracefully and never fails generation.
  */
 export async function enrichTripImages(
   trip: Trip,
@@ -399,7 +429,7 @@ export async function enrichTripImages(
     }
   }
 
-  // If destination pool was empty, pick from any pool
+  // If destination pool was empty, pick from any live pool
   if (!coverPhoto) {
     for (const pool of allPoolsList) {
       for (const photo of pool) {
@@ -410,6 +440,17 @@ export async function enrichTripImages(
         }
       }
       if (coverPhoto) break;
+    }
+  }
+
+  // If live pools were empty (e.g. rate-limited), pick from curated cover fallbacks
+  if (!coverPhoto) {
+    for (const photo of CURATED_FALLBACK_POOLS.cover) {
+      if (!usedPhotoIds.has(photo.id)) {
+        coverPhoto = photo;
+        usedPhotoIds.add(photo.id);
+        break;
+      }
     }
   }
 
@@ -430,6 +471,7 @@ export async function enrichTripImages(
         staysPool,
         destinationPool,
         allPoolsList,
+        "stays",
         day.stay.name,
         usedPhotoIds
       );
@@ -456,6 +498,7 @@ export async function enrichTripImages(
         primaryCatPool,
         destinationPool,
         allPoolsList,
+        activity.category || "heritage",
         activity.name,
         usedPhotoIds
       );

@@ -55,3 +55,4 @@ CREATE POLICY "Authenticated users can insert geocoding cache"
     FOR INSERT
     TO authenticated
     WITH CHECK (true);
+

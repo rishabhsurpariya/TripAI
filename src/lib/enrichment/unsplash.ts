@@ -5,11 +5,23 @@ export interface EnrichedImage {
   attribution?: PhotoAttribution;
 }
 
-// In-memory cache for Unsplash search queries across requests in Node server instance
-const memoryImageCache = new Map<string, EnrichedImage>();
+export interface UnsplashRawPhoto {
+  id: string;
+  url: string;
+  description?: string;
+  alt_description?: string;
+  tags?: string[];
+  attribution: PhotoAttribution;
+  width?: number;
+  height?: number;
+}
 
-// Maximum Unsplash external API requests per single trip generation
-export const MAX_UNSPLASH_REQUESTS_PER_TRIP = 10;
+// In-memory cache for search query pools (query -> array of raw photos)
+const memoryPoolCache = new Map<string, UnsplashRawPhoto[]>();
+
+// Maximum Unsplash searches per trip (1 destination + up to 4 categories + 1 stay)
+export const MAX_UNSPLASH_SEARCHES_PER_TRIP = 6;
+export const PHOTOS_PER_SEARCH = 30;
 
 // Curated high-res default travel placeholders (valid Unsplash CDN images)
 const DEFAULT_COVER_IMAGE =
@@ -20,7 +32,7 @@ const DEFAULT_STAY_IMAGE =
   "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=600&q=80";
 
 /**
- * Normalizes a query for caching and similarity reuse.
+ * Normalizes a query for caching.
  */
 export function normalizeImageQuery(query: string): string {
   return query
@@ -31,48 +43,24 @@ export function normalizeImageQuery(query: string): string {
 }
 
 /**
- * Checks in-memory cache for an exact or closely similar query.
- */
-function getMemoryCachedImage(normQuery: string): EnrichedImage | null {
-  if (memoryImageCache.has(normQuery)) {
-    return memoryImageCache.get(normQuery)!;
-  }
-  // Check for subset matches (reuse the same image for similar queries)
-  for (const [key, val] of memoryImageCache.entries()) {
-    if (key.length > 5 && (normQuery.includes(key) || key.includes(normQuery))) {
-      return val;
-    }
-  }
-  return null;
-}
-
-/**
  * Optional persistent cache lookup from Supabase image_cache table.
  */
-async function getDbCachedImage(normQuery: string): Promise<EnrichedImage | null> {
+async function getDbCachedPool(normQuery: string): Promise<UnsplashRawPhoto[] | null> {
   try {
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     const { data } = await supabase
       .from("image_cache")
-      .select("*")
+      .select("image_url")
       .eq("query", normQuery)
       .maybeSingle();
 
-    if (data && data.image_url) {
-      const enriched: EnrichedImage = {
-        url: data.image_url,
-        attribution: data.photographer_name
-          ? {
-              photographerName: data.photographer_name,
-              photographerUrl: data.photographer_url,
-              unsplashUrl: data.unsplash_url || "https://unsplash.com",
-              downloadLocation: data.download_location,
-            }
-          : undefined,
-      };
-      memoryImageCache.set(normQuery, enriched);
-      return enriched;
+    if (data && data.image_url && data.image_url.startsWith("[")) {
+      const photos: UnsplashRawPhoto[] = JSON.parse(data.image_url);
+      if (Array.isArray(photos) && photos.length > 0) {
+        memoryPoolCache.set(normQuery, photos);
+        return photos;
+      }
     }
   } catch {
     // Database cache not available or table not migrated; catch silently
@@ -83,20 +71,20 @@ async function getDbCachedImage(normQuery: string): Promise<EnrichedImage | null
 /**
  * Optional persistent cache write to Supabase image_cache table.
  */
-async function saveDbCachedImage(
+async function saveDbCachedPool(
   normQuery: string,
-  image: EnrichedImage
+  photos: UnsplashRawPhoto[]
 ): Promise<void> {
   try {
     const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     await supabase.from("image_cache").upsert({
       query: normQuery,
-      image_url: image.url,
-      photographer_name: image.attribution?.photographerName || null,
-      photographer_url: image.attribution?.photographerUrl || null,
-      unsplash_url: image.attribution?.unsplashUrl || null,
-      download_location: image.attribution?.downloadLocation || null,
+      image_url: JSON.stringify(photos),
+      photographer_name: photos[0]?.attribution?.photographerName || null,
+      photographer_url: photos[0]?.attribution?.photographerUrl || null,
+      unsplashUrl: photos[0]?.attribution?.unsplashUrl || null,
+      download_location: photos[0]?.attribution?.downloadLocation || null,
     });
   } catch {
     // Catch silently
@@ -105,6 +93,7 @@ async function saveDbCachedImage(
 
 /**
  * Fire-and-forget download tracking per Unsplash API Guidelines.
+ * Only called for photos actually assigned to trip cards.
  */
 function trackUnsplashDownload(downloadLocation: string, accessKey: string) {
   if (!downloadLocation || !accessKey) return;
@@ -120,36 +109,37 @@ function trackUnsplashDownload(downloadLocation: string, accessKey: string) {
 }
 
 /**
- * Fetches a single landscape photo from the Unsplash API with a short timeout.
- * Returns null on rate-limit, network error, or missing key (never throws).
+ * Fetches up to `per_page` landscape photos from Unsplash for a given query.
+ * Checks memory and DB cache first. Returns array of parsed UnsplashRawPhoto.
+ * Never throws.
  */
-export async function searchUnsplashPhoto(
+export async function searchUnsplashPool(
   query: string,
+  perPage = PHOTOS_PER_SEARCH,
   timeoutMs = 3500
-): Promise<EnrichedImage | null> {
+): Promise<{ photos: UnsplashRawPhoto[]; fromCache: boolean }> {
   const norm = normalizeImageQuery(query);
 
   // 1. Check in-memory cache
-  const cachedMem = getMemoryCachedImage(norm);
-  if (cachedMem) {
-    return cachedMem;
+  if (memoryPoolCache.has(norm)) {
+    return { photos: memoryPoolCache.get(norm)!, fromCache: true };
   }
 
   // 2. Check persistent DB cache
-  const cachedDb = await getDbCachedImage(norm);
-  if (cachedDb) {
-    return cachedDb;
+  const dbPhotos = await getDbCachedPool(norm);
+  if (dbPhotos && dbPhotos.length > 0) {
+    return { photos: dbPhotos, fromCache: true };
   }
 
   const accessKey = process.env.UNSPLASH_ACCESS_KEY;
   if (!accessKey) {
-    return null;
+    return { photos: [], fromCache: false };
   }
 
   try {
     const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(
       query
-    )}&per_page=1&orientation=landscape`;
+    )}&per_page=${perPage}&orientation=landscape`;
 
     const res = await fetch(url, {
       headers: {
@@ -162,60 +152,149 @@ export async function searchUnsplashPhoto(
     if (!res.ok) {
       if (res.status === 429) {
         console.warn(
-          "[Unsplash] Rate limit reached (HTTP 429). Falling back to destination photo/placeholders."
+          "[Unsplash] Rate limit reached (HTTP 429). Falling back to destination pool / placeholders."
         );
       } else {
         console.warn(
-          `[Unsplash] API responded with status ${res.status} for query "${query}".`
+          `[Unsplash] API responded with HTTP ${res.status} for query "${query}".`
         );
       }
-      return null;
+      return { photos: [], fromCache: false };
     }
 
     const data = await res.json();
-    if (data.results && data.results.length > 0) {
-      const photo = data.results[0];
-      const enriched: EnrichedImage = {
-        url: photo.urls?.regular || photo.urls?.small || DEFAULT_COVER_IMAGE,
+    if (data.results && Array.isArray(data.results)) {
+      const photos: UnsplashRawPhoto[] = data.results.map((p: any) => ({
+        id: p.id,
+        url: p.urls?.regular || p.urls?.small || DEFAULT_COVER_IMAGE,
+        description: p.description || undefined,
+        alt_description: p.alt_description || undefined,
+        tags: Array.isArray(p.tags)
+          ? p.tags.map((t: any) => (typeof t === "string" ? t : t.title || "")).filter(Boolean)
+          : undefined,
         attribution: {
-          photographerName: photo.user?.name || "Unsplash Photographer",
-          photographerUrl:
-            photo.user?.links?.html || "https://unsplash.com",
+          photographerName: p.user?.name || "Unsplash Photographer",
+          photographerUrl: p.user?.links?.html || "https://unsplash.com",
           unsplashUrl: "https://unsplash.com",
-          downloadLocation: photo.links?.download_location,
+          downloadLocation: p.links?.download_location,
         },
-      };
+        width: p.width,
+        height: p.height,
+      }));
 
       // Cache result in memory
-      memoryImageCache.set(norm, enriched);
+      memoryPoolCache.set(norm, photos);
 
       // Async write to DB cache
-      saveDbCachedImage(norm, enriched).catch(() => {});
+      saveDbCachedPool(norm, photos).catch(() => {});
 
-      // Trigger Unsplash download endpoint asynchronously
-      if (photo.links?.download_location) {
-        trackUnsplashDownload(photo.links.download_location, accessKey);
-      }
-
-      return enriched;
+      return { photos, fromCache: false };
     }
 
-    return null;
+    return { photos: [], fromCache: false };
   } catch (err: any) {
     console.warn(`[Unsplash] Fetch error for query "${query}":`, err?.message);
-    return null;
+    return { photos: [], fromCache: false };
   }
 }
 
 /**
- * Enriches a Trip object with cover, activity, and stay images.
- * Adheres strictly to low hourly request limits:
- * - Caches in memory and database
- * - Reuses same images for similar queries
- * - Limits external requests per trip to MAX_UNSPLASH_REQUESTS_PER_TRIP (10)
- * - Uses destination photo as fallback for the rest
- * - Runs requests in parallel with short timeout
- * - Never fails generation if Unsplash fails
+ * Computes a keyword match score between an activity/stay name and a photo's metadata.
+ */
+function scorePhotoMatch(photo: UnsplashRawPhoto, name: string): number {
+  if (!name) return 0;
+  const words = name
+    .toLowerCase()
+    .replace(/[^\w\s]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 2);
+
+  if (words.length === 0) return 0;
+
+  const corpus = `${photo.description || ""} ${photo.alt_description || ""} ${(
+    photo.tags || []
+  ).join(" ")}`.toLowerCase();
+
+  let score = 0;
+  for (const word of words) {
+    if (corpus.includes(word)) {
+      score += 1;
+    }
+  }
+  return score;
+}
+
+/**
+ * Finds and marks the best unused photo from a primary pool, with fallback to destination pool,
+ * and finally to any unused photo across all pools before resorting to default placeholder.
+ */
+function pickUnusedPhoto(
+  primaryPool: UnsplashRawPhoto[],
+  fallbackPool: UnsplashRawPhoto[],
+  allPools: UnsplashRawPhoto[][],
+  matchName: string,
+  usedIds: Set<string>
+): UnsplashRawPhoto | null {
+  // 1. Try primary pool
+  let bestPhoto: UnsplashRawPhoto | null = null;
+  let bestScore = -1;
+
+  for (const photo of primaryPool) {
+    if (usedIds.has(photo.id)) continue;
+    const score = scorePhotoMatch(photo, matchName);
+    if (score > bestScore) {
+      bestScore = score;
+      bestPhoto = photo;
+    }
+  }
+
+  if (bestPhoto) {
+    usedIds.add(bestPhoto.id);
+    return bestPhoto;
+  }
+
+  // 2. Try fallback pool (destination pool)
+  bestScore = -1;
+  bestPhoto = null;
+
+  for (const photo of fallbackPool) {
+    if (usedIds.has(photo.id)) continue;
+    const score = scorePhotoMatch(photo, matchName);
+    if (score > bestScore) {
+      bestScore = score;
+      bestPhoto = photo;
+    }
+  }
+
+  if (bestPhoto) {
+    usedIds.add(bestPhoto.id);
+    return bestPhoto;
+  }
+
+  // 3. Try any unused photo in any pool
+  for (const pool of allPools) {
+    for (const photo of pool) {
+      if (!usedIds.has(photo.id)) {
+        usedIds.add(photo.id);
+        return photo;
+      }
+    }
+  }
+
+  // All pools exhausted
+  return null;
+}
+
+/**
+ * Enriches a Trip object with cover, activity, and stay images using a Pool-Based Approach:
+ * 1. Runs at most 6 Unsplash searches with per_page=30 in parallel with a short timeout:
+ *    - 1 for destination (cover image & fallback pool)
+ *    - up to 4 for most distinct activity categories ("[destination] [category]")
+ *    - 1 for stays ("[destination] hotel")
+ * 2. Deduplicates photo IDs across all pools.
+ * 3. Assigns photos so no photo ID is used more than once in the same trip.
+ * 4. Only fires download tracking for photos actually assigned.
+ * 5. Falls back gracefully and never fails generation.
  */
 export async function enrichTripImages(
   trip: Trip,
@@ -223,133 +302,180 @@ export async function enrichTripImages(
   country: string
 ): Promise<{ trip: Trip; unsplashRequestsMade: number }> {
   let unsplashRequestsMade = 0;
+  const accessKey = process.env.UNSPLASH_ACCESS_KEY;
 
-  // 1. Destination Cover Photo
-  const destQuery = `${destination} ${country}`.trim();
-  const normDestQuery = normalizeImageQuery(destQuery);
-  let coverImage: EnrichedImage | null =
-    getMemoryCachedImage(normDestQuery) ||
-    (await getDbCachedImage(normDestQuery));
-
-  if (!coverImage && unsplashRequestsMade < MAX_UNSPLASH_REQUESTS_PER_TRIP) {
-    unsplashRequestsMade++;
-    coverImage = await searchUnsplashPhoto(destQuery);
+  // 1. Identify distinct activity categories and take the top 4 most common
+  const categoryCounts = new Map<string, number>();
+  for (const day of trip.days) {
+    for (const act of day.activities) {
+      if (act.category) {
+        const cat = act.category.trim();
+        categoryCounts.set(cat, (categoryCounts.get(cat) || 0) + 1);
+      }
+    }
   }
 
-  // If destination + country yielded nothing, fallback to just destination
-  if (!coverImage && unsplashRequestsMade < MAX_UNSPLASH_REQUESTS_PER_TRIP) {
-    unsplashRequestsMade++;
-    coverImage = await searchUnsplashPhoto(destination);
+  const topCategories = Array.from(categoryCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([cat]) => cat);
+
+  // 2. Prepare search queries (at most 6)
+  const destQuery = destination.trim();
+  const staysQuery = `${destination} hotel`.trim();
+  const categoryQueries = topCategories.map((cat) => `${destination} ${cat}`.trim());
+
+  // All queries to run in parallel
+  const searchPlan: { type: "dest" | "stays" | "category"; query: string; category?: string }[] = [
+    { type: "dest", query: destQuery },
+    { type: "stays", query: staysQuery },
+    ...categoryQueries.map((q, idx) => ({
+      type: "category" as const,
+      query: q,
+      category: topCategories[idx],
+    })),
+  ];
+
+  // 3. Execute searches in parallel
+  const searchPromises = searchPlan.map(async (item) => {
+    const result = await searchUnsplashPool(item.query, PHOTOS_PER_SEARCH);
+    return { ...item, photos: result.photos, fromCache: result.fromCache };
+  });
+
+  const searchResults = await Promise.allSettled(searchPromises);
+
+  // Count actual external API requests made (excluding cache hits)
+  for (const res of searchResults) {
+    if (res.status === "fulfilled" && !res.value.fromCache && accessKey) {
+      unsplashRequestsMade++;
+    }
   }
 
-  // Fallback to placeholder if Unsplash failed or is rate-limited
-  if (!coverImage) {
-    coverImage = {
-      url: trip.coverImageUrl || DEFAULT_COVER_IMAGE,
-    };
-  }
+  // 4. Build deduplicated pools
+  const seenGlobalPhotoIds = new Set<string>();
 
-  trip.coverImageUrl = coverImage.url;
-  trip.coverImageAttribution = coverImage.attribution;
+  let destinationPool: UnsplashRawPhoto[] = [];
+  let staysPool: UnsplashRawPhoto[] = [];
+  const categoryPools = new Map<string, UnsplashRawPhoto[]>();
 
-  // 2. Prepare items (activities & stays) needing photos
-  type TargetItem =
-    | { type: "activity"; dayIndex: number; actIndex: number; query: string }
-    | { type: "stay"; dayIndex: number; query: string };
+  for (const res of searchResults) {
+    if (res.status !== "fulfilled") continue;
+    const { type, photos, category } = res.value;
 
-  const targets: TargetItem[] = [];
-
-  trip.days.forEach((day, dIdx) => {
-    if (day.stay && day.stay.name) {
-      targets.push({
-        type: "stay",
-        dayIndex: dIdx,
-        query: `${day.stay.name} ${destination}`,
-      });
+    const uniquePhotos: UnsplashRawPhoto[] = [];
+    for (const photo of photos) {
+      if (!seenGlobalPhotoIds.has(photo.id)) {
+        seenGlobalPhotoIds.add(photo.id);
+        uniquePhotos.push(photo);
+      }
     }
 
-    day.activities.forEach((act, aIdx) => {
-      targets.push({
-        type: "activity",
-        dayIndex: dIdx,
-        actIndex: aIdx,
-        query: `${act.name} ${destination}`,
-      });
+    if (type === "dest") {
+      destinationPool = uniquePhotos;
+    } else if (type === "stays") {
+      staysPool = uniquePhotos;
+    } else if (type === "category" && category) {
+      categoryPools.set(category.toLowerCase().trim(), uniquePhotos);
+    }
+  }
+
+  const allPoolsList: UnsplashRawPhoto[][] = [
+    destinationPool,
+    staysPool,
+    ...Array.from(categoryPools.values()),
+  ];
+
+  // 5. Track used photos in this trip and download locations to fire
+  const usedPhotoIds = new Set<string>();
+  const assignedDownloadLocations = new Set<string>();
+
+  // A. Assign Cover Image (unique, prefers landscape)
+  let coverPhoto: UnsplashRawPhoto | null = null;
+  for (const photo of destinationPool) {
+    if (!usedPhotoIds.has(photo.id)) {
+      coverPhoto = photo;
+      usedPhotoIds.add(photo.id);
+      break;
+    }
+  }
+
+  // If destination pool was empty, pick from any pool
+  if (!coverPhoto) {
+    for (const pool of allPoolsList) {
+      for (const photo of pool) {
+        if (!usedPhotoIds.has(photo.id)) {
+          coverPhoto = photo;
+          usedPhotoIds.add(photo.id);
+          break;
+        }
+      }
+      if (coverPhoto) break;
+    }
+  }
+
+  if (coverPhoto) {
+    trip.coverImageUrl = coverPhoto.url;
+    trip.coverImageAttribution = coverPhoto.attribution;
+    if (coverPhoto.attribution.downloadLocation) {
+      assignedDownloadLocations.add(coverPhoto.attribution.downloadLocation);
+    }
+  } else {
+    trip.coverImageUrl = DEFAULT_COVER_IMAGE;
+  }
+
+  // B. Assign Stays (one different photo per day)
+  trip.days.forEach((day) => {
+    if (day.stay) {
+      const stayPhoto = pickUnusedPhoto(
+        staysPool,
+        destinationPool,
+        allPoolsList,
+        day.stay.name,
+        usedPhotoIds
+      );
+
+      if (stayPhoto) {
+        day.stay.imageUrl = stayPhoto.url;
+        day.stay.imageAttribution = stayPhoto.attribution;
+        if (stayPhoto.attribution.downloadLocation) {
+          assignedDownloadLocations.add(stayPhoto.attribution.downloadLocation);
+        }
+      } else {
+        day.stay.imageUrl = DEFAULT_STAY_IMAGE;
+      }
+    }
+  });
+
+  // C. Assign Activities
+  trip.days.forEach((day) => {
+    day.activities.forEach((activity) => {
+      const normCat = (activity.category || "").toLowerCase().trim();
+      const primaryCatPool = categoryPools.get(normCat) || [];
+
+      const actPhoto = pickUnusedPhoto(
+        primaryCatPool,
+        destinationPool,
+        allPoolsList,
+        activity.name,
+        usedPhotoIds
+      );
+
+      if (actPhoto) {
+        activity.imageUrl = actPhoto.url;
+        activity.imageAttribution = actPhoto.attribution;
+        if (actPhoto.attribution.downloadLocation) {
+          assignedDownloadLocations.add(actPhoto.attribution.downloadLocation);
+        }
+      } else {
+        activity.imageUrl = DEFAULT_ACTIVITY_IMAGE;
+      }
     });
   });
 
-  // 3. First pass: resolve from in-memory cache (0 external API requests used)
-  const pendingTargets: TargetItem[] = [];
-
-  for (const target of targets) {
-    const norm = normalizeImageQuery(target.query);
-    const cached = getMemoryCachedImage(norm);
-    if (cached) {
-      if (target.type === "activity") {
-        trip.days[target.dayIndex].activities[target.actIndex].imageUrl =
-          cached.url;
-        trip.days[target.dayIndex].activities[target.actIndex].imageAttribution =
-          cached.attribution;
-      } else {
-        trip.days[target.dayIndex].stay.imageUrl = cached.url;
-        trip.days[target.dayIndex].stay.imageAttribution = cached.attribution;
-      }
-    } else {
-      pendingTargets.push(target);
-    }
-  }
-
-  // 4. Second pass: fetch up to remaining budget in parallel
-  const remainingBudget = Math.max(
-    0,
-    MAX_UNSPLASH_REQUESTS_PER_TRIP - unsplashRequestsMade
-  );
-  const itemsToFetch = pendingTargets.slice(0, remainingBudget);
-  const overflowItems = pendingTargets.slice(remainingBudget);
-
-  if (itemsToFetch.length > 0) {
-    unsplashRequestsMade += itemsToFetch.length;
-
-    const fetchPromises = itemsToFetch.map(async (target) => {
-      const result = await searchUnsplashPhoto(target.query);
-      return { target, result };
-    });
-
-    const results = await Promise.allSettled(fetchPromises);
-
-    for (const res of results) {
-      if (res.status === "fulfilled") {
-        const { target, result } = res.value;
-        const finalImage = result || coverImage;
-
-        if (target.type === "activity") {
-          trip.days[target.dayIndex].activities[target.actIndex].imageUrl =
-            finalImage.url || DEFAULT_ACTIVITY_IMAGE;
-          trip.days[target.dayIndex].activities[
-            target.actIndex
-          ].imageAttribution = finalImage.attribution;
-        } else {
-          trip.days[target.dayIndex].stay.imageUrl =
-            finalImage.url || DEFAULT_STAY_IMAGE;
-          trip.days[target.dayIndex].stay.imageAttribution =
-            finalImage.attribution;
-        }
-      }
-    }
-  }
-
-  // 5. Third pass: for items beyond request budget, use destination photo as fallback
-  for (const target of overflowItems) {
-    if (target.type === "activity") {
-      trip.days[target.dayIndex].activities[target.actIndex].imageUrl =
-        coverImage.url || DEFAULT_ACTIVITY_IMAGE;
-      trip.days[target.dayIndex].activities[target.actIndex].imageAttribution =
-        coverImage.attribution;
-    } else {
-      trip.days[target.dayIndex].stay.imageUrl =
-        coverImage.url || DEFAULT_STAY_IMAGE;
-      trip.days[target.dayIndex].stay.imageAttribution =
-        coverImage.attribution;
+  // 6. Fire download tracking only for photos actually assigned to cards
+  if (accessKey && assignedDownloadLocations.size > 0) {
+    for (const loc of assignedDownloadLocations) {
+      trackUnsplashDownload(loc, accessKey);
     }
   }
 

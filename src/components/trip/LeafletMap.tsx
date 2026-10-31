@@ -185,6 +185,18 @@ export default function LeafletMap({
                         className="object-cover"
                         sizes="220px"
                       />
+                      {act.imageAttribution && (
+                        <div className="absolute bottom-1 right-1 px-1 py-0.5 rounded bg-black/50 text-[8px] text-white/90">
+                          <a
+                            href={`${act.imageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:underline"
+                          >
+                            {act.imageAttribution.photographerName}
+                          </a>
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="flex items-center justify-between gap-1 mb-1">

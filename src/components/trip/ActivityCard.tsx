@@ -20,7 +20,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Activity } from "@/types/trip";
 import { easing } from "@/lib/motion";
 import { StickyNote } from "./StickyNote";
-import { formatCurrency } from "@/lib/currency";
+import { formatCurrency, getCurrencySymbol } from "@/lib/currency";
 
 export interface ActivityCardProps {
   activity: Activity;
@@ -392,6 +392,20 @@ export function ActivityCard({
                 {activity.category}
               </div>
             )}
+            {activity.imageAttribution && (
+              <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/50 backdrop-blur-xs text-[9px] text-white/90">
+                <span>Photo: </span>
+                <a
+                  href={`${activity.imageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-white"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {activity.imageAttribution.photographerName}
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Details */}
@@ -421,7 +435,9 @@ export function ActivityCard({
                       transition={{ duration: 0.18 }}
                       className="flex items-center gap-1"
                     >
-                      <span className="text-xs font-semibold text-[#54381d]">$</span>
+                      <span className="text-xs font-semibold text-[#54381d]">
+                        {getCurrencySymbol(currency)}
+                      </span>
                       <input
                         type="number"
                         value={costInput}

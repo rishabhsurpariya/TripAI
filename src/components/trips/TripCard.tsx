@@ -300,6 +300,22 @@ export function TripCard({
             )}
           </div>
 
+          {/* Unsplash Attribution */}
+          {trip.coverImageAttribution && (
+            <div className="absolute bottom-2 right-2 text-[9px] text-white/80 bg-black/50 backdrop-blur-xs px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+              <span>Photo: </span>
+              <a
+                href={`${trip.coverImageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-white"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {trip.coverImageAttribution.photographerName}
+              </a>
+            </div>
+          )}
+
           {/* Context Action Menu */}
           <div className="absolute top-3 right-3" ref={menuRef}>
             <button

@@ -50,6 +50,19 @@ export function StayCard({
             <p className="text-xs text-on-surface-variant">
               {formatCurrency(stay.pricePerNight, currency)} / night &bull; {stay.distanceFromStopsKm} km from today&apos;s stops
             </p>
+            {stay.imageAttribution && (
+              <p className="text-[10px] text-on-surface-variant/70 mt-0.5">
+                Photo:{" "}
+                <a
+                  href={`${stay.imageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-primary"
+                >
+                  {stay.imageAttribution.photographerName}
+                </a>
+              </p>
+            )}
           </div>
         </div>
 

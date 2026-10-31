@@ -1,5 +1,12 @@
 export type TravelStyle = "budget" | "comfort" | "adventure";
 
+export interface PhotoAttribution {
+  photographerName: string;
+  photographerUrl: string;
+  unsplashUrl?: string;
+  downloadLocation?: string;
+}
+
 export interface Activity {
   id: string;
   name: string;
@@ -9,6 +16,7 @@ export interface Activity {
   estimatedCost: number;
   category: string;
   imageUrl: string;
+  imageAttribution?: PhotoAttribution;
   lat: number;
   lng: number;
   note?: string; // sticky note text
@@ -21,6 +29,7 @@ export interface Stay {
   pricePerNight: number;
   distanceFromStopsKm: number;
   imageUrl: string;
+  imageAttribution?: PhotoAttribution;
 }
 
 export interface Day {
@@ -55,6 +64,7 @@ export interface Trip {
   destination: string;
   country: string;
   coverImageUrl: string;
+  coverImageAttribution?: PhotoAttribution;
   days: Day[];
   travelers: number;
   style: TravelStyle;

@@ -91,6 +91,19 @@ export function HotelsTab({ trip }: HotelsTabProps) {
                 <Sparkles className="w-3 h-3 text-secondary-container" />
                 <span>Primary Stay</span>
               </div>
+              {primaryStay.imageAttribution && (
+                <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/50 backdrop-blur-xs text-[9px] text-white/90">
+                  <span>Photo: </span>
+                  <a
+                    href={`${primaryStay.imageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-white"
+                  >
+                    {primaryStay.imageAttribution.photographerName}
+                  </a>
+                </div>
+              )}
             </div>
 
             <div className="p-5">

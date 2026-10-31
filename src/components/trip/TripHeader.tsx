@@ -199,6 +199,30 @@ export function TripHeader({ trip, onShare }: TripHeaderProps) {
           </div>
         </motion.div>
       </div>
+
+      {/* Unsplash Photo Attribution */}
+      {trip.coverImageAttribution && (
+        <div className="absolute bottom-2 right-4 z-20 text-[10px] text-on-primary/50 hover:text-on-primary/90 transition-colors pointer-events-auto hidden sm:block">
+          <span>Photo by </span>
+          <a
+            href={`${trip.coverImageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-on-primary font-medium"
+          >
+            {trip.coverImageAttribution.photographerName}
+          </a>
+          <span> on </span>
+          <a
+            href="https://unsplash.com/?utm_source=tripai&utm_medium=referral"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-on-primary font-medium"
+          >
+            Unsplash
+          </a>
+        </div>
+      )}
     </section>
   );
 }

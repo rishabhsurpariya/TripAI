@@ -6,6 +6,7 @@ import { generateGettingThere } from "./stages/stage1GettingThere";
 import { generateItinerary } from "./stages/stage2Itinerary";
 import { generateStaysAndTransport } from "./stages/stage3StaysAndTransport";
 import { assembleAndBalanceBudget } from "./stages/stage4BudgetAssembly";
+import { enrichTrip } from "@/lib/enrichment/enrichTrip";
 
 /**
  * Main AI Trip Generation Pipeline
@@ -18,6 +19,10 @@ import { assembleAndBalanceBudget } from "./stages/stage4BudgetAssembly";
  *
  * In normal case: makes exactly 3 model calls (or 2 if no start city).
  * At most: 4 calls (+ up to 2 retries = max 6 calls under rate-limit constraints).
+ *
+ * Stage 5 (Enrichment - purely deterministic, 0 model calls):
+ * - Unsplash landscape photos for destination, stays, and activities
+ * - Nominatim geocoding validation for coordinates within 100km perimeter
  */
 export async function runGenerationPipeline(
   rawInput: any
@@ -55,7 +60,7 @@ export async function runGenerationPipeline(
   totalModelCalls += budgetResult.adjustmentCallsMade;
 
   // Construct canonical Trip object adhering strictly to src/types/trip.ts
-  const trip: Trip = {
+  const rawTrip: Trip = {
     id: "", // Database generates UUID
     destination: input.destination,
     country: itineraryResult.itinerary.country || "",
@@ -76,11 +81,18 @@ export async function runGenerationPipeline(
     startDate: input.startDate,
   };
 
+  // Stage 5: Post-generation deterministic enrichment (images & coordinates, 0 model calls)
+  const { trip: enrichedTrip } = await enrichTrip(
+    rawTrip,
+    input.destination,
+    itineraryResult.itinerary.country || ""
+  );
+
   return {
-    trip,
+    trip: enrichedTrip,
     metrics: {
       modelCalls: totalModelCalls,
-      stagesCompleted: 4,
+      stagesCompleted: 5,
       retries: 0,
     },
   };

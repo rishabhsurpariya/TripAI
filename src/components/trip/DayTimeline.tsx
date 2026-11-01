@@ -28,18 +28,21 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-import { Day, Activity } from "@/types/trip";
+import { Day, Activity, Trip } from "@/types/trip";
 import { easing } from "@/lib/motion";
 import { useTripStore } from "@/store/tripStore";
 import { ActivityCard } from "./ActivityCard";
 import { StayCard } from "./StayCard";
+import { AffiliateDisclosure } from "./BookingButton";
 
 interface DayTimelineProps {
   days: Day[];
+  currency?: string;
   onOpenAddDrawer?: (dayNumber: number) => void;
   onOpenHotelDrawer?: (dayNumber: number) => void;
   onToast?: (message: string, action?: { label: string; onClick: () => void }) => void;
   readOnly?: boolean;
+  trip?: Trip;
 }
 
 // Traveler's memo sticky note with color choice in edit mode
@@ -120,6 +123,7 @@ function SortableActivityItem({
   dayNumber,
   allDayNumbers,
   isEditMode,
+  currency = "INR",
   onDelete,
   onDuplicate,
   onMoveToDay,
@@ -134,6 +138,7 @@ function SortableActivityItem({
   dayNumber: number;
   allDayNumbers: number[];
   isEditMode: boolean;
+  currency?: string;
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
   onMoveToDay: (id: string, targetDayNumber: number) => void;
@@ -168,6 +173,7 @@ function SortableActivityItem({
         isEditMode={isEditMode && !readOnly}
         isDragging={isDragging}
         readOnly={readOnly}
+        currency={currency}
         dragHandleProps={{ ...attributes, ...listeners }}
         onDelete={onDelete}
         onDuplicate={onDuplicate}
@@ -202,6 +208,8 @@ function DaySection({
   onUpdateNote,
   onSaveDayNotes,
   readOnly = false,
+  currency,
+  trip,
 }: {
   day: Day;
   dayIndex: number;
@@ -209,6 +217,8 @@ function DaySection({
   isCollapsed: boolean;
   isEditMode: boolean;
   isDraggingActive: boolean;
+  currency?: string;
+  trip?: Trip;
   onToggleCollapse: () => void;
   onOpenAddDrawer?: (dayNumber: number) => void;
   onOpenHotelDrawer?: (dayNumber: number) => void;
@@ -252,7 +262,7 @@ function DaySection({
         dayIndex > 0 ? "pt-10 border-t border-outline-variant/40" : ""
       }`}
     >
-      {/* Day Header Row with Title, Regenerate button, Toggle and Scrapbook Note */}
+      {/* Day Header Row with Title, Toggle and Scrapbook Note */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <button
@@ -294,35 +304,8 @@ function DaySection({
             >
               {day.title}
             </h2>
-
-            {/* Regenerate this day button (hidden in readOnly) */}
-            {!readOnly && (
-              <button
-                type="button"
-                onClick={() => onToast?.("Coming soon: AI Day Regenerator ✨")}
-                className="px-3 py-1 rounded-full border border-secondary/40 text-primary hover:bg-surface-container-high text-xs font-semibold transition-all flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95"
-              >
-                <span className="material-symbols-outlined text-[15px] text-primary">auto_fix_high</span>
-                <span>Regenerate this day ✨</span>
-              </button>
-            )}
           </div>
 
-          {day.localTransport && day.localTransport.length > 0 && (
-            <div className="flex items-center gap-2 mt-2 flex-wrap">
-              <span className="text-[11px] text-outline uppercase font-semibold">
-                Transit:
-              </span>
-              {day.localTransport.map((trans, i) => (
-                <span
-                  key={i}
-                  className="text-[11px] px-2 py-0.5 rounded-full bg-surface-container text-secondary font-medium border border-outline-variant/30"
-                >
-                  {trans}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Freeform Day Sticky Note */}
@@ -438,6 +421,7 @@ function DaySection({
                         allDayNumbers={allDayNumbers}
                         isEditMode={isEditMode}
                         readOnly={readOnly}
+                        currency={currency}
                         onDelete={() => onDeleteActivity(activity, day.dayNumber, actIdx)}
                         onDuplicate={() => onDuplicateActivity(day.dayNumber, activity.id)}
                         onMoveToDay={(_id, targetDay) =>
@@ -480,7 +464,10 @@ function DaySection({
                   <StayCard
                     stay={day.stay}
                     dayNumber={day.dayNumber}
+                    currency={currency}
                     readOnly={readOnly}
+                    trip={trip}
+                    isEditMode={isEditMode}
                     onChangeHotel={readOnly ? undefined : () => onOpenHotelDrawer?.(day.dayNumber)}
                   />
                 </div>
@@ -507,11 +494,15 @@ function DaySection({
 
 export function DayTimeline({
   days,
+  currency = "INR",
   onOpenAddDrawer,
   onOpenHotelDrawer,
   onToast,
   readOnly = false,
+  trip,
 }: DayTimelineProps) {
+  const storeTrip = useTripStore((state) => state.currentTrip);
+  const activeTrip = trip || storeTrip || undefined;
   const [collapsedDays, setCollapsedDays] = useState<Record<number, boolean>>({});
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
@@ -675,6 +666,7 @@ export function DayTimeline({
             isCollapsed={!!collapsedDays[day.dayNumber]}
             isEditMode={isEditMode}
             isDraggingActive={Boolean(activeDragId)}
+            currency={currency}
             onToggleCollapse={() => toggleDay(day.dayNumber)}
             onOpenAddDrawer={onOpenAddDrawer}
             onOpenHotelDrawer={onOpenHotelDrawer}
@@ -688,8 +680,14 @@ export function DayTimeline({
             onUpdateNote={handleUpdateNote}
             onSaveDayNotes={(dayNum, note) => updateDayNotes(dayNum, note)}
             readOnly={readOnly}
+            trip={activeTrip}
           />
         ))}
+      </div>
+
+      {/* Outbound Booking Disclosure */}
+      <div className="pt-4 pb-1 text-center">
+        <AffiliateDisclosure />
       </div>
 
       {/* Drag Overlay with Stitch Design lifted and tilted dragging state */}

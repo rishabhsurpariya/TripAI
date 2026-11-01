@@ -2,20 +2,28 @@
 
 import Image from "next/image";
 import { Bed, Star, Navigation } from "lucide-react";
-import { Stay } from "@/types/trip";
+import { Stay, Trip } from "@/types/trip";
+import { formatCurrency } from "@/lib/currency";
+import { BookingButton } from "./BookingButton";
 
 interface StayCardProps {
   stay: Stay;
   dayNumber?: number;
+  currency?: string;
   onChangeHotel?: () => void;
   readOnly?: boolean;
+  trip?: Trip;
+  isEditMode?: boolean;
 }
 
 export function StayCard({
   stay,
   dayNumber,
+  currency = "INR",
   onChangeHotel,
   readOnly = false,
+  trip,
+  isEditMode = false,
 }: StayCardProps) {
   return (
     <div className="bg-surface-container rounded-2xl p-4 sm:p-5 shadow-sm border border-outline-variant/50">
@@ -45,24 +53,59 @@ export function StayCard({
               {stay.name}
             </h4>
             <p className="text-xs text-on-surface-variant">
-              ${stay.pricePerNight} / night &bull; {stay.distanceFromStopsKm} km from today&apos;s stops
+              {formatCurrency(stay.pricePerNight, currency)} / night (est.) &bull; {stay.distanceFromStopsKm} km from today&apos;s stops
             </p>
+            {stay.imageAttribution && (
+              <p className="text-[10px] text-on-surface-variant/70 mt-0.5">
+                Photo:{" "}
+                <a
+                  href={`${stay.imageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-primary"
+                >
+                  {stay.imageAttribution.photographerName}
+                </a>
+              </p>
+            )}
           </div>
         </div>
 
         {/* Action button / Status badge */}
         {readOnly ? (
-          <div className="text-right shrink-0">
-            <div className="text-xs font-semibold text-[#6e4f32]">
-              ₹{stay.pricePerNight?.toLocaleString() || "6,800"}{" "}
-              <span className="text-[11px] font-normal text-[#a28973]">/ night</span>
+          <div className="flex flex-col items-end gap-2 shrink-0">
+            <div className="text-right">
+              <div className="text-xs font-semibold text-[#6e4f32]">
+                {formatCurrency(stay.pricePerNight || 0, currency)}{" "}
+                <span className="text-[11px] font-normal text-[#a28973]">/ night (est.)</span>
+              </div>
+              <div className="text-[10px] text-[#8c6e52] font-medium bg-white/70 px-2 py-0.5 rounded border border-[#bba591]/30 mt-0.5 inline-block">
+                Confirmed Stay
+              </div>
             </div>
-            <div className="text-[10px] text-[#8c6e52] font-medium bg-white/70 px-2 py-0.5 rounded border border-[#bba591]/30 mt-1 inline-block">
-              Confirmed Stay
-            </div>
+            {trip && (
+              <BookingButton
+                category="hotel"
+                label="Check availability"
+                trip={trip}
+                dayNumber={dayNumber}
+                hotelName={stay.name}
+                isEditMode={false}
+              />
+            )}
           </div>
         ) : (
-          <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+          <div className="flex items-center gap-2 self-end sm:self-center shrink-0 flex-wrap justify-end">
+            {trip && !isEditMode && (
+              <BookingButton
+                category="hotel"
+                label="Check availability"
+                trip={trip}
+                dayNumber={dayNumber}
+                hotelName={stay.name}
+                isEditMode={isEditMode}
+              />
+            )}
             {onChangeHotel && (
               <button
                 type="button"

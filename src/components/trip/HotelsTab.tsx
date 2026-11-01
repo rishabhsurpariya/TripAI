@@ -12,6 +12,8 @@ import {
   Bed,
 } from "lucide-react";
 import { Trip } from "@/types/trip";
+import { formatCurrency } from "@/lib/currency";
+import { AffiliateDisclosure } from "./BookingButton";
 
 interface HotelsTabProps {
   trip: Trip;
@@ -22,6 +24,7 @@ export function HotelsTab({ trip }: HotelsTabProps) {
 
   const stayBudget = trip.budget?.stay || 35000;
   const daysCount = trip.days?.length || 5;
+  const currencyCode = trip.currency || "INR";
 
   const primaryStay = trip.days?.[0]?.stay || {
     id: "stay-1",
@@ -56,7 +59,7 @@ export function HotelsTab({ trip }: HotelsTabProps) {
         </div>
         <div className="flex items-center gap-3">
           <span className="font-serif text-lg sm:text-xl text-primary font-bold">
-            Total Stay Budget: ${stayBudget.toLocaleString()}
+            Total Stay Budget: {formatCurrency(stayBudget, currencyCode)} (est.)
           </span>
         </div>
       </div>
@@ -89,6 +92,19 @@ export function HotelsTab({ trip }: HotelsTabProps) {
                 <Sparkles className="w-3 h-3 text-secondary-container" />
                 <span>Primary Stay</span>
               </div>
+              {primaryStay.imageAttribution && (
+                <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/50 backdrop-blur-xs text-[9px] text-white/90">
+                  <span>Photo: </span>
+                  <a
+                    href={`${primaryStay.imageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-white"
+                  >
+                    {primaryStay.imageAttribution.photographerName}
+                  </a>
+                </div>
+              )}
             </div>
 
             <div className="p-5">
@@ -118,10 +134,10 @@ export function HotelsTab({ trip }: HotelsTabProps) {
               <div className="mt-5 flex items-center justify-between pt-3 border-t border-outline-variant/30">
                 <div>
                   <span className="font-serif text-xl text-primary font-bold">
-                    ${primaryStay.pricePerNight.toLocaleString()}
+                    {formatCurrency(primaryStay.pricePerNight, currencyCode)}
                   </span>
                   <span className="text-[11px] text-secondary font-normal ml-1">
-                    / night
+                    / night (est.)
                   </span>
                 </div>
                 <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold flex items-center gap-1">
@@ -188,7 +204,7 @@ export function HotelsTab({ trip }: HotelsTabProps) {
                     $8,500
                   </span>
                   <span className="text-[11px] text-secondary font-normal ml-1">
-                    / night
+                    / night (est.)
                   </span>
                 </div>
                 <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold">
@@ -268,7 +284,7 @@ export function HotelsTab({ trip }: HotelsTabProps) {
 
               <div className="flex items-center gap-3 self-end sm:self-center">
                 <span className="text-xs font-serif font-bold text-primary">
-                  ${(day.stay?.pricePerNight || primaryStay.pricePerNight).toLocaleString()}
+                  {formatCurrency(day.stay?.pricePerNight || primaryStay.pricePerNight, currencyCode)}
                 </span>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">
                   Booked
@@ -284,6 +300,11 @@ export function HotelsTab({ trip }: HotelsTabProps) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Outbound Booking Disclosure */}
+      <div className="pt-2 text-center">
+        <AffiliateDisclosure />
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { Trip } from "@/types/trip";
+import { formatCurrency } from "@/lib/currency";
 
 interface LocalTransportTabProps {
   trip: Trip;
@@ -35,6 +36,7 @@ export function LocalTransportTab({ trip }: LocalTransportTabProps) {
 
   const destination = trip.destination || "Destination";
   const daysCount = trip.days?.length || 5;
+  const currencyCode = trip.currency || "INR";
 
   const mobilityOptions: MobilityOption[] = [
     {
@@ -73,7 +75,7 @@ export function LocalTransportTab({ trip }: LocalTransportTabProps) {
   const handleReserve = (option: MobilityOption) => {
     setSelectedRental(option.id);
     setReservedMessage(
-      `${option.title} selected for ${daysCount} days: $${(option.pricePerDay * daysCount).toLocaleString()}`
+      `${option.title} selected for ${daysCount} days: ${formatCurrency(option.pricePerDay * daysCount, currencyCode)}`
     );
     setTimeout(() => {
       setReservedMessage(null);

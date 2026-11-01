@@ -20,6 +20,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Activity } from "@/types/trip";
 import { easing } from "@/lib/motion";
 import { StickyNote } from "./StickyNote";
+import { formatCurrency, getCurrencySymbol } from "@/lib/currency";
 
 export interface ActivityCardProps {
   activity: Activity;
@@ -39,6 +40,7 @@ export interface ActivityCardProps {
   onUpdateNote?: (id: string, note: string, color?: string) => void;
   onReplace?: (id: string) => void;
   readOnly?: boolean;
+  currency?: string;
 }
 
 function getTimeSlotIcon(slot: string) {
@@ -76,6 +78,7 @@ export function ActivityCard({
   onUpdateTimeSlot,
   onUpdateNote,
   readOnly = false,
+  currency = "INR",
 }: ActivityCardProps) {
   const durationHours = (activity.durationMinutes / 60).toFixed(1);
   const shouldReduceMotion = useReducedMotion();
@@ -389,6 +392,20 @@ export function ActivityCard({
                 {activity.category}
               </div>
             )}
+            {activity.imageAttribution && (
+              <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/50 backdrop-blur-xs text-[9px] text-white/90">
+                <span>Photo: </span>
+                <a
+                  href={`${activity.imageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-white"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {activity.imageAttribution.photographerName}
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Details */}
@@ -418,7 +435,9 @@ export function ActivityCard({
                       transition={{ duration: 0.18 }}
                       className="flex items-center gap-1"
                     >
-                      <span className="text-xs font-semibold text-[#54381d]">$</span>
+                      <span className="text-xs font-semibold text-[#54381d]">
+                        {getCurrencySymbol(currency)}
+                      </span>
                       <input
                         type="number"
                         value={costInput}
@@ -441,7 +460,7 @@ export function ActivityCard({
                       className="text-primary-container font-semibold"
                     >
                       {activity.estimatedCost > 0
-                        ? `~$${activity.estimatedCost.toLocaleString()} est.`
+                        ? `~${formatCurrency(activity.estimatedCost, currency)} est.`
                         : "Free entry"}
                     </motion.span>
                   )}

@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import {
   CalendarDays,
   Plane,
-  Bus,
   Building2,
   Wallet,
   Map,
@@ -20,7 +19,6 @@ import { TripHeader } from "./TripHeader";
 import { DayTimeline } from "./DayTimeline";
 import { BudgetSidePanel } from "./BudgetSidePanel";
 import { GettingThereTab } from "./GettingThereTab";
-import { LocalTransportTab } from "./LocalTransportTab";
 import { HotelsTab } from "./HotelsTab";
 import { BudgetTab } from "./BudgetTab";
 import { TripMapTab } from "./TripMapTab";
@@ -28,6 +26,7 @@ import { AddActivityDrawer } from "@/components/edit/AddActivityDrawer";
 import { ChangeHotelDrawer } from "@/components/edit/ChangeHotelDrawer";
 import { updateTrip } from "@/lib/data/trips";
 import { ShareTripModal } from "./ShareTripModal";
+import { formatCurrency } from "@/lib/currency";
 
 interface TripPlanViewProps {
   trip: Trip;
@@ -36,7 +35,6 @@ interface TripPlanViewProps {
 type TabKey =
   | "itinerary"
   | "getting-there"
-  | "local-transport"
   | "hotels"
   | "budget"
   | "map";
@@ -206,12 +204,6 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
       badge: "Flights & Train",
     },
     {
-      key: "local-transport",
-      label: "Local Transport",
-      icon: <Bus className="w-4 h-4" />,
-      badge: "Transit & Cabs",
-    },
-    {
       key: "hotels",
       label: "Hotels",
       icon: <Building2 className="w-4 h-4" />,
@@ -221,7 +213,7 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
       key: "budget",
       label: "Budget",
       icon: <Wallet className="w-4 h-4" />,
-      badge: `$${totalBudgetSpent.toLocaleString()}`,
+      badge: formatCurrency(totalBudgetSpent, activeTrip.currency || "INR"),
     },
     {
       key: "map",
@@ -434,9 +426,11 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
                 <div className="lg:col-span-8 flex flex-col space-y-10">
                   <DayTimeline
                     days={activeTrip.days || []}
+                    currency={activeTrip.currency || "INR"}
                     onOpenAddDrawer={handleOpenAddDrawer}
                     onOpenHotelDrawer={handleOpenHotelDrawer}
                     onToast={showToast}
+                    trip={activeTrip}
                   />
                 </div>
 
@@ -451,11 +445,6 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
             {activeTab === "getting-there" && (
               /* TAB 2: GETTING THERE */
               <GettingThereTab trip={activeTrip} />
-            )}
-
-            {activeTab === "local-transport" && (
-              /* TAB 3: LOCAL TRANSPORT */
-              <LocalTransportTab trip={activeTrip} />
             )}
 
             {activeTab === "hotels" && (
@@ -492,6 +481,7 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
         currentStay={
           activeTrip.days?.find((d) => d.dayNumber === targetDayForHotel)?.stay
         }
+        currency={activeTrip.currency || "INR"}
         onClose={() => setIsHotelDrawerOpen(false)}
         onSelectStay={handleSelectHotel}
       />

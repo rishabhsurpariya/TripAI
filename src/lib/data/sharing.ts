@@ -24,6 +24,7 @@ export const GOA_SHARED_TRIP: Trip = {
   travelers: 2,
   style: "comfort",
   startCity: "Jaipur",
+  currency: "INR",
   totalBudget: 25000,
   budget: {
     transport: 5100,

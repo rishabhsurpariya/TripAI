@@ -14,10 +14,12 @@ import {
 import { Activity } from "@/types/trip";
 import Image from "next/image";
 import { Clock } from "lucide-react";
+import { formatCurrency } from "@/lib/currency";
 
 interface LeafletMapProps {
   activities: (Activity & { dayNumber?: number; stopIndex: number })[];
   selectedActivityId: string | null;
+  currency?: string;
   onSelectActivity: (id: string) => void;
 }
 
@@ -103,6 +105,7 @@ function createNumberedMarkerIcon(
 export default function LeafletMap({
   activities,
   selectedActivityId,
+  currency = "INR",
   onSelectActivity,
 }: LeafletMapProps) {
   // Center calculation default: Kyoto coordinates if empty
@@ -182,6 +185,18 @@ export default function LeafletMap({
                         className="object-cover"
                         sizes="220px"
                       />
+                      {act.imageAttribution && (
+                        <div className="absolute bottom-1 right-1 px-1 py-0.5 rounded bg-black/50 text-[8px] text-white/90">
+                          <a
+                            href={`${act.imageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:underline"
+                          >
+                            {act.imageAttribution.photographerName}
+                          </a>
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="flex items-center justify-between gap-1 mb-1">
@@ -202,7 +217,7 @@ export default function LeafletMap({
                     </span>
                     <span className="font-serif font-bold text-primary">
                       {act.estimatedCost > 0
-                        ? `$${act.estimatedCost.toLocaleString()}`
+                        ? formatCurrency(act.estimatedCost, currency || "INR")
                         : "Free Entry"}
                     </span>
                   </div>

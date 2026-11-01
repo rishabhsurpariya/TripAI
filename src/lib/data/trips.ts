@@ -49,6 +49,7 @@ export function mapRowToTrip(row: any): Trip {
     numDays: row.num_days ?? plan.numDays ?? plan.days?.length,
     travelers: row.travelers ?? plan.travelers ?? 1,
     style: row.style ?? plan.style ?? "comfort",
+    currency: row.currency ?? plan.currency ?? "INR",
     totalBudget:
       row.total_budget !== null && row.total_budget !== undefined
         ? Number(row.total_budget)
@@ -223,6 +224,7 @@ export async function createTrip(
     num_days: trip.days?.length || 0,
     travelers: trip.travelers || 1,
     style: trip.style || "comfort",
+    currency: trip.currency || "INR",
     total_budget: trip.totalBudget || 0,
     plan: planCopy,
     is_shared: trip.isShared ?? false,
@@ -324,6 +326,8 @@ export async function updateTrip(
       updatePayload.style = updates.style;
     if (updates.totalBudget !== undefined)
       updatePayload.total_budget = updates.totalBudget;
+    if (updates.currency !== undefined)
+      updatePayload.currency = updates.currency;
     if (updates.shareId !== undefined)
       updatePayload.share_id = updates.shareId;
     if (updates.isShared !== undefined)

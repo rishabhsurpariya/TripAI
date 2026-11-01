@@ -8,12 +8,12 @@ import {
   Calendar,
   CheckCircle2,
   Share2,
-  Sparkles,
   Bookmark,
 } from "lucide-react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { Trip } from "@/types/trip";
 import { easing } from "@/lib/motion";
+import { formatCurrency } from "@/lib/currency";
 
 interface TripHeaderProps {
   trip: Trip;
@@ -146,9 +146,9 @@ export function TripHeader({ trip, onShare }: TripHeaderProps) {
                 <div className="flex items-center justify-between gap-3 text-xs">
                   <span className="text-on-primary-container text-[11px]">Budget</span>
                   <span className="text-on-primary font-bold">
-                    ${budgetSpent.toLocaleString()}{" "}
+                    {formatCurrency(budgetSpent, trip.currency || "INR")}{" "}
                     <span className="opacity-60 text-[11px] font-normal">
-                      / ${maxBudget.toLocaleString()}
+                      / {formatCurrency(maxBudget, trip.currency || "INR")}
                     </span>
                   </span>
                 </div>
@@ -163,7 +163,7 @@ export function TripHeader({ trip, onShare }: TripHeaderProps) {
               </div>
               {bufferAmount > 0 && (
                 <span className="text-[10px] text-secondary-container bg-primary/40 px-2 py-0.5 rounded-full font-medium">
-                  +${bufferAmount.toLocaleString()} buffer
+                  +{formatCurrency(bufferAmount, trip.currency || "INR")} buffer
                 </span>
               )}
             </div>
@@ -182,14 +182,6 @@ export function TripHeader({ trip, onShare }: TripHeaderProps) {
             </button>
             <button
               type="button"
-              className="px-3.5 py-2 rounded-full bg-surface/15 hover:bg-surface/25 backdrop-blur-sm text-on-primary text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border border-white/10 active:scale-95"
-              title="Regenerate Day"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Regenerate Day</span>
-            </button>
-            <button
-              type="button"
               className="px-4 py-2 rounded-full bg-surface text-primary hover:bg-surface-container-low text-xs font-semibold shadow-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
             >
               <Bookmark className="w-3.5 h-3.5 fill-primary text-primary" />
@@ -198,6 +190,30 @@ export function TripHeader({ trip, onShare }: TripHeaderProps) {
           </div>
         </motion.div>
       </div>
+
+      {/* Unsplash Photo Attribution */}
+      {trip.coverImageAttribution && (
+        <div className="absolute bottom-2 right-4 z-20 text-[10px] text-on-primary/50 hover:text-on-primary/90 transition-colors pointer-events-auto hidden sm:block">
+          <span>Photo by </span>
+          <a
+            href={`${trip.coverImageAttribution.photographerUrl}?utm_source=tripai&utm_medium=referral`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-on-primary font-medium"
+          >
+            {trip.coverImageAttribution.photographerName}
+          </a>
+          <span> on </span>
+          <a
+            href="https://unsplash.com/?utm_source=tripai&utm_medium=referral"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-on-primary font-medium"
+          >
+            Unsplash
+          </a>
+        </div>
+      )}
     </section>
   );
 }

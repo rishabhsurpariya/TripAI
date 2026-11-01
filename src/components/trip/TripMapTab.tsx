@@ -126,6 +126,7 @@ export function TripMapTab({ trip }: TripMapTabProps) {
             <LeafletMap
               activities={displayedActivities}
               selectedActivityId={selectedActivityId}
+              currency={trip.currency || "INR"}
               onSelectActivity={(id) => setSelectedActivityId(id)}
             />
 

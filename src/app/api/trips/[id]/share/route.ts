@@ -82,7 +82,7 @@ export async function POST(
     }
 
     // Build update payload
-    const updatePayload: Record<string, any> = {
+    const updatePayload: Record<string, unknown> = {
       is_shared: isShared,
       share_id: shareId,
     };
@@ -121,7 +121,7 @@ export async function POST(
       isShared: updated.is_shared,
       shareId: updated.share_id,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[POST /api/trips/[id]/share] Unexpected error:", err);
     return NextResponse.json(
       {

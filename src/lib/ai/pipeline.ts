@@ -25,7 +25,7 @@ import { enrichTrip } from "@/lib/enrichment/enrichTrip";
  * - Nominatim geocoding validation for coordinates within 100km perimeter
  */
 export async function runGenerationPipeline(
-  rawInput: any
+  rawInput: unknown
 ): Promise<PipelineResult> {
   // Step 0: Input sanitization & prompt-injection defense
   const input: TripGenerationInput = validateAndSanitizeInput(rawInput);

@@ -32,9 +32,10 @@ export class GeminiProvider implements AIProvider {
   /**
    * Helper to check if an error is a 429 rate limit, 503 high demand, or quota exhaustion.
    */
-  private isRateLimitError(err: any): boolean {
-    const msg = (err?.message || "").toLowerCase();
-    const status = err?.status || err?.statusCode || 0;
+  private isRateLimitError(err: unknown): boolean {
+    const error = err as { message?: string; status?: number; statusCode?: number };
+    const msg = (error?.message || "").toLowerCase();
+    const status = error?.status || error?.statusCode || 0;
     return (
       status === 429 ||
       status === 503 ||
@@ -48,8 +49,9 @@ export class GeminiProvider implements AIProvider {
     );
   }
 
-  private isTransientNetworkError(err: any): boolean {
-    const msg = (err?.message || "").toLowerCase();
+  private isTransientNetworkError(err: unknown): boolean {
+    const error = err as { message?: string };
+    const msg = (error?.message || "").toLowerCase();
     return (
       msg.includes("fetch failed") ||
       msg.includes("econnreset") ||
@@ -88,7 +90,7 @@ export class GeminiProvider implements AIProvider {
           throw new AIGenerationError("Empty response from AI model.");
         }
         return text;
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (this.isRateLimitError(err)) {
           // Wait briefly and retry once
           console.warn(
@@ -109,10 +111,10 @@ export class GeminiProvider implements AIProvider {
             const text = retryResponse.text;
             if (!text) throw new AIGenerationError("Empty response on retry.");
             return text;
-          } catch (retryErr: any) {
+          } catch (retryErr: unknown) {
             console.error(
               `[GeminiProvider:${stageName}] Rate limit confirmed after retry:`,
-              retryErr?.message
+              (retryErr as Error)?.message
             );
             throw new AIRateLimitError("busy, try again soon");
           }
@@ -120,7 +122,7 @@ export class GeminiProvider implements AIProvider {
 
         if (this.isTransientNetworkError(err)) {
           console.warn(
-            `[GeminiProvider:${stageName}] Transient network error (${err?.message}). Retrying in 1.5s...`
+            `[GeminiProvider:${stageName}] Transient network error (${(err as Error)?.message}). Retrying in 1.5s...`
           );
           await new Promise((r) => setTimeout(r, 1500));
           try {
@@ -136,33 +138,33 @@ export class GeminiProvider implements AIProvider {
             const text = retryResponse.text;
             if (!text) throw new AIGenerationError("Empty response on retry.");
             return text;
-          } catch (retryErr: any) {
+          } catch (retryErr: unknown) {
             console.error(
               `[GeminiProvider:${stageName}] Network error persisted on retry:`,
-              retryErr?.message
+              (retryErr as Error)?.message
             );
             throw new AIGenerationError(
-              retryErr?.message || "Network error communicating with AI provider."
+              (retryErr as Error)?.message || "Network error communicating with AI provider."
             );
           }
         }
 
         console.error(
           `[GeminiProvider:${stageName}] Model invocation error:`,
-          err?.message
+          (err as Error)?.message
         );
         throw new AIGenerationError(
-          err?.message || "Failed to generate content from AI provider."
+          (err as Error)?.message || "Failed to generate content from AI provider."
         );
       }
     };
 
     // First attempt
     const rawText = await executeCall(prompt);
-    let parsedJson: any;
+    let parsedJson: unknown;
     try {
       parsedJson = JSON.parse(rawText);
-    } catch (parseErr) {
+    } catch {
       console.warn(
         `[GeminiProvider:${stageName}] Initial JSON parse failed. Retrying with explicit JSON instruction...`
       );
@@ -200,13 +202,13 @@ Please return ONLY a strictly valid JSON object conforming exactly to the reques
         retryValidationResult.error.issues
       );
       throw new AIValidationError("AI response failed schema validation after retry.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (err instanceof AIRateLimitError || err instanceof AIValidationError) {
         throw err;
       }
       console.error(
         `[GeminiProvider:${stageName}] JSON parsing failed on retry:`,
-        err?.message
+        (err as Error)?.message
       );
       throw new AIValidationError("AI response was not valid JSON after retry.");
     }

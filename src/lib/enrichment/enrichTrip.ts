@@ -30,10 +30,10 @@ export async function enrichTrip(
     const imageResult = await enrichTripImages(trip, destination, country);
     trip = imageResult.trip;
     unsplashRequests = imageResult.unsplashRequestsMade;
-  } catch (imgErr: any) {
+  } catch (imgErr: unknown) {
     console.warn(
       "[Enrichment] Unsplash enrichment encountered error:",
-      imgErr?.message || imgErr
+      (imgErr as Error)?.message || imgErr
     );
   }
 
@@ -42,10 +42,10 @@ export async function enrichTrip(
     const geoResult = await enrichTripCoordinates(trip, destination, country);
     trip = geoResult.trip;
     nominatimLookups = geoResult.nominatimLookupsMade;
-  } catch (geoErr: any) {
+  } catch (geoErr: unknown) {
     console.warn(
       "[Enrichment] Geocoding validation encountered error:",
-      geoErr?.message || geoErr
+      (geoErr as Error)?.message || geoErr
     );
   }
 

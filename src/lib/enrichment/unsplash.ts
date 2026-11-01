@@ -1,3 +1,16 @@
+interface UnsplashApiResponsePhoto {
+  id: string;
+  urls?: { regular?: string; small?: string };
+  description?: string | null;
+  alt_description?: string | null;
+  slug?: string;
+  tags?: Array<string | { title?: string }>;
+  location?: { title?: string; name?: string; city?: string; country?: string };
+  user?: { name?: string; links?: { html?: string } };
+  links?: { download_location?: string };
+  width?: number;
+  height?: number;
+}
 import { PhotoAttribution, Trip } from "@/types/trip";
 
 export interface EnrichedImage {
@@ -372,7 +385,7 @@ export async function searchUnsplashPool(
 
     const data = await res.json();
     if (data.results && Array.isArray(data.results)) {
-      const photos: UnsplashRawPhoto[] = data.results.map((p: any) => ({
+      const photos: UnsplashRawPhoto[] = (data.results as UnsplashApiResponsePhoto[]).map((p) => ({
         id: p.id,
         url: p.urls?.regular || p.urls?.small || DEFAULT_COVER_IMAGE,
         description: p.description || undefined,
@@ -380,7 +393,7 @@ export async function searchUnsplashPool(
         slug: p.slug || undefined,
         tags: Array.isArray(p.tags)
           ? p.tags
-              .map((t: any) => (typeof t === "string" ? t : t.title || ""))
+              .map((t) => (typeof t === "string" ? t : t.title || ""))
               .filter(Boolean)
           : undefined,
         location: [
@@ -409,8 +422,8 @@ export async function searchUnsplashPool(
     }
 
     return { photos: [], fromCache: false };
-  } catch (err: any) {
-    console.warn(`[Unsplash] Fetch error for query "${query}":`, err?.message);
+  } catch (err: unknown) {
+    console.warn(`[Unsplash] Fetch error for query "${query}":`, (err as Error)?.message);
     return { photos: [], fromCache: false };
   }
 }

@@ -173,10 +173,10 @@ export async function queryNominatim(
 
     memoryGeocodingCache.set(norm, null);
     return null;
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.warn(
       `[Nominatim] Lookup failed for "${query}":`,
-      err?.message || err
+      (err as Error)?.message || err
     );
     memoryGeocodingCache.set(norm, null);
     return null;

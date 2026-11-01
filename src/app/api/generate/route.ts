@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Parse request JSON body
-    let rawBody: any;
+    let rawBody: unknown;
     try {
       rawBody = await request.json();
     } catch {
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
 
     // 3. Execute generation pipeline
     console.log(
-      `[POST /api/generate] Starting AI generation for user ${user.id} -> destination: "${rawBody?.destination}"`
+      `[POST /api/generate] Starting AI generation for user ${user.id} -> destination: "${(rawBody as Record<string, unknown>)?.destination}"`
     );
 
     const { trip, metrics } = await runGenerationPipeline(rawBody);
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       tripId: savedTrip.id,
       modelCalls: metrics.modelCalls,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     if (err instanceof AIRateLimitError) {
       console.warn("[POST /api/generate] Rate limit triggered:", err.message);
       return NextResponse.json(

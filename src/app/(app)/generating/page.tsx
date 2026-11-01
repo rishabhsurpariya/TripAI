@@ -123,8 +123,12 @@ function GeneratingContent() {
   const setActiveState = setInternalState;
 
   // Generation state
-  const [currentStepIndex, setCurrentStepIndex] = useState(0); // 0 to 4
-  const [progressPercent, setProgressPercent] = useState(18);
+  const [currentStepIndex, setCurrentStepIndex] = useState(
+    queryState === "slow" ? 2 : 0
+  );
+  const [progressPercent, setProgressPercent] = useState(
+    queryState === "slow" ? 62 : 18
+  );
   const [isDone, setIsDone] = useState(false);
   const [isSlowNotice, setIsSlowNotice] = useState(false);
   const [tipIndex, setTipIndex] = useState(0);
@@ -153,11 +157,6 @@ function GeneratingContent() {
     }
     const controller = new AbortController();
     abortRef.current = controller;
-
-    setIsDone(false);
-    setIsSlowNotice(false);
-    setCurrentStepIndex(0);
-    setProgressPercent(18);
 
     // Natural progress steps: advance through steps 1-4, then hold at step 5 (94%) until network finishes
     const t1 = setTimeout(() => {
@@ -247,16 +246,8 @@ function GeneratingContent() {
   };
 
   useEffect(() => {
-    if (queryState === "slow") {
+    if (queryState === "slow" || queryState === "error") {
       clearTimers();
-      setCurrentStepIndex(2);
-      setProgressPercent(62);
-      setIsDone(false);
-      return;
-    }
-    if (queryState === "error") {
-      clearTimers();
-      setIsDone(false);
       return;
     }
 
@@ -273,6 +264,10 @@ function GeneratingContent() {
 
   // "Try again" restarts generation
   const handleTryAgain = () => {
+    setIsDone(false);
+    setIsSlowNotice(false);
+    setCurrentStepIndex(0);
+    setProgressPercent(18);
     setActiveState("progress");
     startGeneration();
   };

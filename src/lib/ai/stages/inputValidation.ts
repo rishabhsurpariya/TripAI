@@ -23,14 +23,15 @@ const INJECTION_PATTERNS = [
 ];
 
 export function validateAndSanitizeInput(
-  rawInput: any
+  rawInput: unknown
 ): TripGenerationInput {
+  const input = (rawInput && typeof rawInput === "object" ? rawInput : {}) as Record<string, unknown>;
   if (!rawInput || typeof rawInput !== "object") {
     throw new AIInvalidInputError("Input must be a valid JSON object.");
   }
 
   // 1. Destination
-  const rawDest = String(rawInput.destination || "");
+  const rawDest = String(input.destination || "");
   const destination = sanitizeString(rawDest);
   if (!destination || destination.length < 2 || destination.length > 100) {
     throw new AIInvalidInputError(
@@ -45,7 +46,7 @@ export function validateAndSanitizeInput(
   }
 
   // 2. Days
-  const daysNum = Number(rawInput.days);
+  const daysNum = Number(input.days);
   if (isNaN(daysNum) || !Number.isInteger(daysNum) || daysNum < 1 || daysNum > 15) {
     throw new AIInvalidInputError(
       "Trip duration must be an integer between 1 and 15 days."
@@ -53,7 +54,7 @@ export function validateAndSanitizeInput(
   }
 
   // 3. Budget
-  const budgetNum = Number(rawInput.budget);
+  const budgetNum = Number(input.budget);
   if (isNaN(budgetNum) || budgetNum <= 0) {
     throw new AIInvalidInputError(
       "Total budget must be a positive number greater than 0."
@@ -61,7 +62,7 @@ export function validateAndSanitizeInput(
   }
 
   // 4. Travelers
-  const travelersNum = Number(rawInput.travelers || 1);
+  const travelersNum = Number(input.travelers || 1);
   if (
     isNaN(travelersNum) ||
     !Number.isInteger(travelersNum) ||
@@ -74,16 +75,16 @@ export function validateAndSanitizeInput(
   }
 
   // 5. Travel Style
-  const rawStyle = String(rawInput.style || "comfort").toLowerCase();
+  const rawStyle = String(input.style || "comfort").toLowerCase();
   const validStyles = ["budget", "comfort", "adventure"] as const;
-  const style = validStyles.includes(rawStyle as any)
+  const style = validStyles.includes(rawStyle as (typeof validStyles)[number])
     ? (rawStyle as "budget" | "comfort" | "adventure")
     : "comfort";
 
   // 6. Start City (optional)
   let startCity: string | undefined = undefined;
-  if (rawInput.startCity) {
-    const sanitizedStart = sanitizeString(String(rawInput.startCity));
+  if (input.startCity) {
+    const sanitizedStart = sanitizeString(String(input.startCity));
     if (sanitizedStart.length > 0) {
       if (sanitizedStart.length > 100) {
         throw new AIInvalidInputError(
@@ -101,8 +102,8 @@ export function validateAndSanitizeInput(
 
   // 7. Start Date (optional YYYY-MM-DD)
   let startDate: string | undefined = undefined;
-  if (rawInput.startDate) {
-    const sanitizedDate = sanitizeString(String(rawInput.startDate));
+  if (input.startDate) {
+    const sanitizedDate = sanitizeString(String(input.startDate));
     if (/^\d{4}-\d{2}-\d{2}$/.test(sanitizedDate)) {
       startDate = sanitizedDate;
     }
@@ -110,8 +111,8 @@ export function validateAndSanitizeInput(
 
   // 8. Currency (optional, defaults to INR)
   let currency: string = DEFAULT_CURRENCY;
-  if (rawInput.currency) {
-    const rawCurrency = sanitizeString(String(rawInput.currency)).toUpperCase();
+  if (input.currency) {
+    const rawCurrency = sanitizeString(String(input.currency)).toUpperCase();
     if ((SUPPORTED_CURRENCY_CODES as string[]).includes(rawCurrency)) {
       currency = rawCurrency;
     }

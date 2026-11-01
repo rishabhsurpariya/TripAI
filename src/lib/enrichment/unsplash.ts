@@ -239,29 +239,6 @@ function scorePhotoMatch(photo: UnsplashRawPhoto, name: string): number {
   return score;
 }
 
-/**
- * Dev-only logging enabled by DEBUG_IMAGES=true (never active in production).
- */
-function logCardDebug(cardLog: {
-  cardTitle: string;
-  query: string;
-  chosenAltDescription: string;
-  passedRelevanceFilter: boolean;
-  filterReason: string;
-  assignmentReason: string;
-}) {
-  const isDebugImages =
-    process.env.DEBUG_IMAGES === "true" && process.env.NODE_ENV !== "production";
-  if (!isDebugImages) return;
-
-  console.log(
-    `[DEBUG_IMAGES] Card: "${cardLog.cardTitle}"\n` +
-      `  • Query: "${cardLog.query}"\n` +
-      `  • Chosen photo alt_description: "${cardLog.chosenAltDescription}"\n` +
-      `  • Passed relevance filter: ${cardLog.passedRelevanceFilter} (${cardLog.filterReason})\n` +
-      `  • Assignment reason: ${cardLog.assignmentReason}`
-  );
-}
 
 /**
  * Persistent cache lookup from Supabase image_cache table.
@@ -438,8 +415,8 @@ export async function searchUnsplashPool(
  * but reuse verified photos instead of using unverified ones.
  */
 function pickVerifiedPhotoForCard(params: {
-  cardTitle: string;
-  query: string;
+  cardTitle?: string;
+  query?: string;
   itemName: string;
   preferredCategoryPool: UnsplashRawPhoto[];
   destinationPool: UnsplashRawPhoto[];
@@ -456,8 +433,6 @@ function pickVerifiedPhotoForCard(params: {
   isPlaceholder: boolean;
 } {
   const {
-    cardTitle,
-    query,
     itemName,
     preferredCategoryPool,
     destinationPool,
@@ -502,14 +477,6 @@ function pickVerifiedPhotoForCard(params: {
     if (bestUnused && bestScore > 0) {
       usedPhotoIds.add(bestUnused.id);
       usedCounts.set(bestUnused.id, (usedCounts.get(bestUnused.id) || 0) + 1);
-      logCardDebug({
-        cardTitle,
-        query,
-        chosenAltDescription: bestUnused.alt_description || bestUnused.description || bestUnused.slug || "",
-        passedRelevanceFilter: true,
-        filterReason: `matched: "${bestUnused.matchedFilterTerm || "verified"}"`,
-        assignmentReason: `Priority 3a: Best match (unused, score=${bestScore})`,
-      });
       return {
         url: bestUnused.url,
         attribution: bestUnused.attribution,
@@ -533,18 +500,6 @@ function pickVerifiedPhotoForCard(params: {
   if (chosenCategoryUnused) {
     usedPhotoIds.add(chosenCategoryUnused.id);
     usedCounts.set(chosenCategoryUnused.id, (usedCounts.get(chosenCategoryUnused.id) || 0) + 1);
-    logCardDebug({
-      cardTitle,
-      query,
-      chosenAltDescription:
-        chosenCategoryUnused.alt_description ||
-        chosenCategoryUnused.description ||
-        chosenCategoryUnused.slug ||
-        "",
-      passedRelevanceFilter: true,
-      filterReason: `matched: "${chosenCategoryUnused.matchedFilterTerm || "verified"}"`,
-      assignmentReason: "Priority 3b: Matching category pool (unused)",
-    });
     return {
       url: chosenCategoryUnused.url,
       attribution: chosenCategoryUnused.attribution,
@@ -567,15 +522,6 @@ function pickVerifiedPhotoForCard(params: {
   if (chosenDestUnused) {
     usedPhotoIds.add(chosenDestUnused.id);
     usedCounts.set(chosenDestUnused.id, (usedCounts.get(chosenDestUnused.id) || 0) + 1);
-    logCardDebug({
-      cardTitle,
-      query,
-      chosenAltDescription:
-        chosenDestUnused.alt_description || chosenDestUnused.description || chosenDestUnused.slug || "",
-      passedRelevanceFilter: true,
-      filterReason: `matched: "${chosenDestUnused.matchedFilterTerm || "verified"}"`,
-      assignmentReason: "Priority 3c: Destination pool (unused)",
-    });
     return {
       url: chosenDestUnused.url,
       attribution: chosenDestUnused.attribution,
@@ -589,15 +535,6 @@ function pickVerifiedPhotoForCard(params: {
   if (anyUnused) {
     usedPhotoIds.add(anyUnused.id);
     usedCounts.set(anyUnused.id, (usedCounts.get(anyUnused.id) || 0) + 1);
-    logCardDebug({
-      cardTitle,
-      query,
-      chosenAltDescription:
-        anyUnused.alt_description || anyUnused.description || anyUnused.slug || "",
-      passedRelevanceFilter: true,
-      filterReason: `matched: "${anyUnused.matchedFilterTerm || "verified"}"`,
-      assignmentReason: "Priority 3c (general): Any verified pool (unused)",
-    });
     return {
       url: anyUnused.url,
       attribution: anyUnused.attribution,
@@ -613,7 +550,6 @@ function pickVerifiedPhotoForCard(params: {
       (usedCounts.get(a.id) || 0) - (usedCounts.get(b.id) || 0);
 
     let reusedPhoto: UnsplashRawPhoto | null = null;
-    let reuseReason = "";
 
     // 4a. Try best match reused
     if (itemName) {
@@ -622,7 +558,6 @@ function pickVerifiedPhotoForCard(params: {
         .sort(sortByReuse);
       if (matchReused.length > 0) {
         reusedPhoto = matchReused[0];
-        reuseReason = "Priority 4: Best match (reused verified)";
       }
     }
 
@@ -630,35 +565,23 @@ function pickVerifiedPhotoForCard(params: {
     if (!reusedPhoto && preferredCategoryPool.length > 0) {
       const sortedCat = [...preferredCategoryPool].sort(sortByReuse);
       reusedPhoto = sortedCat[0];
-      reuseReason = "Priority 4: Category pool (reused verified)";
     }
 
     // 4c. Try destination pool reused
     if (!reusedPhoto && destinationPool.length > 0) {
       const sortedDest = [...destinationPool].sort(sortByReuse);
       reusedPhoto = sortedDest[0];
-      reuseReason = "Priority 4: Destination pool (reused verified)";
     }
 
     // 4d. Any verified photo reused
     if (!reusedPhoto) {
       const sortedAll = [...allVerifiedPhotos].sort(sortByReuse);
       reusedPhoto = sortedAll[0];
-      reuseReason = "Priority 4: Any verified photo (reused verified)";
     }
 
     if (reusedPhoto) {
       const count = (usedCounts.get(reusedPhoto.id) || 0) + 1;
       usedCounts.set(reusedPhoto.id, count);
-      logCardDebug({
-        cardTitle,
-        query,
-        chosenAltDescription:
-          reusedPhoto.alt_description || reusedPhoto.description || reusedPhoto.slug || "",
-        passedRelevanceFilter: true,
-        filterReason: `matched: "${reusedPhoto.matchedFilterTerm || "verified"}"`,
-        assignmentReason: `${reuseReason} (used ${count} times)`,
-      });
       return {
         url: reusedPhoto.url,
         attribution: reusedPhoto.attribution,
@@ -669,14 +592,6 @@ function pickVerifiedPhotoForCard(params: {
   }
 
   // --- Priority 3d: Neutral placeholder (No verified photo exists, never use unverified) ---
-  logCardDebug({
-    cardTitle,
-    query,
-    chosenAltDescription: "[Neutral Travel Placeholder]",
-    passedRelevanceFilter: false,
-    filterReason: "no verified photo found",
-    assignmentReason: "Priority 3d: Neutral placeholder (zero verified photos available)",
-  });
 
   return {
     url: defaultImage,
@@ -691,7 +606,6 @@ function pickVerifiedPhotoForCard(params: {
  * 1. Specific queries: destination and country in every search.
  * 2. Relevance filter: strictly discards unverified photos.
  * 3. Priority assignment: Best match -> Category pool -> Destination pool -> Reuse verified -> Neutral placeholder.
- * 4. Dev-only debug logging with DEBUG_IMAGES=true (never in production).
  * 5. Download tracking only for photos actually assigned.
  * 6. Non-fatal fallback.
  */

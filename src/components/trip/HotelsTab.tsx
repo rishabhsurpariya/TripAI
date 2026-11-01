@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Trip } from "@/types/trip";
 import { formatCurrency } from "@/lib/currency";
+import { AffiliateDisclosure } from "./BookingButton";
 
 interface HotelsTabProps {
   trip: Trip;
@@ -58,7 +59,7 @@ export function HotelsTab({ trip }: HotelsTabProps) {
         </div>
         <div className="flex items-center gap-3">
           <span className="font-serif text-lg sm:text-xl text-primary font-bold">
-            Total Stay Budget: {formatCurrency(stayBudget, currencyCode)}
+            Total Stay Budget: {formatCurrency(stayBudget, currencyCode)} (est.)
           </span>
         </div>
       </div>
@@ -136,7 +137,7 @@ export function HotelsTab({ trip }: HotelsTabProps) {
                     {formatCurrency(primaryStay.pricePerNight, currencyCode)}
                   </span>
                   <span className="text-[11px] text-secondary font-normal ml-1">
-                    / night
+                    / night (est.)
                   </span>
                 </div>
                 <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold flex items-center gap-1">
@@ -203,7 +204,7 @@ export function HotelsTab({ trip }: HotelsTabProps) {
                     $8,500
                   </span>
                   <span className="text-[11px] text-secondary font-normal ml-1">
-                    / night
+                    / night (est.)
                   </span>
                 </div>
                 <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold">
@@ -299,6 +300,11 @@ export function HotelsTab({ trip }: HotelsTabProps) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Outbound Booking Disclosure */}
+      <div className="pt-2 text-center">
+        <AffiliateDisclosure />
       </div>
     </div>
   );

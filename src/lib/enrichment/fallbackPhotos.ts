@@ -328,3 +328,4 @@ export function getCategoryFallbackKey(category: string): string {
   // Default for heritage, culture, museum, art, spiritual, temple, shrine, etc.
   return "heritage";
 }
+

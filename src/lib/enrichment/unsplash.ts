@@ -1,8 +1,4 @@
 import { PhotoAttribution, Trip } from "@/types/trip";
-import {
-  CURATED_FALLBACK_POOLS,
-  getCategoryFallbackKey,
-} from "./fallbackPhotos";
 
 export interface EnrichedImage {
   url: string;
@@ -15,31 +11,56 @@ export interface UnsplashRawPhoto {
   description?: string;
   alt_description?: string;
   tags?: string[];
+  location?: string;
+  slug?: string;
   attribution: PhotoAttribution;
   width?: number;
   height?: number;
+  passedFilter?: boolean;
+  matchedFilterTerm?: string;
 }
 
 // In-memory cache for search query pools (query -> array of raw photos)
 const memoryPoolCache = new Map<string, UnsplashRawPhoto[]>();
 
-// Maximum Unsplash searches per trip (1 destination + up to 4 categories + 1 stay)
+// Maximum Unsplash searches per trip (1 destination + 1 stay + up to 4 categories)
 export const MAX_UNSPLASH_SEARCHES_PER_TRIP = 6;
 export const PHOTOS_PER_SEARCH = 30;
 
-// Curated high-res default travel placeholders (valid Unsplash CDN images)
-const DEFAULT_COVER_IMAGE =
+// Curated high-res neutral travel placeholders (never depict wrong cities/monuments)
+export const DEFAULT_COVER_IMAGE =
   "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=80";
-const DEFAULT_ACTIVITY_IMAGE =
-  "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80";
-const DEFAULT_STAY_IMAGE =
-  "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=600&q=80";
+export const DEFAULT_ACTIVITY_IMAGE =
+  "https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=600&q=80";
+export const DEFAULT_STAY_IMAGE =
+  "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=600&q=80";
+
+export const NEUTRAL_COVER_ATTRIBUTION: PhotoAttribution = {
+  photographerName: "Francesca Tirico",
+  photographerUrl: "https://unsplash.com/@francesca_tirico",
+  unsplashUrl: "https://unsplash.com",
+};
+
+export const NEUTRAL_ACTIVITY_ATTRIBUTION: PhotoAttribution = {
+  photographerName: "Dariusz Sankowski",
+  photographerUrl: "https://unsplash.com/@dariuszsankowski",
+  unsplashUrl: "https://unsplash.com",
+};
+
+export const NEUTRAL_STAY_ATTRIBUTION: PhotoAttribution = {
+  photographerName: "Visual Stories",
+  photographerUrl: "https://unsplash.com",
+  unsplashUrl: "https://unsplash.com",
+};
 
 /**
- * Normalizes a query for caching.
+ * Normalizes text in a case-insensitive way and strips diacritics/accents.
  */
-export function normalizeImageQuery(query: string): string {
-  return query
+export function normalizeForRelevance(text: string): string {
+  if (!text) return "";
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^\w\s]/g, " ")
     .replace(/\s+/g, " ")
@@ -47,7 +68,190 @@ export function normalizeImageQuery(query: string): string {
 }
 
 /**
- * Optional persistent cache lookup from Supabase image_cache table.
+ * Checks if a corpus contains a term.
+ * For short words (length <= 3), requires word boundaries to prevent false positives like "goa" in "goal".
+ */
+export function matchesRelevanceTerm(corpus: string, term: string): boolean {
+  if (!term || term.length < 2) return false;
+  if (term.length <= 3) {
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`(^|\\s|[_-])${escaped}([ns]?|[_-]*)(\\s|[_-]|$)`, "i");
+    return regex.test(corpus);
+  }
+  return corpus.includes(term);
+}
+
+export interface RelevanceTerms {
+  destination: string;
+  country: string;
+  placeTerms: string[];
+}
+
+/**
+ * Extracts destination, country, and well-known place/activity names from the itinerary.
+ */
+export function buildRelevanceTerms(
+  destination: string,
+  country: string,
+  trip: Trip
+): RelevanceTerms {
+  const normDest = normalizeForRelevance(destination);
+  const normCountry = normalizeForRelevance(country);
+
+  const stopWords = new Set([
+    "visit", "tour", "explore", "day", "walk", "walking", "morning",
+    "afternoon", "evening", "dinner", "lunch", "breakfast", "hotel",
+    "resort", "the", "and", "in", "at", "to", "of", "for", "with",
+    "around", "near", "view", "trip", "center", "centre", "city",
+    "street", "road", "park", "garden", "market", "experience",
+    "discovery", "session", "stop", "relax", "relaxation", "check",
+    "arrival", "departure", "stay", "night", "spa", "inn", "hostel",
+    "authentic", "local", "best", "great", "famous"
+  ]);
+
+  const placeTermsSet = new Set<string>();
+
+  for (const day of trip.days) {
+    if (day.stay?.name) {
+      const normStay = normalizeForRelevance(day.stay.name);
+      if (normStay.length >= 3 && !stopWords.has(normStay)) {
+        placeTermsSet.add(normStay);
+      }
+      for (const word of normStay.split(/\s+/)) {
+        if (word.length >= 4 && !stopWords.has(word)) {
+          placeTermsSet.add(word);
+        }
+      }
+    }
+
+    for (const act of day.activities) {
+      if (act.name) {
+        const normAct = normalizeForRelevance(act.name);
+        if (normAct.length >= 3 && !stopWords.has(normAct)) {
+          placeTermsSet.add(normAct);
+        }
+        for (const word of normAct.split(/\s+/)) {
+          if (word.length >= 4 && !stopWords.has(word)) {
+            placeTermsSet.add(word);
+          }
+        }
+      }
+    }
+  }
+
+  return {
+    destination: normDest,
+    country: normCountry,
+    placeTerms: Array.from(placeTermsSet),
+  };
+}
+
+/**
+ * Relevance filter: checks whether the photo's alt_description, description,
+ * tags, location, or slug mention destination name, country, or itinerary place name.
+ */
+export function isVerifiedPhoto(
+  photo: UnsplashRawPhoto,
+  terms: RelevanceTerms
+): { verified: boolean; matchedTerm?: string } {
+  const corpus = normalizeForRelevance(
+    [
+      photo.alt_description,
+      photo.description,
+      (photo.tags || []).join(" "),
+      photo.location,
+      photo.slug,
+    ]
+      .filter(Boolean)
+      .join(" ")
+  );
+
+  if (!corpus) return { verified: false };
+
+  // 1. Destination check
+  if (terms.destination && matchesRelevanceTerm(corpus, terms.destination)) {
+    return { verified: true, matchedTerm: terms.destination };
+  }
+  const destWords = terms.destination.split(/\s+/).filter((w) => w.length >= 3);
+  for (const dw of destWords) {
+    if (matchesRelevanceTerm(corpus, dw)) {
+      return { verified: true, matchedTerm: dw };
+    }
+  }
+
+  // 2. Country check
+  if (terms.country && matchesRelevanceTerm(corpus, terms.country)) {
+    return { verified: true, matchedTerm: terms.country };
+  }
+
+  // 3. Itinerary place names
+  for (const pt of terms.placeTerms) {
+    if (matchesRelevanceTerm(corpus, pt)) {
+      return { verified: true, matchedTerm: pt };
+    }
+  }
+
+  return { verified: false };
+}
+
+/**
+ * Computes a keyword match score between an activity/stay name and a photo's metadata.
+ */
+function scorePhotoMatch(photo: UnsplashRawPhoto, name: string): number {
+  if (!name) return 0;
+  const words = normalizeForRelevance(name)
+    .split(/\s+/)
+    .filter((w) => w.length > 2);
+
+  if (words.length === 0) return 0;
+
+  const corpus = normalizeForRelevance(
+    [
+      photo.alt_description,
+      photo.description,
+      (photo.tags || []).join(" "),
+      photo.location,
+      photo.slug,
+    ]
+      .filter(Boolean)
+      .join(" ")
+  );
+
+  let score = 0;
+  for (const word of words) {
+    if (corpus.includes(word)) {
+      score += 1;
+    }
+  }
+  return score;
+}
+
+/**
+ * Dev-only logging enabled by DEBUG_IMAGES=true (never active in production).
+ */
+function logCardDebug(cardLog: {
+  cardTitle: string;
+  query: string;
+  chosenAltDescription: string;
+  passedRelevanceFilter: boolean;
+  filterReason: string;
+  assignmentReason: string;
+}) {
+  const isDebugImages =
+    process.env.DEBUG_IMAGES === "true" && process.env.NODE_ENV !== "production";
+  if (!isDebugImages) return;
+
+  console.log(
+    `[DEBUG_IMAGES] Card: "${cardLog.cardTitle}"\n` +
+      `  • Query: "${cardLog.query}"\n` +
+      `  • Chosen photo alt_description: "${cardLog.chosenAltDescription}"\n` +
+      `  • Passed relevance filter: ${cardLog.passedRelevanceFilter} (${cardLog.filterReason})\n` +
+      `  • Assignment reason: ${cardLog.assignmentReason}`
+  );
+}
+
+/**
+ * Persistent cache lookup from Supabase image_cache table.
  */
 async function getDbCachedPool(normQuery: string): Promise<UnsplashRawPhoto[] | null> {
   try {
@@ -67,13 +271,13 @@ async function getDbCachedPool(normQuery: string): Promise<UnsplashRawPhoto[] | 
       }
     }
   } catch {
-    // Database cache not available or table not migrated; catch silently
+    // Database cache not available; catch silently
   }
   return null;
 }
 
 /**
- * Optional persistent cache write to Supabase image_cache table.
+ * Persistent cache write to Supabase image_cache table.
  */
 async function saveDbCachedPool(
   normQuery: string,
@@ -97,7 +301,7 @@ async function saveDbCachedPool(
 
 /**
  * Fire-and-forget download tracking per Unsplash API Guidelines.
- * Only called for photos actually assigned to trip cards.
+ * Only fired for photos actually assigned to trip cards.
  */
 function trackUnsplashDownload(downloadLocation: string, accessKey: string) {
   if (!downloadLocation || !accessKey) return;
@@ -108,13 +312,13 @@ function trackUnsplashDownload(downloadLocation: string, accessKey: string) {
     },
     signal: AbortSignal.timeout(3000),
   }).catch(() => {
-    // Non-blocking, ignore background tracking network issues
+    // Non-fatal, ignore background tracking network issues
   });
 }
 
 /**
  * Fetches up to `per_page` landscape photos from Unsplash for a given query.
- * Checks memory and DB cache first. Returns array of parsed UnsplashRawPhoto.
+ * Checks memory and DB cache first.
  * Never throws.
  */
 export async function searchUnsplashPool(
@@ -122,7 +326,7 @@ export async function searchUnsplashPool(
   perPage = PHOTOS_PER_SEARCH,
   timeoutMs = 3500
 ): Promise<{ photos: UnsplashRawPhoto[]; fromCache: boolean }> {
-  const norm = normalizeImageQuery(query);
+  const norm = normalizeForRelevance(query);
 
   // 1. Check in-memory cache
   if (memoryPoolCache.has(norm)) {
@@ -156,7 +360,7 @@ export async function searchUnsplashPool(
     if (!res.ok) {
       if (res.status === 429 || res.status === 403) {
         console.warn(
-          `[Unsplash] Rate limit hit (HTTP ${res.status}). Using diverse curated fallback pools.`
+          `[Unsplash] Rate limit hit (HTTP ${res.status}). Using verified cached pools or neutral placeholders.`
         );
       } else {
         console.warn(
@@ -173,9 +377,20 @@ export async function searchUnsplashPool(
         url: p.urls?.regular || p.urls?.small || DEFAULT_COVER_IMAGE,
         description: p.description || undefined,
         alt_description: p.alt_description || undefined,
+        slug: p.slug || undefined,
         tags: Array.isArray(p.tags)
-          ? p.tags.map((t: any) => (typeof t === "string" ? t : t.title || "")).filter(Boolean)
+          ? p.tags
+              .map((t: any) => (typeof t === "string" ? t : t.title || ""))
+              .filter(Boolean)
           : undefined,
+        location: [
+          p.location?.title,
+          p.location?.name,
+          p.location?.city,
+          p.location?.country,
+        ]
+          .filter(Boolean)
+          .join(" ") || undefined,
         attribution: {
           photographerName: p.user?.name || "Unsplash Photographer",
           photographerUrl: p.user?.links?.html || "https://unsplash.com",
@@ -186,10 +401,8 @@ export async function searchUnsplashPool(
         height: p.height,
       }));
 
-      // Cache result in memory
+      // Cache raw search result
       memoryPoolCache.set(norm, photos);
-
-      // Async write to DB cache
       saveDbCachedPool(norm, photos).catch(() => {});
 
       return { photos, fromCache: false };
@@ -203,138 +416,292 @@ export async function searchUnsplashPool(
 }
 
 /**
- * Computes a keyword match score between an activity/stay name and a photo's metadata.
+ * Assigns photos following the strict priority rules:
+ * a. Best match: a verified photo whose text mentions specific activity or place name.
+ * b. A verified photo from matching category pool.
+ * c. A verified photo from destination pool.
+ * d. If no verified photo exists, use neutral placeholder. Never use unverified photo.
+ * Uniqueness preference: avoid repeating within trip while unused verified photos remain,
+ * but reuse verified photos instead of using unverified ones.
  */
-function scorePhotoMatch(photo: UnsplashRawPhoto, name: string): number {
-  if (!name) return 0;
-  const words = name
-    .toLowerCase()
-    .replace(/[^\w\s]/g, " ")
-    .split(/\s+/)
-    .filter((w) => w.length > 2);
+function pickVerifiedPhotoForCard(params: {
+  cardTitle: string;
+  query: string;
+  itemName: string;
+  preferredCategoryPool: UnsplashRawPhoto[];
+  destinationPool: UnsplashRawPhoto[];
+  allVerifiedPools: UnsplashRawPhoto[][];
+  usedPhotoIds: Set<string>;
+  usedCounts: Map<string, number>;
+  defaultImage: string;
+  defaultAttribution: PhotoAttribution;
+  preferLandscape?: boolean;
+}): {
+  url: string;
+  attribution: PhotoAttribution;
+  downloadLocation?: string;
+  isPlaceholder: boolean;
+} {
+  const {
+    cardTitle,
+    query,
+    itemName,
+    preferredCategoryPool,
+    destinationPool,
+    allVerifiedPools,
+    usedPhotoIds,
+    usedCounts,
+    defaultImage,
+    defaultAttribution,
+    preferLandscape,
+  } = params;
 
-  if (words.length === 0) return 0;
+  // Helper to test if photo is landscape
+  const isLandscape = (p: UnsplashRawPhoto) =>
+    p.width && p.height ? p.width >= p.height : true;
 
-  const corpus = `${photo.description || ""} ${photo.alt_description || ""} ${(
-    photo.tags || []
-  ).join(" ")}`.toLowerCase();
-
-  let score = 0;
-  for (const word of words) {
-    if (corpus.includes(word)) {
-      score += 1;
-    }
-  }
-  return score;
-}
-
-/**
- * Finds and marks the best unused photo from:
- * 1. Primary live category pool
- * 2. Fallback live destination pool
- * 3. Any live pools
- * 4. Matching curated fallback pool
- * 5. General curated fallback pools
- * Never repeats a photo while unused photos remain!
- */
-function pickUnusedPhoto(
-  primaryPool: UnsplashRawPhoto[],
-  fallbackPool: UnsplashRawPhoto[],
-  allPools: UnsplashRawPhoto[][],
-  category: string,
-  matchName: string,
-  usedIds: Set<string>
-): UnsplashRawPhoto | null {
-  // 1. Try primary live pool
-  let bestPhoto: UnsplashRawPhoto | null = null;
-  let bestScore = -1;
-
-  for (const photo of primaryPool) {
-    if (usedIds.has(photo.id)) continue;
-    const score = scorePhotoMatch(photo, matchName);
-    if (score > bestScore) {
-      bestScore = score;
-      bestPhoto = photo;
-    }
-  }
-
-  if (bestPhoto) {
-    usedIds.add(bestPhoto.id);
-    return bestPhoto;
-  }
-
-  // 2. Try fallback live pool (destination pool)
-  bestScore = -1;
-  bestPhoto = null;
-
-  for (const photo of fallbackPool) {
-    if (usedIds.has(photo.id)) continue;
-    const score = scorePhotoMatch(photo, matchName);
-    if (score > bestScore) {
-      bestScore = score;
-      bestPhoto = photo;
-    }
-  }
-
-  if (bestPhoto) {
-    usedIds.add(bestPhoto.id);
-    return bestPhoto;
-  }
-
-  // 3. Try any unused photo in any live pool
-  for (const pool of allPools) {
-    for (const photo of pool) {
-      if (!usedIds.has(photo.id)) {
-        usedIds.add(photo.id);
-        return photo;
+  // Flatten all verified pools for candidate search
+  const allVerifiedPhotos: UnsplashRawPhoto[] = [];
+  const seenIds = new Set<string>();
+  for (const pool of allVerifiedPools) {
+    for (const p of pool) {
+      if (!seenIds.has(p.id)) {
+        seenIds.add(p.id);
+        allVerifiedPhotos.push(p);
       }
     }
   }
 
-  // 4. Try category curated fallback pool
-  const fallbackKey = getCategoryFallbackKey(category);
-  const curatedCatPool = CURATED_FALLBACK_POOLS[fallbackKey] || [];
-  for (const photo of curatedCatPool) {
-    if (!usedIds.has(photo.id)) {
-      usedIds.add(photo.id);
-      return photo;
-    }
-  }
+  // --- Priority 3a: Best match among UNUSED verified photos ---
+  if (itemName) {
+    let bestUnused: UnsplashRawPhoto | null = null;
+    let bestScore = 0;
 
-  // 5. Try all other curated fallback pools
-  for (const pool of Object.values(CURATED_FALLBACK_POOLS)) {
-    for (const photo of pool) {
-      if (!usedIds.has(photo.id)) {
-        usedIds.add(photo.id);
-        return photo;
+    for (const p of allVerifiedPhotos) {
+      if (usedPhotoIds.has(p.id)) continue;
+      const score = scorePhotoMatch(p, itemName);
+      if (score > bestScore) {
+        bestScore = score;
+        bestUnused = p;
       }
     }
+
+    if (bestUnused && bestScore > 0) {
+      usedPhotoIds.add(bestUnused.id);
+      usedCounts.set(bestUnused.id, (usedCounts.get(bestUnused.id) || 0) + 1);
+      logCardDebug({
+        cardTitle,
+        query,
+        chosenAltDescription: bestUnused.alt_description || bestUnused.description || bestUnused.slug || "",
+        passedRelevanceFilter: true,
+        filterReason: `matched: "${bestUnused.matchedFilterTerm || "verified"}"`,
+        assignmentReason: `Priority 3a: Best match (unused, score=${bestScore})`,
+      });
+      return {
+        url: bestUnused.url,
+        attribution: bestUnused.attribution,
+        downloadLocation: bestUnused.attribution.downloadLocation,
+        isPlaceholder: false,
+      };
+    }
   }
 
-  return null;
+  // --- Priority 3b: Matching category pool among UNUSED verified photos ---
+  let chosenCategoryUnused: UnsplashRawPhoto | null = null;
+  if (preferLandscape) {
+    chosenCategoryUnused =
+      preferredCategoryPool.find((p) => !usedPhotoIds.has(p.id) && isLandscape(p)) ||
+      preferredCategoryPool.find((p) => !usedPhotoIds.has(p.id)) ||
+      null;
+  } else {
+    chosenCategoryUnused = preferredCategoryPool.find((p) => !usedPhotoIds.has(p.id)) || null;
+  }
+
+  if (chosenCategoryUnused) {
+    usedPhotoIds.add(chosenCategoryUnused.id);
+    usedCounts.set(chosenCategoryUnused.id, (usedCounts.get(chosenCategoryUnused.id) || 0) + 1);
+    logCardDebug({
+      cardTitle,
+      query,
+      chosenAltDescription:
+        chosenCategoryUnused.alt_description ||
+        chosenCategoryUnused.description ||
+        chosenCategoryUnused.slug ||
+        "",
+      passedRelevanceFilter: true,
+      filterReason: `matched: "${chosenCategoryUnused.matchedFilterTerm || "verified"}"`,
+      assignmentReason: "Priority 3b: Matching category pool (unused)",
+    });
+    return {
+      url: chosenCategoryUnused.url,
+      attribution: chosenCategoryUnused.attribution,
+      downloadLocation: chosenCategoryUnused.attribution.downloadLocation,
+      isPlaceholder: false,
+    };
+  }
+
+  // --- Priority 3c: Destination pool among UNUSED verified photos ---
+  let chosenDestUnused: UnsplashRawPhoto | null = null;
+  if (preferLandscape) {
+    chosenDestUnused =
+      destinationPool.find((p) => !usedPhotoIds.has(p.id) && isLandscape(p)) ||
+      destinationPool.find((p) => !usedPhotoIds.has(p.id)) ||
+      null;
+  } else {
+    chosenDestUnused = destinationPool.find((p) => !usedPhotoIds.has(p.id)) || null;
+  }
+
+  if (chosenDestUnused) {
+    usedPhotoIds.add(chosenDestUnused.id);
+    usedCounts.set(chosenDestUnused.id, (usedCounts.get(chosenDestUnused.id) || 0) + 1);
+    logCardDebug({
+      cardTitle,
+      query,
+      chosenAltDescription:
+        chosenDestUnused.alt_description || chosenDestUnused.description || chosenDestUnused.slug || "",
+      passedRelevanceFilter: true,
+      filterReason: `matched: "${chosenDestUnused.matchedFilterTerm || "verified"}"`,
+      assignmentReason: "Priority 3c: Destination pool (unused)",
+    });
+    return {
+      url: chosenDestUnused.url,
+      attribution: chosenDestUnused.attribution,
+      downloadLocation: chosenDestUnused.attribution.downloadLocation,
+      isPlaceholder: false,
+    };
+  }
+
+  // --- Fallback among any remaining UNUSED verified photos ---
+  const anyUnused = allVerifiedPhotos.find((p) => !usedPhotoIds.has(p.id));
+  if (anyUnused) {
+    usedPhotoIds.add(anyUnused.id);
+    usedCounts.set(anyUnused.id, (usedCounts.get(anyUnused.id) || 0) + 1);
+    logCardDebug({
+      cardTitle,
+      query,
+      chosenAltDescription:
+        anyUnused.alt_description || anyUnused.description || anyUnused.slug || "",
+      passedRelevanceFilter: true,
+      filterReason: `matched: "${anyUnused.matchedFilterTerm || "verified"}"`,
+      assignmentReason: "Priority 3c (general): Any verified pool (unused)",
+    });
+    return {
+      url: anyUnused.url,
+      attribution: anyUnused.attribution,
+      downloadLocation: anyUnused.attribution.downloadLocation,
+      isPlaceholder: false,
+    };
+  }
+
+  // --- Priority 4: Reusing verified photos (Uniqueness preference: reuse rather than placeholder) ---
+  if (allVerifiedPhotos.length > 0) {
+    // Sort candidate pools by least reused
+    const sortByReuse = (a: UnsplashRawPhoto, b: UnsplashRawPhoto) =>
+      (usedCounts.get(a.id) || 0) - (usedCounts.get(b.id) || 0);
+
+    let reusedPhoto: UnsplashRawPhoto | null = null;
+    let reuseReason = "";
+
+    // 4a. Try best match reused
+    if (itemName) {
+      const matchReused = allVerifiedPhotos
+        .filter((p) => scorePhotoMatch(p, itemName) > 0)
+        .sort(sortByReuse);
+      if (matchReused.length > 0) {
+        reusedPhoto = matchReused[0];
+        reuseReason = "Priority 4: Best match (reused verified)";
+      }
+    }
+
+    // 4b. Try category pool reused
+    if (!reusedPhoto && preferredCategoryPool.length > 0) {
+      const sortedCat = [...preferredCategoryPool].sort(sortByReuse);
+      reusedPhoto = sortedCat[0];
+      reuseReason = "Priority 4: Category pool (reused verified)";
+    }
+
+    // 4c. Try destination pool reused
+    if (!reusedPhoto && destinationPool.length > 0) {
+      const sortedDest = [...destinationPool].sort(sortByReuse);
+      reusedPhoto = sortedDest[0];
+      reuseReason = "Priority 4: Destination pool (reused verified)";
+    }
+
+    // 4d. Any verified photo reused
+    if (!reusedPhoto) {
+      const sortedAll = [...allVerifiedPhotos].sort(sortByReuse);
+      reusedPhoto = sortedAll[0];
+      reuseReason = "Priority 4: Any verified photo (reused verified)";
+    }
+
+    if (reusedPhoto) {
+      const count = (usedCounts.get(reusedPhoto.id) || 0) + 1;
+      usedCounts.set(reusedPhoto.id, count);
+      logCardDebug({
+        cardTitle,
+        query,
+        chosenAltDescription:
+          reusedPhoto.alt_description || reusedPhoto.description || reusedPhoto.slug || "",
+        passedRelevanceFilter: true,
+        filterReason: `matched: "${reusedPhoto.matchedFilterTerm || "verified"}"`,
+        assignmentReason: `${reuseReason} (used ${count} times)`,
+      });
+      return {
+        url: reusedPhoto.url,
+        attribution: reusedPhoto.attribution,
+        downloadLocation: reusedPhoto.attribution.downloadLocation,
+        isPlaceholder: false,
+      };
+    }
+  }
+
+  // --- Priority 3d: Neutral placeholder (No verified photo exists, never use unverified) ---
+  logCardDebug({
+    cardTitle,
+    query,
+    chosenAltDescription: "[Neutral Travel Placeholder]",
+    passedRelevanceFilter: false,
+    filterReason: "no verified photo found",
+    assignmentReason: "Priority 3d: Neutral placeholder (zero verified photos available)",
+  });
+
+  return {
+    url: defaultImage,
+    attribution: defaultAttribution,
+    downloadLocation: undefined,
+    isPlaceholder: true,
+  };
 }
 
 /**
- * Enriches a Trip object with cover, activity, and stay images using a Pool-Based Approach:
- * 1. Runs at most 6 Unsplash searches with per_page=30 in parallel with a short timeout:
- *    - 1 for destination (cover image & fallback pool)
- *    - up to 4 for most distinct activity categories ("[destination] [category]")
- *    - 1 for stays ("[destination] hotel")
- * 2. Deduplicates photo IDs across all pools.
- * 3. Assigns photos so no photo ID is used more than once in the same trip.
- * 4. Only fires download tracking for photos actually assigned.
- * 5. Uses rich curated fallback pools if Unsplash hits hourly rate limit (403/429).
- * 6. Falls back gracefully and never fails generation.
+ * Enriches a Trip object with verified destination, stay, and activity photos.
+ * 1. Specific queries: destination and country in every search.
+ * 2. Relevance filter: strictly discards unverified photos.
+ * 3. Priority assignment: Best match -> Category pool -> Destination pool -> Reuse verified -> Neutral placeholder.
+ * 4. Dev-only debug logging with DEBUG_IMAGES=true (never in production).
+ * 5. Download tracking only for photos actually assigned.
+ * 6. Non-fatal fallback.
  */
 export async function enrichTripImages(
   trip: Trip,
   destination: string,
   country: string
-): Promise<{ trip: Trip; unsplashRequestsMade: number }> {
+): Promise<{ trip: Trip; unsplashRequestsMade: number; placeholderCardsCount: number }> {
   let unsplashRequestsMade = 0;
+  let placeholderCardsCount = 0;
   const accessKey = process.env.UNSPLASH_ACCESS_KEY;
 
-  // 1. Identify distinct activity categories and take the top 4 most common
+  // 1. Build destination & country base query
+  const cleanDest = (destination || "").trim();
+  const cleanCountry = (country || "").trim();
+
+  // Ensure query includes both destination and country (e.g. "Goa India")
+  const baseLocation =
+    cleanCountry && !cleanDest.toLowerCase().includes(cleanCountry.toLowerCase())
+      ? `${cleanDest} ${cleanCountry}`
+      : cleanDest;
+
+  // 2. Identify top distinct activity categories (up to 4)
   const categoryCounts = new Map<string, number>();
   for (const day of trip.days) {
     for (const act of day.activities) {
@@ -350,13 +717,16 @@ export async function enrichTripImages(
     .slice(0, 4)
     .map(([cat]) => cat);
 
-  // 2. Prepare search queries (at most 6)
-  const destQuery = destination.trim();
-  const staysQuery = `${destination} hotel`.trim();
-  const categoryQueries = topCategories.map((cat) => `${destination} ${cat}`.trim());
+  // 3. Prepare specific search queries
+  const destQuery = baseLocation;
+  const staysQuery = `${baseLocation} hotel`;
+  const categoryQueries = topCategories.map((cat) => `${baseLocation} ${cat}`);
 
-  // All queries to run in parallel
-  const searchPlan: { type: "dest" | "stays" | "category"; query: string; category?: string }[] = [
+  const searchPlan: {
+    type: "dest" | "stays" | "category";
+    query: string;
+    category?: string;
+  }[] = [
     { type: "dest", query: destQuery },
     { type: "stays", query: staysQuery },
     ...categoryQueries.map((q, idx) => ({
@@ -366,7 +736,7 @@ export async function enrichTripImages(
     })),
   ];
 
-  // 3. Execute searches in parallel
+  // 4. Execute searches in parallel (at most 6)
   const searchPromises = searchPlan.map(async (item) => {
     const result = await searchUnsplashPool(item.query, PHOTOS_PER_SEARCH);
     return { ...item, photos: result.photos, fromCache: result.fromCache };
@@ -374,14 +744,17 @@ export async function enrichTripImages(
 
   const searchResults = await Promise.allSettled(searchPromises);
 
-  // Count actual external API requests made (excluding cache hits)
+  // Count external requests (excluding cache hits)
   for (const res of searchResults) {
     if (res.status === "fulfilled" && !res.value.fromCache && accessKey) {
       unsplashRequestsMade++;
     }
   }
 
-  // 4. Build deduplicated pools
+  // 5. Build relevance filter terms from destination, country, and itinerary
+  const relevanceTerms = buildRelevanceTerms(destination, country, trip);
+
+  // 6. Build verified pools: discard every result that doesn't pass relevance filter
   const seenGlobalPhotoIds = new Set<string>();
 
   let destinationPool: UnsplashRawPhoto[] = [];
@@ -392,135 +765,128 @@ export async function enrichTripImages(
     if (res.status !== "fulfilled") continue;
     const { type, photos, category } = res.value;
 
-    const uniquePhotos: UnsplashRawPhoto[] = [];
+    const verifiedList: UnsplashRawPhoto[] = [];
     for (const photo of photos) {
-      if (!seenGlobalPhotoIds.has(photo.id)) {
+      if (seenGlobalPhotoIds.has(photo.id)) continue;
+
+      const check = isVerifiedPhoto(photo, relevanceTerms);
+      if (check.verified) {
+        photo.passedFilter = true;
+        photo.matchedFilterTerm = check.matchedTerm;
         seenGlobalPhotoIds.add(photo.id);
-        uniquePhotos.push(photo);
+        verifiedList.push(photo);
       }
+      // If !check.verified, DISCARD completely! Never enters any pool.
     }
 
     if (type === "dest") {
-      destinationPool = uniquePhotos;
+      destinationPool = verifiedList;
     } else if (type === "stays") {
-      staysPool = uniquePhotos;
+      staysPool = verifiedList;
     } else if (type === "category" && category) {
-      categoryPools.set(category.toLowerCase().trim(), uniquePhotos);
+      categoryPools.set(normalizeForRelevance(category), verifiedList);
     }
   }
 
-  const allPoolsList: UnsplashRawPhoto[][] = [
+  const allVerifiedPoolsList: UnsplashRawPhoto[][] = [
     destinationPool,
     staysPool,
     ...Array.from(categoryPools.values()),
   ];
 
-  // 5. Track used photos in this trip and download locations to fire
+  // 7. Track photo usage and download locations to fire
   const usedPhotoIds = new Set<string>();
+  const usedCounts = new Map<string, number>();
   const assignedDownloadLocations = new Set<string>();
 
-  // A. Assign Cover Image (unique, prefers landscape)
-  let coverPhoto: UnsplashRawPhoto | null = null;
-  for (const photo of destinationPool) {
-    if (!usedPhotoIds.has(photo.id)) {
-      coverPhoto = photo;
-      usedPhotoIds.add(photo.id);
-      break;
-    }
+  // A. Cover image: must be a verified destination photo, prefer landscape
+  const coverResult = pickVerifiedPhotoForCard({
+    cardTitle: `Cover: ${destination}`,
+    query: destQuery,
+    itemName: destination,
+    preferredCategoryPool: destinationPool,
+    destinationPool,
+    allVerifiedPools: allVerifiedPoolsList,
+    usedPhotoIds,
+    usedCounts,
+    defaultImage: DEFAULT_COVER_IMAGE,
+    defaultAttribution: NEUTRAL_COVER_ATTRIBUTION,
+    preferLandscape: true,
+  });
+
+  trip.coverImageUrl = coverResult.url;
+  trip.coverImageAttribution = coverResult.attribution;
+  if (coverResult.downloadLocation) {
+    assignedDownloadLocations.add(coverResult.downloadLocation);
+  }
+  if (coverResult.isPlaceholder) {
+    placeholderCardsCount++;
   }
 
-  // If destination pool was empty, pick from any live pool
-  if (!coverPhoto) {
-    for (const pool of allPoolsList) {
-      for (const photo of pool) {
-        if (!usedPhotoIds.has(photo.id)) {
-          coverPhoto = photo;
-          usedPhotoIds.add(photo.id);
-          break;
-        }
-      }
-      if (coverPhoto) break;
-    }
-  }
-
-  // If live pools were empty (e.g. rate-limited), pick from curated cover fallbacks
-  if (!coverPhoto) {
-    for (const photo of CURATED_FALLBACK_POOLS.cover) {
-      if (!usedPhotoIds.has(photo.id)) {
-        coverPhoto = photo;
-        usedPhotoIds.add(photo.id);
-        break;
-      }
-    }
-  }
-
-  if (coverPhoto) {
-    trip.coverImageUrl = coverPhoto.url;
-    trip.coverImageAttribution = coverPhoto.attribution;
-    if (coverPhoto.attribution.downloadLocation) {
-      assignedDownloadLocations.add(coverPhoto.attribution.downloadLocation);
-    }
-  } else {
-    trip.coverImageUrl = DEFAULT_COVER_IMAGE;
-  }
-
-  // B. Assign Stays (one different photo per day)
+  // B. Stays (one different photo per day)
   trip.days.forEach((day) => {
     if (day.stay) {
-      const stayPhoto = pickUnusedPhoto(
-        staysPool,
+      const stayResult = pickVerifiedPhotoForCard({
+        cardTitle: `Day ${day.dayNumber} Stay: ${day.stay.name}`,
+        query: staysQuery,
+        itemName: day.stay.name,
+        preferredCategoryPool: staysPool,
         destinationPool,
-        allPoolsList,
-        "stays",
-        day.stay.name,
-        usedPhotoIds
-      );
+        allVerifiedPools: allVerifiedPoolsList,
+        usedPhotoIds,
+        usedCounts,
+        defaultImage: DEFAULT_STAY_IMAGE,
+        defaultAttribution: NEUTRAL_STAY_ATTRIBUTION,
+      });
 
-      if (stayPhoto) {
-        day.stay.imageUrl = stayPhoto.url;
-        day.stay.imageAttribution = stayPhoto.attribution;
-        if (stayPhoto.attribution.downloadLocation) {
-          assignedDownloadLocations.add(stayPhoto.attribution.downloadLocation);
-        }
-      } else {
-        day.stay.imageUrl = DEFAULT_STAY_IMAGE;
+      day.stay.imageUrl = stayResult.url;
+      day.stay.imageAttribution = stayResult.attribution;
+      if (stayResult.downloadLocation) {
+        assignedDownloadLocations.add(stayResult.downloadLocation);
+      }
+      if (stayResult.isPlaceholder) {
+        placeholderCardsCount++;
       }
     }
   });
 
-  // C. Assign Activities
+  // C. Activities
   trip.days.forEach((day) => {
     day.activities.forEach((activity) => {
-      const normCat = (activity.category || "").toLowerCase().trim();
+      const normCat = normalizeForRelevance(activity.category || "");
       const primaryCatPool = categoryPools.get(normCat) || [];
+      const actQuery = `${baseLocation} ${activity.category || "activity"}`;
 
-      const actPhoto = pickUnusedPhoto(
-        primaryCatPool,
+      const actResult = pickVerifiedPhotoForCard({
+        cardTitle: `Day ${day.dayNumber} Activity: ${activity.name}`,
+        query: actQuery,
+        itemName: activity.name,
+        preferredCategoryPool: primaryCatPool,
         destinationPool,
-        allPoolsList,
-        activity.category || "heritage",
-        activity.name,
-        usedPhotoIds
-      );
+        allVerifiedPools: allVerifiedPoolsList,
+        usedPhotoIds,
+        usedCounts,
+        defaultImage: DEFAULT_ACTIVITY_IMAGE,
+        defaultAttribution: NEUTRAL_ACTIVITY_ATTRIBUTION,
+      });
 
-      if (actPhoto) {
-        activity.imageUrl = actPhoto.url;
-        activity.imageAttribution = actPhoto.attribution;
-        if (actPhoto.attribution.downloadLocation) {
-          assignedDownloadLocations.add(actPhoto.attribution.downloadLocation);
-        }
-      } else {
-        activity.imageUrl = DEFAULT_ACTIVITY_IMAGE;
+      activity.imageUrl = actResult.url;
+      activity.imageAttribution = actResult.attribution;
+      if (actResult.downloadLocation) {
+        assignedDownloadLocations.add(actResult.downloadLocation);
+      }
+      if (actResult.isPlaceholder) {
+        placeholderCardsCount++;
       }
     });
   });
 
-  // 6. Fire download tracking only for photos actually assigned to cards
+  // 8. Fire download tracking only for photos actually assigned to cards
   if (accessKey && assignedDownloadLocations.size > 0) {
     for (const loc of assignedDownloadLocations) {
       trackUnsplashDownload(loc, accessKey);
     }
   }
 
-  return { trip, unsplashRequestsMade };
+  return { trip, unsplashRequestsMade, placeholderCardsCount };
 }

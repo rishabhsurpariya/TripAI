@@ -14,7 +14,6 @@ import {
   Bookmark,
   CalendarDays,
   Plane,
-  Car,
   Building2,
   PieChart,
   Map as MapIcon,
@@ -42,7 +41,6 @@ import { PublicNavbar } from "@/components/layout/PublicNavbar";
 import { Navbar } from "@/components/layout/Navbar";
 import { DayTimeline } from "@/components/trip/DayTimeline";
 import { GettingThereTab } from "@/components/trip/GettingThereTab";
-import { LocalTransportTab } from "@/components/trip/LocalTransportTab";
 import { HotelsTab } from "@/components/trip/HotelsTab";
 import { BudgetTab } from "@/components/trip/BudgetTab";
 import { TripMapTab } from "@/components/trip/TripMapTab";
@@ -61,7 +59,6 @@ interface SharedTripViewProps {
 type TabKey =
   | "itinerary"
   | "getting-there"
-  | "local-transport"
   | "hotels"
   | "budget"
   | "map";
@@ -208,11 +205,6 @@ export function SharedTripView({
       key: "getting-there",
       label: "Getting there",
       icon: <Plane className="w-3.5 h-3.5" />,
-    },
-    {
-      key: "local-transport",
-      label: "Local transport",
-      icon: <Car className="w-3.5 h-3.5" />,
     },
     {
       key: "hotels",
@@ -438,7 +430,7 @@ export function SharedTripView({
                 </div>
               </div>
 
-              {/* Right: Actions for Visitor (NO Edit, Regenerate, or Delete) */}
+              {/* Right: Actions for Visitor (NO Edit or Delete) */}
               <div className="flex items-center gap-2.5">
                 <button
                   type="button"
@@ -547,6 +539,7 @@ export function SharedTripView({
                       currency={currencyCode}
                       readOnly={true}
                       onToast={showToast}
+                      trip={trip}
                     />
 
                     {/* 8. SIGN-UP CALL TO ACTION BANNER (Fades up when scrolled into view) */}
@@ -616,9 +609,6 @@ export function SharedTripView({
 
                 {activeTab === "getting-there" && (
                   <GettingThereTab trip={trip} />
-                )}
-                {activeTab === "local-transport" && (
-                  <LocalTransportTab trip={trip} />
                 )}
                 {activeTab === "hotels" && <HotelsTab trip={trip} />}
                 {activeTab === "budget" && <BudgetTab trip={trip} />}

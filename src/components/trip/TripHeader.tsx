@@ -8,7 +8,6 @@ import {
   Calendar,
   CheckCircle2,
   Share2,
-  Sparkles,
   Bookmark,
 } from "lucide-react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
@@ -180,14 +179,6 @@ export function TripHeader({ trip, onShare }: TripHeaderProps) {
             >
               <Share2 className="w-3.5 h-3.5" />
               <span>Share</span>
-            </button>
-            <button
-              type="button"
-              className="px-3.5 py-2 rounded-full bg-surface/15 hover:bg-surface/25 backdrop-blur-sm text-on-primary text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer border border-white/10 active:scale-95"
-              title="Regenerate Day"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Regenerate Day</span>
             </button>
             <button
               type="button"

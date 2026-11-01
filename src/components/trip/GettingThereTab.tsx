@@ -3,6 +3,7 @@
 import { Plane, Train, Bus, Clock, ShieldCheck, Sparkles, ArrowRight } from "lucide-react";
 import { Trip, TransportOption } from "@/types/trip";
 import { formatCurrency } from "@/lib/currency";
+import { BookingButton, AffiliateDisclosure } from "./BookingButton";
 
 interface GettingThereTabProps {
   trip: Trip;
@@ -123,7 +124,7 @@ export function GettingThereTab({ trip }: GettingThereTabProps) {
                     <span className="font-serif text-xl sm:text-2xl text-primary font-bold">
                       {formatCurrency(option.estimatedCost, trip.currency || "INR")}
                     </span>
-                    <p className="text-[10px] text-secondary font-medium">per traveler</p>
+                    <p className="text-[10px] text-secondary font-medium">per traveler (est.)</p>
                   </div>
                 </div>
 
@@ -171,24 +172,25 @@ export function GettingThereTab({ trip }: GettingThereTabProps) {
               </div>
 
               {/* Card Footer Action */}
-              <div className="mt-5 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs">
-                <span className="inline-flex items-center gap-1 text-[11px] text-secondary font-medium">
+              <div className="mt-5 pt-3 border-t border-outline-variant/20 flex items-center justify-between text-xs gap-2">
+                <span className="inline-flex items-center gap-1 text-[11px] text-secondary font-medium shrink-0">
                   <ShieldCheck className="w-3.5 h-3.5" /> Baggage included
                 </span>
-                <button
-                  type="button"
-                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                    isRecommended
-                      ? "bg-primary-container text-on-primary hover:bg-primary"
-                      : "border border-secondary text-primary hover:bg-surface-container"
-                  }`}
-                >
-                  Select Option
-                </button>
+                <BookingButton
+                  category={option.mode}
+                  label="Find tickets"
+                  trip={trip}
+                  transportMode={option.mode}
+                />
               </div>
             </div>
           );
         })}
+      </div>
+
+      {/* Outbound Booking Disclosure */}
+      <div className="pt-2 text-center">
+        <AffiliateDisclosure />
       </div>
     </div>
   );

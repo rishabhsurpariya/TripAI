@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import {
   CalendarDays,
   Plane,
-  Bus,
   Building2,
   Wallet,
   Map,
@@ -20,7 +19,6 @@ import { TripHeader } from "./TripHeader";
 import { DayTimeline } from "./DayTimeline";
 import { BudgetSidePanel } from "./BudgetSidePanel";
 import { GettingThereTab } from "./GettingThereTab";
-import { LocalTransportTab } from "./LocalTransportTab";
 import { HotelsTab } from "./HotelsTab";
 import { BudgetTab } from "./BudgetTab";
 import { TripMapTab } from "./TripMapTab";
@@ -37,7 +35,6 @@ interface TripPlanViewProps {
 type TabKey =
   | "itinerary"
   | "getting-there"
-  | "local-transport"
   | "hotels"
   | "budget"
   | "map";
@@ -205,12 +202,6 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
       label: "Getting There",
       icon: <Plane className="w-4 h-4" />,
       badge: "Flights & Train",
-    },
-    {
-      key: "local-transport",
-      label: "Local Transport",
-      icon: <Bus className="w-4 h-4" />,
-      badge: "Transit & Cabs",
     },
     {
       key: "hotels",
@@ -439,6 +430,7 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
                     onOpenAddDrawer={handleOpenAddDrawer}
                     onOpenHotelDrawer={handleOpenHotelDrawer}
                     onToast={showToast}
+                    trip={activeTrip}
                   />
                 </div>
 
@@ -453,11 +445,6 @@ export function TripPlanView({ trip }: TripPlanViewProps) {
             {activeTab === "getting-there" && (
               /* TAB 2: GETTING THERE */
               <GettingThereTab trip={activeTrip} />
-            )}
-
-            {activeTab === "local-transport" && (
-              /* TAB 3: LOCAL TRANSPORT */
-              <LocalTransportTab trip={activeTrip} />
             )}
 
             {activeTab === "hotels" && (

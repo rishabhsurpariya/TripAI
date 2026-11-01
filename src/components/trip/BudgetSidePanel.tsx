@@ -258,6 +258,10 @@ export function BudgetSidePanel({
           </div>
         </div>
 
+        <p className="text-[10px] text-on-surface-variant/70 italic text-center mt-2.5">
+          All figures are approximate estimates.
+        </p>
+
         <button
           type="button"
           onClick={onOpenBudgetTab}

@@ -464,7 +464,7 @@ export async function getSharedTrip(shareId: string): Promise<SharedTripResult> 
     }
 
     const row = data[0];
-    const plan = (row.plan || {}) as Record<string, any>;
+    const plan = { ...((row.plan || {}) as Record<string, unknown>) };
 
     // Strictly ensure no owner metadata is present in the plan object
     delete plan.userId;

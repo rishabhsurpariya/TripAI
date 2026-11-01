@@ -9,7 +9,6 @@ import {
   Lock,
   Copy,
   Check,
-  Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Trip } from "@/types/trip";
@@ -77,9 +76,9 @@ export function ShareTripModal({
           newState ? "Public link re-enabled" : "Public link disabled (private)"
         );
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[ShareTripModal] Toggle error:", err);
-      showToast?.(err?.message || "Failed to update sharing settings");
+      showToast?.((err as Error)?.message || "Failed to update sharing settings");
     } finally {
       setIsUpdating(false);
     }
@@ -99,9 +98,9 @@ export function ShareTripModal({
         onTripUpdate?.(updatedTrip);
         showToast?.("Secret link revoked");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("[ShareTripModal] Revoke error:", err);
-      showToast?.(err?.message || "Failed to revoke secret link");
+      showToast?.((err as Error)?.message || "Failed to revoke secret link");
     } finally {
       setIsUpdating(false);
     }

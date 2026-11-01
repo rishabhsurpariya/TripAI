@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Search,
   LayoutGrid,
@@ -12,13 +11,8 @@ import {
   Luggage,
   X,
   ChevronDown,
-  Share2,
   Trash2,
-  Copy,
   CheckCircle2,
-  Check,
-  Globe,
-  Lock,
 } from "lucide-react";
 import {
   motion,
@@ -53,7 +47,6 @@ export default function MyTripsPage() {
     renameTrip,
     duplicateTrip,
     deleteTrip,
-    toggleShare,
     resetTrips,
   } = useSavedTripsStore();
 

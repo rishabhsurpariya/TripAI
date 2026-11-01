@@ -35,26 +35,42 @@ function getClient(client?: SupabaseClient): SupabaseClient {
 /**
  * Maps a Postgres row from `trips` table to the frontend `Trip` interface.
  */
-export function mapRowToTrip(row: any): Trip {
-  const plan =
+export interface TripDatabaseRow {
+  id: string;
+  destination?: string | null;
+  country?: string | null;
+  cover_image_url?: string | null;
+  start_date?: string | null;
+  num_days?: number | null;
+  travelers?: number | null;
+  style?: string | null;
+  currency?: string | null;
+  total_budget?: number | string | null;
+  share_id?: string | null;
+  is_shared?: boolean | null;
+  plan?: Partial<Trip> | null;
+  [key: string]: unknown;
+}
+
+export function mapRowToTrip(row: TripDatabaseRow): Trip {
+  const plan: Partial<Trip> =
     typeof row.plan === "object" && row.plan !== null ? row.plan : {};
 
   return {
     ...plan,
     id: row.id,
-    destination: row.destination ?? plan.destination,
-    country: row.country ?? plan.country,
-    coverImageUrl: row.cover_image_url ?? plan.coverImageUrl,
+    destination: row.destination ?? plan.destination ?? "",
+    country: row.country ?? plan.country ?? "",
+    coverImageUrl: row.cover_image_url ?? plan.coverImageUrl ?? "",
     startDate: row.start_date ?? plan.startDate,
-    numDays: row.num_days ?? plan.numDays ?? plan.days?.length,
     travelers: row.travelers ?? plan.travelers ?? 1,
-    style: row.style ?? plan.style ?? "comfort",
+    style: (row.style ?? plan.style ?? "comfort") as Trip["style"],
     currency: row.currency ?? plan.currency ?? "INR",
     totalBudget:
       row.total_budget !== null && row.total_budget !== undefined
         ? Number(row.total_budget)
         : plan.totalBudget ?? 0,
-    shareId: row.share_id ?? plan.shareId,
+    shareId: (row.share_id ?? plan.shareId) || undefined,
     isShared: row.is_shared ?? plan.isShared ?? false,
     days: plan.days || [],
     gettingThere: plan.gettingThere || [],
@@ -215,7 +231,7 @@ export async function createTrip(
   }
 
   const planCopy = { ...trip };
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     user_id: user.id,
     destination: trip.destination,
     country: trip.country || "",
@@ -305,7 +321,7 @@ export async function updateTrip(
       id: existing.id,
     };
 
-    const updatePayload: Record<string, any> = {
+    const updatePayload: Record<string, unknown> = {
       plan: mergedPlan,
       updated_at: new Date().toISOString(),
     };

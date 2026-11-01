@@ -46,7 +46,7 @@ export function isValidPartnerUrl(urlStr: string, allowedDomains: string[]): boo
  * - Restricts outbound links exclusively to verified HTTPS partner domains.
  */
 export function buildBookingLink(options: BookingLinkOptions): string | null {
-  const { partnerId, trip, dayNumber, hotelName, transportMode } = options;
+  const { partnerId, trip, dayNumber, hotelName } = options;
 
   const partner = AFFILIATE_PARTNERS.find((p) => p.id === partnerId);
   if (!partner) return null;

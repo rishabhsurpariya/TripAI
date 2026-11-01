@@ -114,7 +114,7 @@ export async function assembleAndBalanceBudget(
   };
 
   let dailyFood = staysAndTransport.dailyFoodEstimate;
-  let dailyMisc = staysAndTransport.dailyMiscEstimate;
+  const dailyMisc = staysAndTransport.dailyMiscEstimate;
   let { breakdown, total } = computeTotals(days, dailyFood, dailyMisc);
   let adjustmentCallsMade = 0;
 
@@ -193,10 +193,10 @@ IMPORTANT: All replacement costs must be realistic local prices in ${input.curre
       const recomputed = computeTotals(days, dailyFood, dailyMisc);
       breakdown = recomputed.breakdown;
       total = recomputed.total;
-    } catch (adjErr: any) {
+    } catch (adjErr: unknown) {
       console.warn(
         "[assembleAndBalanceBudget] Optional adjustment pass failed, using original estimate:",
-        adjErr?.message
+        (adjErr as Error)?.message
       );
     }
   }

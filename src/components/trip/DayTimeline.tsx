@@ -198,7 +198,6 @@ function DaySection({
   onToggleCollapse,
   onOpenAddDrawer,
   onOpenHotelDrawer,
-  onToast,
   onDeleteActivity,
   onDuplicateActivity,
   onMoveToDay,
@@ -670,7 +669,6 @@ export function DayTimeline({
             onToggleCollapse={() => toggleDay(day.dayNumber)}
             onOpenAddDrawer={onOpenAddDrawer}
             onOpenHotelDrawer={onOpenHotelDrawer}
-            onToast={(msg) => onToast?.(msg)}
             onDeleteActivity={handleDeleteActivity}
             onDuplicateActivity={handleDuplicateActivity}
             onMoveToDay={handleMoveToDay}
